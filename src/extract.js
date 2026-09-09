@@ -60,8 +60,17 @@ const HEADER_ROLES = [
   [new RegExp(`^${QUALIFIER}week`, 'i'), 'studyWeek'],
   [new RegExp(`^${QUALIFIER}month`, 'i'), 'studyMonth'],
   [new RegExp(`^${QUALIFIER}window`, 'i'), 'window'],
-  [/^(visit|assessment|procedure|activity|event)s?\b/i, 'visitName'],
-  [new RegExp(`^${QUALIFIER}(?:period|phase|stage|epoch)`, 'i'), 'period'],
+  [/^visits?\b/i, 'visitName'],
+  /*
+   * "Trial Activity", "Assessment", "Procedure" caption the ACTIVITY COLUMN,
+   * not the columns to their right — they are the label column's own heading,
+   * and the row they sit on carries the study phases. Reading them as visit
+   * names takes the slot the real visit row needs: Prot_000 captions its
+   * phases "Trial Activity" and its visits "Visits", and naming the first one
+   * left the second with nowhere to go, so the columns came out called
+   * "Screening Period" instead of "Stabilization", "V 2.1", "V 2.2".
+   */
+  [new RegExp(`^${QUALIFIER}(?:period|phase|stage|epoch|activit(?:y|ies)|assessments?|procedures?|events?)`, 'i'), 'period'],
   [/^cycle/i, 'cycle'],
 ];
 
@@ -788,15 +797,50 @@ function ruledRows(page, splitRows, gridLeft) {
  * Kept per column rather than flattened, so "Screening / Visit 2 / Day -14 /
  * ±3 days" survives as four facts about one visit instead of one run-on string.
  */
+/**
+ * What a header row's caption says it is telling you about the columns.
+ *
+ * The caption is read first and only then the whole line: "ACTIVITY WEEK -2 0 2"
+ * is a week row whose caption begins with the word the activity column is titled
+ * with, and only the first two words are searched, because "Allowed window for
+ * visit (days)" ends in the word "days" and would otherwise be filed as a second,
+ * competing day row.
+ */
+function roleOf(label, text) {
+  const head = clean(label).split(/\s+/).slice(0, 2).join(' ');
+  for (const [pattern, name] of HEADER_ROLES) {
+    const anywhere = new RegExp(pattern.source.replace(/^\^/, '\\b'), 'i');
+    if (anywhere.test(head)) return name;
+  }
+  for (const [pattern, name] of HEADER_ROLES) if (pattern.test(text || '')) return name;
+  return null;
+}
+
 function readHeader(rows, bands, firstDataY, page) {
   const pitch = bands.length > 1
     ? (bands[bands.length - 1].centre - bands[0].centre) / (bands.length - 1) : 40;
+
+  // Which ruled cell of the header block a line falls in, where the page rules
+  // one. Null when the header is not ruled, which turns the grouping below back
+  // into the line-by-line reading.
+  const edges = [...new Set((page?.rules?.horizontals || [])
+    .filter((h) => h.y < firstDataY + 2).map((h) => Math.round(h.y)))].sort((a, b) => a - b);
+  const cellOf = (y) => {
+    if (edges.length < 3) return null;
+    const at = edges.findIndex((e, i) => i < edges.length - 1 && y >= e - 2 && y < edges[i + 1] - 2);
+    return at < 0 ? null : at;
+  };
 
   const header = [];
   for (const row of rows) {
     if (row.y >= firstDataY) break;
     const cells = [...row.marks, ...row.other].filter((w) => columnFor(w, bands));
     if (!cells.length) continue;
+    // The running head is above the table, not part of it. "TJ301 Protocol
+    // No.: CTJ301UC201 Date: 16 May 2017" spreads across the page like a
+    // header row and was being banded over the columns as though it named
+    // them.
+    if (PAGE_FURNITURE.test(row.text || '')) continue;
 
     // The left-hand text of a header line counts as that line's caption only
     // when it names a dimension. The table's own title is frequently set INSIDE
@@ -808,12 +852,34 @@ function readHeader(rows, bands, firstDataY, page) {
     // the phases end up spread over the wrong columns.
     const label = namesDimension(row.label) ? row.label : '';
 
-    // A line with no left-hand label of its own is not a new heading — it is the
-    // rest of the one above, which was too wide for its column and wrapped.
+    /*
+     * Lines inside one ruled cell are one header row, whatever they look like.
+     *
+     * Prot_000 sets its visit column as "Visit 0" over "Stabilization" — two
+     * lines, and the caption "Visits" is on the SECOND of them. Read line by
+     * line, the first has no caption and is taken as the wrap of the window row
+     * above it, so "Visit 0" and "Visit 1.1" end up filed as visit windows and
+     * the row that names the visits is left describing nothing. The page draws a
+     * cell around all three lines and says they are one row.
+     */
     const previous = header[header.length - 1];
-    if (!label && previous) {
-      continueHeading(previous.values, cells, bands, pitch);
+    const cell = cellOf(row.y);
+    const sameCell = previous && cell !== null && cell === previous.cell;
+
+    if (sameCell || (!label && previous && cell === null)) {
+      // Inside a ruled cell the column is already known, so the second line of
+      // a heading goes to its own column rather than to whichever value it
+      // happens to sit nearest. Proximity is for unruled pages, where a heading
+      // too wide for its column wraps under its neighbour and the nearest
+      // heading is the only evidence of which one it continues.
+      if (sameCell && bands[0]?.ruled) placeCells(previous.values, cells, bands, (a, b) => `${a} ${b}`);
+      else continueHeading(previous.values, cells, bands, pitch);
       previous.bottom = Math.max(previous.bottom, row.bottom);
+      // The caption may arrive on a later line of the same cell.
+      if (label && !previous.label) {
+        previous.label = label;
+        previous.role = roleOf(label, row.text);
+      }
       continue;
     }
 
@@ -830,17 +896,10 @@ function readHeader(rows, bands, firstDataY, page) {
     // same reason. "Allowed window for visit (days)" is a window row; read to
     // the end of the caption it matches "day" first — days come before windows
     // in the role list — and it is filed as a second, competing day row.
-    let role = null;
-    const head = clean(label).split(/\s+/).slice(0, 2).join(' ');
-    for (const [pattern, name] of HEADER_ROLES) {
-      const anywhere = new RegExp(pattern.source.replace(/^\^/, '\\b'), 'i');
-      if (anywhere.test(head)) { role = name; break; }
-    }
-    for (const [pattern, name] of HEADER_ROLES) {
-      if (role) break;
-      if (pattern.test(row.text || '')) role = name;
-    }
-    const entry = { role, label, y: row.y, top: row.y, bottom: row.bottom, values: new Map() };
+    const role = roleOf(label, row.text);
+    const entry = {
+      role, label, y: row.y, top: row.y, bottom: row.bottom, cell: cellOf(row.y), values: new Map(),
+    };
     placeCells(entry.values, cells, bands, (a, b) => `${a} ${b}`);
     // "VISIT 1 2 3 4" names visits by number, whatever the caption calls them.
     if (role === 'visitName' && [...entry.values.values()].every((v) => /^\d{1,3}[a-z]?$/i.test(v.text))) {

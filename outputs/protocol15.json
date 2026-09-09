@@ -189,7 +189,9 @@
         {
           "id": "divider-randomization",
           "label": "RANDOMIZATION",
-          "path": [],
+          "path": [
+            "Baseline"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,

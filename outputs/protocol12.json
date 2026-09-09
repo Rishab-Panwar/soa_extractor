@@ -161,10 +161,12 @@
         {
           "id": "c1",
           "label": "Screening/Baseline",
-          "path": [],
+          "path": [
+            "Screening/Baseline"
+          ],
           "visitNumber": null,
           "studyDay": null,
-          "studyWeek": null,
+          "studyWeek": "14-21 days prior to randomization",
           "window": "14-21 days prior to randomization",
           "pages": [],
           "markers": [
@@ -174,7 +176,9 @@
         {
           "id": "divider-randomization",
           "label": "RANDOMIZATION",
-          "path": [],
+          "path": [
+            "Study Medication Administration"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,
@@ -196,7 +200,7 @@
           "id": "c3",
           "label": "Study Week 4",
           "path": [
-            "Study Medication Administration 12/"
+            "Study Medication Administration"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -208,7 +212,7 @@
           "id": "c4",
           "label": "Study Week 5-7",
           "path": [
-            "Study Medication Administration 12/"
+            "Study Medication Administration"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -220,7 +224,7 @@
           "id": "c5",
           "label": "Study Week 8",
           "path": [
-            "Study Medication Administration 12/"
+            "Study Medication Administration"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -231,9 +235,7 @@
         {
           "id": "c6",
           "label": "Study Week 9-11",
-          "path": [
-            "Study Medication Administration 12/"
-          ],
+          "path": [],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": "9-11",

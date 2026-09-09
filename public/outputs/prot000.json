@@ -132,15 +132,14 @@
       "columns": [
         {
           "id": "p44c1",
-          "label": "Run-in",
+          "label": "Visit 0 Stabilization",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "Stabilization"
+            "Run-in"
           ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,
-          "window": "Visit 0",
+          "window": null,
           "markers": [],
           "pages": [
             44
@@ -148,17 +147,16 @@
         },
         {
           "id": "p44c2",
-          "label": "Screening Period",
+          "label": "Visit 1 Screening",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "Screening"
+            "Screening Period"
           ],
           "visitNumber": null,
           "studyDay": "-28 to -6",
           "studyWeek": null,
-          "window": "Visit 1",
+          "window": null,
           "markers": [
-            "d"
+            "g"
           ],
           "pages": [
             44,
@@ -167,17 +165,16 @@
         },
         {
           "id": "p44c3",
-          "label": "Screening Period",
+          "label": "Visit 1.1 Baseline",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "Baseline"
+            "Screening Period"
           ],
           "visitNumber": null,
           "studyDay": "-5 to -1",
           "studyWeek": null,
-          "window": "Visit 1.1",
+          "window": null,
           "markers": [
-            "d"
+            "e"
           ],
           "pages": [
             44,
@@ -186,17 +183,16 @@
         },
         {
           "id": "p44c4",
-          "label": "Treatment Period",
+          "label": "Visit 2 Baseline",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "Baseline"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "0",
           "studyWeek": "0",
-          "window": "Visit 2",
+          "window": null,
           "markers": [
-            "d"
+            "e"
           ],
           "pages": [
             44,
@@ -205,17 +201,16 @@
         },
         {
           "id": "p44c5",
-          "label": "Treatment Period",
+          "label": "V 2.1",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V 2.1"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "2",
           "studyWeek": null,
           "window": null,
           "markers": [
-            "d"
+            "1"
           ],
           "pages": [
             44,
@@ -224,18 +219,15 @@
         },
         {
           "id": "p44c6",
-          "label": "Treatment Period",
+          "label": "V 2.2",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V 2.2"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "6",
           "studyWeek": "1",
           "window": "±1",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -243,18 +235,15 @@
         },
         {
           "id": "p44c7",
-          "label": "Treatment Period",
+          "label": "V2.3",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V2.3"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "10",
           "studyWeek": null,
           "window": "±1",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -262,18 +251,15 @@
         },
         {
           "id": "p44c8",
-          "label": "Treatment Period",
+          "label": "V 3",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V 3"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "14",
           "studyWeek": "2",
           "window": "±1",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -281,18 +267,15 @@
         },
         {
           "id": "p44c9",
-          "label": "Treatment Period",
+          "label": "V 4",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V 4"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "28",
           "studyWeek": "4",
           "window": "±1",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -300,18 +283,15 @@
         },
         {
           "id": "p44c10",
-          "label": "Treatment Period",
+          "label": "V 5",
           "path": [
-            "Protocol No.: CTJ301UC201 Time and Events Schedule",
-            "V 5"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "42",
           "studyWeek": "6",
           "window": "±2",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -319,18 +299,15 @@
         },
         {
           "id": "p44c11",
-          "label": "Treatment Period",
+          "label": "V 6",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V 6"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "56",
           "studyWeek": "8",
           "window": "±2",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -338,18 +315,15 @@
         },
         {
           "id": "p44c12",
-          "label": "Treatment Period",
+          "label": "V 7",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V 7"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "70",
           "studyWeek": "10",
           "window": "±2",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -357,17 +331,16 @@
         },
         {
           "id": "p44c13",
-          "label": "Treatment Period",
+          "label": "V 7.1",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V 7.1"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "72",
           "studyWeek": null,
           "window": null,
           "markers": [
-            "d"
+            "1"
           ],
           "pages": [
             44,
@@ -376,18 +349,15 @@
         },
         {
           "id": "p44c14",
-          "label": "Treatment Period",
+          "label": "V 7.2",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V 7.2"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "76",
           "studyWeek": null,
           "window": null,
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -395,18 +365,15 @@
         },
         {
           "id": "p44c15",
-          "label": "Treatment Period",
+          "label": "V7.3",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V7.3"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "80",
           "studyWeek": null,
           "window": "±1",
-          "markers": [
-            "d"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -414,18 +381,15 @@
         },
         {
           "id": "p44c16",
-          "label": "Treatment Period",
+          "label": "V 8 (EoT Visit)",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "(EoT Visit)"
+            "Treatment Period"
           ],
           "visitNumber": null,
           "studyDay": "84",
           "studyWeek": "12",
-          "window": "±2 V 8",
-          "markers": [
-            "d"
-          ],
+          "window": "±2",
+          "markers": [],
           "pages": [
             44,
             45
@@ -433,17 +397,16 @@
         },
         {
           "id": "p44c17",
-          "label": "Follow-up Period",
+          "label": "V 8.1",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "V 8.1"
+            "Follow-up Period"
           ],
           "visitNumber": null,
           "studyDay": "90",
           "studyWeek": null,
           "window": "±2",
           "markers": [
-            "d"
+            "1"
           ],
           "pages": [
             44,
@@ -452,18 +415,15 @@
         },
         {
           "id": "p44c18",
-          "label": "Follow-up Period",
+          "label": "V 9 (Safety Follow-up Visit)",
           "path": [
-            "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
-            "Follow-up Visit)"
+            "Follow-up Period"
           ],
           "visitNumber": null,
           "studyDay": "105",
           "studyWeek": "15",
-          "window": "±2 V 9 (Safety",
-          "markers": [
-            "d"
-          ],
+          "window": "±2",
+          "markers": [],
           "pages": [
             44,
             45
@@ -1408,74 +1368,6 @@
             {
               "target": "row",
               "row": "r28"
-            },
-            {
-              "target": "column",
-              "column": "p44c2"
-            },
-            {
-              "target": "column",
-              "column": "p44c3"
-            },
-            {
-              "target": "column",
-              "column": "p44c4"
-            },
-            {
-              "target": "column",
-              "column": "p44c5"
-            },
-            {
-              "target": "column",
-              "column": "p44c6"
-            },
-            {
-              "target": "column",
-              "column": "p44c7"
-            },
-            {
-              "target": "column",
-              "column": "p44c8"
-            },
-            {
-              "target": "column",
-              "column": "p44c9"
-            },
-            {
-              "target": "column",
-              "column": "p44c10"
-            },
-            {
-              "target": "column",
-              "column": "p44c11"
-            },
-            {
-              "target": "column",
-              "column": "p44c12"
-            },
-            {
-              "target": "column",
-              "column": "p44c13"
-            },
-            {
-              "target": "column",
-              "column": "p44c14"
-            },
-            {
-              "target": "column",
-              "column": "p44c15"
-            },
-            {
-              "target": "column",
-              "column": "p44c16"
-            },
-            {
-              "target": "column",
-              "column": "p44c17"
-            },
-            {
-              "target": "column",
-              "column": "p44c18"
             }
           ]
         },
@@ -1496,6 +1388,14 @@
             {
               "target": "row",
               "row": "r17"
+            },
+            {
+              "target": "column",
+              "column": "p44c3"
+            },
+            {
+              "target": "column",
+              "column": "p44c4"
             }
           ]
         },
@@ -1536,6 +1436,10 @@
             {
               "target": "row",
               "row": "r21"
+            },
+            {
+              "target": "column",
+              "column": "p44c2"
             }
           ]
         },
@@ -1616,20 +1520,36 @@
             {
               "target": "row",
               "row": "r20"
+            },
+            {
+              "target": "column",
+              "column": "p44c5"
+            },
+            {
+              "target": "column",
+              "column": "p44c13"
+            },
+            {
+              "target": "column",
+              "column": "p44c17"
             }
           ]
         }
       ],
       "ambiguities": [
-        "Page 44: 10 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state.",
-        "Page 45: 10 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state."
+        "1 column(s) carry no readable visit number, day or week in the printed header (pages 44). Those columns could not be matched against the same visit on another page, so a table that spans pages may list a visit more than once. The cells under them are still verbatim."
       ],
       "provenance": {
         "readBy": "geometry",
         "model": null,
-        "confidence": 0.46,
+        "confidence": 0.44,
         "verdict": "fallback",
         "findings": [
+          {
+            "check": "unidentified-columns",
+            "severity": "low",
+            "detail": "1 of 18 columns (6%) carry no visit number, study day, week or window. Columns like these cannot be recognised as the same visit on another page, so a schedule spanning pages may be listing the same visits more than once."
+          },
           {
             "check": "duplicate-columns",
             "severity": "low",
@@ -2280,5 +2200,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-09T20:22:48.975Z"
+  "extractedAt": "2026-09-09T20:36:24.782Z"
 }

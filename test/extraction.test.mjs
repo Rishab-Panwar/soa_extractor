@@ -149,11 +149,28 @@ test('a phase heading bands exactly the columns its cell encloses', async (t) =>
   const result = await run(readFileSync(own), { assist: false });
   const runs = [];
   for (const column of result.tables[0].columns) {
+    const phase = column.path[column.path.length - 1];
     const last = runs[runs.length - 1];
-    if (last && last.label === column.label) last.n++;
-    else runs.push({ label: column.label, n: 1 });
+    if (last && last.phase === phase) last.n++;
+    else runs.push({ phase, n: 1 });
   }
-  assert.deepEqual(runs.map((r) => `${r.label}×${r.n}`), [
+  assert.deepEqual(runs.map((r) => `${r.phase}×${r.n}`), [
     'Run-in×1', 'Screening Period×2', 'Treatment Period×13', 'Follow-up Period×2',
   ]);
+});
+
+test('lines inside one ruled header cell are one header row', async (t) => {
+  if (!existsSync(own)) return t.skip('Prot_000.pdf not present');
+  // The page sets each visit as "Visit 0" over "Stabilization", and puts the
+  // caption "Visits" on the SECOND line. Read line by line, the first has no
+  // caption and is taken as the wrap of the window row above it — so "Visit 0"
+  // and "Visit 1.1" were filed as visit windows and the row naming the visits
+  // described nothing.
+  const result = await run(readFileSync(own), { assist: false });
+  const table = result.tables[0];
+  assert.equal(table.columns[0].label, 'Visit 0 Stabilization');
+  assert.equal(table.columns[17].label, 'V 9 (Safety Follow-up Visit)');
+  assert.deepEqual(table.columns.slice(4, 8).map((c) => c.label), ['V 2.1', 'V 2.2', 'V2.3', 'V 3']);
+  // And no visit identifier ended up filed as a visit window.
+  assert.equal(table.columns.filter((c) => /visit/i.test(c.window || '')).length, 0);
 });
