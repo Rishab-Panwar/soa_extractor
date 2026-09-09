@@ -68,7 +68,9 @@ npm run serve          # UI on http://localhost:3100 — drop in any protocol PD
 npm run extract -- path/to/protocol.pdf [more.pdf ...]   # writes outputs/<name>.json
 ```
 
-Node 20+. The UI and the batch script run the same pipeline, so the committed
+Node 22.13+ — that is what pdfjs-dist needs, and CI proves it: a Node 20 run
+fails on `Promise.withResolvers`, which the PDF reader calls and Node 20 does not
+have. The UI and the batch script run the same pipeline, so the committed
 `outputs/` are reproducible.
 
 **The second opinion is optional.** Without a key the tool runs geometry only,

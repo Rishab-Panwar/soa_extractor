@@ -7,12 +7,14 @@
 # twenty-nine rows it is supposed to. A reviewer with the protocols beside the
 # checkout gets the full suite from the same command.
 #
-# Both ends of the supported Node range are run, because the first CI run failed
-# on a difference between them: `node --test "test/*.test.mjs"` passed locally,
-# where the shell leaves the glob alone and Node expands it, and failed on
-# Linux, where Node was handed a path with a star in it. `node --test` on its
-# own discovers the files on every platform — and running two versions is how
-# that stays true.
+# Two Node versions, and both have already earned their place. The first run
+# here failed on the test command: `node --test "test/*.test.mjs"` passes
+# locally, where the shell leaves the quoted glob alone and Node expands it, and
+# fails on Linux, where Node is handed a path with a star in it. The second
+# failed on Node 20, which has no `Promise.withResolvers` — pdfjs-dist calls it,
+# so the minimum this project claimed to support was simply wrong, and nothing
+# said so because npm does not enforce `engines`. Neither fault would have shown
+# up on a single version.
 name: tests
 
 on:
@@ -26,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22]
+        node: [22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
