@@ -138,13 +138,12 @@
             "Stabilization"
           ],
           "visitNumber": null,
-          "studyDay": "-28 to -6",
+          "studyDay": null,
           "studyWeek": null,
           "window": "Visit 0",
           "markers": [],
           "pages": [
-            44,
-            45
+            44
           ]
         },
         {
@@ -162,7 +161,8 @@
             "d"
           ],
           "pages": [
-            44
+            44,
+            45
           ]
         },
         {
@@ -186,7 +186,7 @@
         },
         {
           "id": "p44c4",
-          "label": "Screening Period",
+          "label": "Treatment Period",
           "path": [
             "Protocol No.: CTJ301UC201 Time and Events Schedule",
             "Baseline"
@@ -205,7 +205,7 @@
         },
         {
           "id": "p44c5",
-          "label": "Screening Period",
+          "label": "Treatment Period",
           "path": [
             "Protocol No.: CTJ301UC201 Time and Events Schedule",
             "V 2.1"
@@ -213,7 +213,7 @@
           "visitNumber": null,
           "studyDay": "2",
           "studyWeek": null,
-          "window": "Visit 2",
+          "window": null,
           "markers": [
             "d"
           ],
@@ -224,7 +224,7 @@
         },
         {
           "id": "p44c6",
-          "label": "Screening Period",
+          "label": "Treatment Period",
           "path": [
             "Protocol No.: CTJ301UC201 Time and Events Schedule",
             "V 2.2"
@@ -365,7 +365,7 @@
           "visitNumber": null,
           "studyDay": "72",
           "studyWeek": null,
-          "window": "±2",
+          "window": null,
           "markers": [
             "d"
           ],
@@ -376,7 +376,7 @@
         },
         {
           "id": "p44c14",
-          "label": "Follow-up Period",
+          "label": "Treatment Period",
           "path": [
             "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
             "V 7.2"
@@ -384,7 +384,7 @@
           "visitNumber": null,
           "studyDay": "76",
           "studyWeek": null,
-          "window": "±1",
+          "window": null,
           "markers": [
             "d"
           ],
@@ -395,7 +395,7 @@
         },
         {
           "id": "p44c15",
-          "label": "Follow-up Period",
+          "label": "Treatment Period",
           "path": [
             "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
             "V7.3"
@@ -414,7 +414,7 @@
         },
         {
           "id": "p44c16",
-          "label": "Follow-up Period",
+          "label": "Treatment Period",
           "path": [
             "Date: 16 May 2017 Ver.1.1 Supersedes: Ver.1.0 Page 44 of 97",
             "(EoT Visit)"
@@ -1075,7 +1075,7 @@
           "markers": [],
           "cells": [
             {
-              "col": "p44c1",
+              "col": "p44c2",
               "value": "•"
             }
           ]
@@ -1090,7 +1090,7 @@
           ],
           "cells": [
             {
-              "col": "p44c1",
+              "col": "p44c2",
               "value": "•"
             },
             {
@@ -1125,7 +1125,7 @@
           ],
           "cells": [
             {
-              "col": "p44c1",
+              "col": "p44c2",
               "value": "•"
             },
             {
@@ -1213,7 +1213,7 @@
           ],
           "cells": [
             {
-              "col": "p44c1",
+              "col": "p44c2",
               "value": "•"
             },
             {
@@ -1621,8 +1621,8 @@
         }
       ],
       "ambiguities": [
-        "Page 44: 14 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state.",
-        "Page 45: 14 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state."
+        "Page 44: 10 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state.",
+        "Page 45: 10 column(s) sit between two banding headings rather than under either. They were given the nearer heading, which the page does not state."
       ],
       "provenance": {
         "readBy": "geometry",
@@ -2280,5 +2280,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-09T17:11:47.873Z"
+  "extractedAt": "2026-09-09T20:22:48.975Z"
 }

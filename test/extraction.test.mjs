@@ -139,3 +139,21 @@ test('a footnote marker is kept beside its value, not glued onto it', async (t) 
   assert.ok(cells.some((c) => c.value === '3X/week' && (c.markers || []).includes('d')), '"3X/week" with marker d');
   assert.equal(cells.filter((c) => /^\d?X?\/?week[a-z]$/i.test(c.value)).length, 0, 'no marker glued into a value');
 });
+
+test('a phase heading bands exactly the columns its cell encloses', async (t) => {
+  if (!existsSync(own)) return t.skip('Prot_000.pdf not present');
+  // The page rules "Screening Period" over two visits and "Treatment Period"
+  // over thirteen. Inferring the span from where the heading's ink falls read
+  // it as five and seven — a heading centred over its group reaches columns it
+  // does not cover, and the document draws the answer.
+  const result = await run(readFileSync(own), { assist: false });
+  const runs = [];
+  for (const column of result.tables[0].columns) {
+    const last = runs[runs.length - 1];
+    if (last && last.label === column.label) last.n++;
+    else runs.push({ label: column.label, n: 1 });
+  }
+  assert.deepEqual(runs.map((r) => `${r.label}×${r.n}`), [
+    'Run-in×1', 'Screening Period×2', 'Treatment Period×13', 'Follow-up Period×2',
+  ]);
+});

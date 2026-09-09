@@ -501,6 +501,47 @@ function continueHeading(values, cells, bands, reach) {
 }
 
 /**
+ * A banding heading, applied to exactly the columns its cell encloses.
+ *
+ * The document draws this. A header row is ruled like any other, and the cell
+ * holding "Screening Period" has borders that say precisely which visits sit
+ * under it — no inference required. The rules that matter here are SHORT: they
+ * cross the heading row only, and are skipped when the data columns are read
+ * because a rule that does not run the height of the grid is not a column
+ * boundary. Read for this row alone, they are exactly the boundaries wanted.
+ *
+ * Without this the span has to be guessed from where the ink falls, and a
+ * heading centred over its group reaches columns it does not cover: Prot_000
+ * showed "Screening Period" over five visits where the page rules it over two.
+ */
+function ruledSpans(values, bands, page, top, bottom) {
+  const crossing = (page.rules?.verticals || [])
+    .filter((v) => v.y0 <= top + 2 && v.y1 >= bottom - 2)
+    .map((v) => v.x)
+    .sort((a, b) => a - b);
+
+  const edges = [];
+  for (const x of crossing) if (!edges.length || x - edges[edges.length - 1] > 3) edges.push(x);
+  // Fewer cells than headings means this row is not ruled into cells at all.
+  if (edges.length < 3 || edges.length - 1 < values.size) return null;
+
+  const spread = new Map();
+  for (const value of values.values()) {
+    const middle = (value.x0 + value.x1) / 2;
+    const at = edges.findIndex((x, i) => i < edges.length - 1 && middle >= x && middle <= edges[i + 1]);
+    if (at < 0) return null;
+    for (const band of bands) {
+      if (band.centre >= edges[at] && band.centre <= edges[at + 1]) spread.set(band.id, value);
+    }
+  }
+  if (!spread.size) return null;
+
+  values.clear();
+  for (const [id, value] of spread) values.set(id, value);
+  return [];
+}
+
+/**
  * A banding heading, applied to every column it bands.
  *
  * "Treatment Infusions" is printed once across four columns, so read literally
@@ -747,7 +788,7 @@ function ruledRows(page, splitRows, gridLeft) {
  * Kept per column rather than flattened, so "Screening / Visit 2 / Day -14 /
  * ±3 days" survives as four facts about one visit instead of one run-on string.
  */
-function readHeader(rows, bands, firstDataY) {
+function readHeader(rows, bands, firstDataY, page) {
   const pitch = bands.length > 1
     ? (bands[bands.length - 1].centre - bands[0].centre) / (bands.length - 1) : 40;
 
@@ -770,7 +811,11 @@ function readHeader(rows, bands, firstDataY) {
     // A line with no left-hand label of its own is not a new heading — it is the
     // rest of the one above, which was too wide for its column and wrapped.
     const previous = header[header.length - 1];
-    if (!label && previous) { continueHeading(previous.values, cells, bands, pitch); continue; }
+    if (!label && previous) {
+      continueHeading(previous.values, cells, bands, pitch);
+      previous.bottom = Math.max(previous.bottom, row.bottom);
+      continue;
+    }
 
     // One stray word above the grid — a title, a page number — is not a header
     // row. A header row says something about several columns at once.
@@ -795,7 +840,7 @@ function readHeader(rows, bands, firstDataY) {
       if (role) break;
       if (pattern.test(row.text || '')) role = name;
     }
-    const entry = { role, label, y: row.y, values: new Map() };
+    const entry = { role, label, y: row.y, top: row.y, bottom: row.bottom, values: new Map() };
     placeCells(entry.values, cells, bands, (a, b) => `${a} ${b}`);
     // "VISIT 1 2 3 4" names visits by number, whatever the caption calls them.
     if (role === 'visitName' && [...entry.values.values()].every((v) => /^\d{1,3}[a-z]?$/i.test(v.text))) {
@@ -804,7 +849,12 @@ function readHeader(rows, bands, firstDataY) {
     header.push(entry);
   }
   const inferred = new Set();
-  for (const entry of header) for (const id of spanSparse(entry.values, bands)) inferred.add(id);
+  for (const entry of header) {
+    // The drawn cell first, the inference only where the row is not ruled.
+    const ruled = ruledSpans(entry.values, bands, page, entry.top, entry.bottom);
+    if (ruled) continue;
+    for (const id of spanSparse(entry.values, bands)) inferred.add(id);
+  }
   return { header, inferred: [...inferred] };
 }
 
@@ -1016,7 +1066,7 @@ export function extractTable(pages, { title = '' } = {}) {
     // without it cuts it off and the row is lost.
     const marked = assembled.filter((r) => r.marks.length);
     const lastDataBottom = Math.max(...marked.flatMap((r) => r.lines.map((l) => l.bottom)));
-    const { header, inferred } = readHeader(rows, bands, firstDataY);
+    const { header, inferred } = readHeader(rows, bands, firstDataY, page);
     if (inferred.length) {
       ambiguities.push(`Page ${page.number}: ${inferred.length} column(s) sit between two banding headings rather than under either. `
         + `They were given the nearer heading, which the page does not state.`);
