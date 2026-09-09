@@ -305,6 +305,12 @@ export function linkTrailingMarkers(table) {
     const found = markers.find((m) => texts.some((t) => {
       const s = String(t || '').trim();
       if (s.length <= m.length) return false;
+      // A symbol marker leads its name as often as it trails it: protocol9
+      // writes "* Morphine (0600, 1100, 1630, 2200 h)" and "**Lofexidine or
+      // Placebo", where the footnote is announced before the assessment it
+      // qualifies. Looking only at the end left all three of that schedule's
+      // footnotes pointing at nothing.
+      if (symbol(m) && s.startsWith(m) && !s.startsWith(`${m}${m[0]}`)) return true;
       return s.endsWith(m) || (symbol(m) && target === 'column' && s.split(m).length === 2);
     }));
     if (!found) return;
@@ -359,6 +365,12 @@ export async function run(buffer, { maxTables = 3, floor = 12, assist = true, lo
     table.locatorScore = candidate.score;
     table.locatorEvidence = candidate.evidence.map((e) => ({ page: e.page, score: e.score, reasons: e.reasons }));
     // Score the extraction against itself before anyone is asked to believe it.
+    // Linked BEFORE it is scored. The self-check counts footnotes that point at
+    // nothing, and running it before the pass that binds markers to the rows
+    // they name meant it counted footnotes that were about to be linked —
+    // nine of Prot_000's twelve, when the true number is one. A check that
+    // reports work not yet done sends good tables for an expensive review.
+    linkTrailingMarkers(table);
     table.assessment = assess(table);
     tables.push(table);
   }
@@ -478,6 +490,8 @@ export async function run(buffer, { maxTables = 3, floor = 12, assist = true, lo
     // One published shape, whichever path produced each table. Markers left in
     // the row names are linked first, so the published linkage is complete
     // however the table was read.
+    // Already linked above for the tables read by rule; a reviewed table has
+    // replaced one of those and needs the pass run on it too.
     tables: tables.map((table) => { linkTrailingMarkers(table); return normalise(table); }),
     // Kept so the UI can show why these pages and not others, and so a reviewer
     // can argue with the locator instead of trusting it.

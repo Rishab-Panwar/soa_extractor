@@ -1,0 +1,26 @@
+# The tests exist; this is what makes them mean something.
+#
+# Most of the suite needs the five protocol documents, which are not in this
+# repository and are not ours to publish — those cases skip. What runs here is
+# the held-out mock we wrote ourselves, which is enough to prove the pipeline
+# loads, reads a 97-page PDF, and still finds the eighteen columns and
+# twenty-nine rows it is supposed to. A reviewer with the protocols beside the
+# checkout gets the full suite from the same command.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test

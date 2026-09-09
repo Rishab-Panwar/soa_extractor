@@ -492,6 +492,11 @@ The suite was mutation-tested rather than trusted: reintroducing that bug turns
 it red. Doing so also showed that one of the two changes made to fix it was not
 load-bearing, and the comment claiming otherwise was corrected.
 
+It runs on every push (`.github/workflows/test.yml`). Most cases skip in CI for
+want of the protocols; what runs there is the held-out mock, which is enough to
+prove the pipeline loads, reads a 97-page PDF and still finds the eighteen
+columns it should.
+
 ## Questions for a clinical SME
 
 - protocol9 marks some rows by **grey shading with no printed character**. Is

@@ -1335,7 +1335,8 @@
           "continued": false,
           "appliesTo": [
             {
-              "target": "table"
+              "target": "row",
+              "row": "r5"
             }
           ]
         },
@@ -1350,7 +1351,8 @@
           "continued": false,
           "appliesTo": [
             {
-              "target": "table"
+              "target": "row",
+              "row": "r6"
             }
           ]
         },
@@ -1365,7 +1367,8 @@
           "continued": false,
           "appliesTo": [
             {
-              "target": "table"
+              "target": "row",
+              "row": "r17"
             }
           ]
         },

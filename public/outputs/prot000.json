@@ -1542,8 +1542,8 @@
       "provenance": {
         "readBy": "geometry",
         "model": null,
-        "confidence": 0.44,
-        "verdict": "fallback",
+        "confidence": 0.67,
+        "verdict": "check",
         "findings": [
           {
             "check": "unidentified-columns",
@@ -1554,11 +1554,6 @@
             "check": "duplicate-columns",
             "severity": "low",
             "detail": "2 pair(s) of columns hold an identical set of marks (p44c9≡p44c11, p44c10≡p44c12). Real visits differ somewhere, so these are very likely one visit reported twice."
-          },
-          {
-            "check": "unlinked-footnotes",
-            "severity": "high",
-            "detail": "9 of 12 footnotes are not linked to any cell, row or column. Either their markers were missed in the grid, or lines of prose were read as footnote definitions."
           }
         ],
         "rowsAreRuled": true,
@@ -2200,5 +2195,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-09T20:52:07.096Z"
+  "extractedAt": "2026-09-09T21:21:04.472Z"
 }
