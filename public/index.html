@@ -308,7 +308,7 @@ function tableCard(t) {
         <span class="prov">${verdictLabel(t.provenance)}</span>
         <span>pages <code>${t.pages.join(', ')}</code></span>
         <span>${cols.length} columns</span>
-        <span>${assessments} assessments${categories ? ` · ${categories} category rows` : ''}</span>
+        <span>${assessments} assessments${categories ? ` · ${categories} category row${categories > 1 ? 's' : ''}` : ''}</span>
         <span>${t.footnotes.length} footnotes</span>
       </div>
     </header>
