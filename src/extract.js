@@ -771,6 +771,33 @@ function ruledRows(page, splitRows, gridLeft) {
   for (const band of bands) {
     if (!band.lines.length) continue;
     const lines = band.lines.sort((a, b) => a.y - b.y);
+
+    /*
+     * A ruled band is not always one row.
+     *
+     * Some tables rule every row; others rule only their sections. One protocol
+     * draws horizontal lines around "Baseline Evaluation", "TB Investigations"
+     * and "Further contacts" and nothing between the assessments inside them —
+     * so reading each band as a row turned sixteen assessments into three, each
+     * with every name in its section run together. The rules are still the
+     * outer boundaries; where a band holds several rows, the lines inside it say
+     * so, and are split exactly as they would be on an unruled page.
+     */
+    // Several lines each carrying BOTH a name and something in the grid is what
+    // a band of several rows looks like. A single row spread over several lines
+    // has one such line and the rest are its name continuing, which is why
+    // splitting on "could this be split" instead tore eight of Prot_000's
+    // wrapped assessments apart.
+    // A row's name begins the way a name begins. The rest of one, carried onto
+    // the next line, reads as a fragment — "sampling", "documented", "syphilis
+    // test" — and counting those as rows tore four more wrapped assessments in
+    // half. Continuations are lower-case or a stray character; names are not.
+    const named = (l) => l.label && l.label.length > 2 && /^[A-Z0-9]/.test(l.label);
+    const standalone = lines.filter((l) => named(l) && (l.marks.length || l.other.length)).length;
+    if (standalone >= 2) {
+      const within = assembleRows(lines);
+      if (within.length > 1) { out.push(...within); continue; }
+    }
     const label = clean(lines.map((l) => l.label).filter(Boolean).join(' '));
     const marks = lines.flatMap((l) => l.marks);
     if (!label && !marks.length && !lines.some((l) => l.other.length)) continue;

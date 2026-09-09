@@ -40,7 +40,7 @@ const own = fileURLToPath(new URL('../Prot_000.pdf', import.meta.url));
 const EXPECTED = [
   { name: 'protocol1', file: at('protocol1'), columns: 14, rows: 28, cells: 139, unnamed: 0, unlabelled: 0,
     why: 'a header captioned "ACTIVITY WEEK", and "Adverse events" as its last row' },
-  { name: 'protocol5', file: at('protocol5'), columns: 11, rows: 30, cells: 107, unnamed: 0, unlabelled: 0,
+  { name: 'protocol5', file: at('protocol5'), columns: 11, rows: 31, cells: 107, unnamed: 0, unlabelled: 0,
     why: 'a phase band captioned "Study Phase", wrapping down three lines' },
   { name: 'protocol9', file: at('protocol9'), columns: 11, rows: 32, cells: 168, unnamed: 0, unlabelled: 0,
     why: 'the table title set inside the activity column, bulleted rows, and a value written across columns' },
