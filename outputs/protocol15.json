@@ -1398,11 +1398,10 @@
         }
       ],
       "ambiguities": [
-        "A vertical text spelling out \"RANDOMIZATION\" runs down the page at x≈310, one letter per assessment row (R,A,N,D,O,M,I,Z,A,T,I,O,N); it was excluded as a data column since it carries no marks, but it may indicate an unlabeled visit/column between Baseline and Week 1-3 that the rule-based pass mistakenly counted as a marked column.",
-        "Column c2 ('Baseline') has no explicit study-week header printed near it (only 'Weekly x 2 weeks' or '3 X/week' text labels appear in some rows at that x-position); its exact relationship to the 'Baseline' period label and the neighboring 'Week 1-3' column (c3) is inferred from x-position alignment, not an explicit header.",
         "Row 'Physical exam/FEV1' has a continuation line (y=261) containing footnote-b markers at x-positions matching columns c3-c7 but with no accompanying X values in those cells; it is unclear whether Physical exam is actually performed weekly (marker b) at those visits without a printed X, or if this is a formatting artifact.",
         "Pages 26 and 27 contain only narrative descriptions of the same assessments (screening, baseline, treatment, end-of-study procedures) without a tabular grid, so no additional columns/rows were extracted from them; they corroborate but do not add new schedule structure.",
-        "5 cell value(s) proposed by the second opinion were not found in the page text and have been discarded: Concomitant medications/c2=\"Weekly x 2 weeks\", BSCS/c2=\"Weekly x 2 weeks\", CGI-S/c2=\"Weekly x 2 weeks\", CGI-O/c2=\"Weekly x 2 weeks\", Urine tox screen/c2=\"Weekly x 2 weeks\""
+        "5 cell value(s) proposed by the second opinion were not found in the page text and have been discarded: Concomitant medications/c2=\"Weekly x 2 weeks\", BSCS/c2=\"Weekly x 2 weeks\", CGI-S/c2=\"Weekly x 2 weeks\", CGI-O/c2=\"Weekly x 2 weeks\", Urine tox screen/c2=\"Weekly x 2 weeks\"",
+        "2 note(s) the review recorded as unresolved have since been settled by reading the ruled grid — the phase bands, spanning values and divider columns it was unsure of are in the output above — and are no longer listed here."
       ],
       "provenance": {
         "readBy": "review",

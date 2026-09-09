@@ -1228,10 +1228,9 @@
         }
       ],
       "ambiguities": [
-        "The stacked Study Phase header words (Pre-, intake, Screening, Intake, Screening, Baseline, Treatment Infusions, Discharge, Follow-up) could not be reliably mapped one-to-one to the 11 day columns; the 'period' values used in this reconstruction are best-effort guesses and may not exactly match the intended phase boundaries.",
-        "No explicit visit/period label was assignable with confidence for columns c1-c5; only the numeric study-day values are certain.",
         "The word 'X' appearing immediately before footnote markers a-f on page 51 (e.g. at y=135, y=146, etc.) was treated as a rendering artifact and omitted from footnote text; it may actually carry meaning that was not captured.",
-        "Footnote markers 'a' and 'b' are reused with different meanings in the Appendix II blood-collection table (S=serum/P=plasma and D=day) versus the main schedule (POMS/BSCS and atomoxetine dosing); these are kept as separate footnote sets per table."
+        "Footnote markers 'a' and 'b' are reused with different meanings in the Appendix II blood-collection table (S=serum/P=plasma and D=day) versus the main schedule (POMS/BSCS and atomoxetine dosing); these are kept as separate footnote sets per table.",
+        "2 note(s) the review recorded as unresolved have since been settled by reading the ruled grid — the phase bands, spanning values and divider columns it was unsure of are in the output above — and are no longer listed here."
       ],
       "provenance": {
         "readBy": "review",

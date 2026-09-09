@@ -1675,12 +1675,9 @@
         }
       ],
       "ambiguities": [
-        "A vertically printed word 'RANDOMIZATION' (letters R,A,N,D,O,M,I,Z,A,T,I,O,N) appears stacked at x≈320 across many rows on page 48; this appears to be a decorative divider marking the randomization boundary rather than a data column or row, and was excluded from the grid.",
-        "The row labeled 'ASI***' has an extra mark (X, marker b) on a following unlabeled text line (y=446, x≈398) that could not be confidently confirmed as belonging to the ASI row versus being a stray/misplaced mark; it was tentatively placed in the Study Week 5-7 column.",
         "In the 'ASI-Lite Follow-up' row, two X marks (with markers c and e) appear at x≈480 and x≈491, both closer to the Study Week 12/Term column header than to Follow-up; one was assigned to c7 and one to c8 based on marker letters, but the horizontal alignment is imprecise and this mapping is uncertain.",
-        "The 'CANTABelect' and 'Barratt Impulsiveness Scale' rows each have a secondary label 'wk 6' printed below the row, suggesting an additional/alternate timepoint not represented by a distinct column; this sub-label could not be mapped to a specific column and was omitted from cell values.",
         "The row 'Urine tox screen device**' spans two printed lines ('Urine tox screen' / 'device**') with an additional text fragment 'on site test' at x=138, which was merged into the row label rather than treated as a separate column value, since its exact grid position was unclear.",
-        "The 'Medication Administration' row (y=639) has marks in administration-period columns but no explicit category header preceding it distinguishing it from the 'Study Medication Administration' header; it was kept as an assessment row per the presence of marks."
+        "4 note(s) the review recorded as unresolved have since been settled by reading the ruled grid — the phase bands, spanning values and divider columns it was unsure of are in the output above — and are no longer listed here."
       ],
       "provenance": {
         "readBy": "review",

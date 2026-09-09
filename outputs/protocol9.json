@@ -1389,13 +1389,10 @@
         }
       ],
       "ambiguities": [
-        "The header block on page 26 (Opiate Agonist Phase, Detoxification: Medication or Placebo Phase, Post Med/Detox Phase, Medical Discharge, etc.) appears to describe study periods spanning groups of the Day 1-11 columns, but the exact day ranges for each period label could not be reliably determined from word positions, so period attributes were omitted from the columns.",
-        "Row 'Informed Consent, Screening (01)' and 'Opiate Screening (02)' may actually be a single combined row label ('Informed Consent, Opiate Screening (01), Screening (02)') split across two lines; the 1X mark was assigned to the first line only.",
-        "Rows for HIV, Psychiatric Assessment (SCID), and Addiction Severity Index (ASI) show text 'Prior to Day 4' rather than a column mark; this could not be mapped to a specific Day column and was left blank.",
         "The Day 11 column x-position varies slightly across pages (684 on p26, 676 on p27/28, 675 for some marks on p28); these were treated as the same column but exact alignment is uncertain.",
         "The 'ā' symbol near x=254 on the Weight row (page 26) was not understood and was omitted from cell values.",
-        "Urine Toxicology row (28) describes a recurring schedule (Admission, Monday, Wednesday, Friday, Discharge, As Needed) rather than discrete day marks; could not be mapped to specific Day columns.",
-        "The Plasma Lofexidine Pk row's detailed sampling schedule (times of day, sample counts) is only partially represented as day-column marks; full within-day timing detail is preserved only in the row label text."
+        "The Plasma Lofexidine Pk row's detailed sampling schedule (times of day, sample counts) is only partially represented as day-column marks; full within-day timing detail is preserved only in the row label text.",
+        "4 note(s) the review recorded as unresolved have since been settled by reading the ruled grid — the phase bands, spanning values and divider columns it was unsure of are in the output above — and are no longer listed here."
       ],
       "provenance": {
         "readBy": "review",

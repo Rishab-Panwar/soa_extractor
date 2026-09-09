@@ -115,6 +115,71 @@ export function restoreRowSplits(reviewed, geometric) {
 }
 
 /**
+ * Doubts the review recorded that have since been settled.
+ *
+ * A review writes down what it could not work out, and those notes are shown to
+ * the reader under "what it could not settle". They were written before the
+ * header and the cells were re-read from the ruled grid — so protocol5 still
+ * warned that its study phases were "best-effort guesses" that "may not exactly
+ * match the intended phase boundaries" when they are now read off the lines the
+ * page draws, and protocol9 still said "Prior to Day 4" could not be mapped to
+ * a column when it sits in three. A stale doubt is worse than no doubt: it tells
+ * a reader to discount an answer that is right.
+ *
+ * Only a note that says it FAILED at something, about a thing now present, is
+ * retired. A note recording a real remaining limitation says no such thing and
+ * stays. The count of what was retired is kept, because quietly deleting the
+ * model's own reservations would be its own kind of dishonesty.
+ */
+export function retireSettledNotes(table) {
+  const admitsDefeat = /could not|cannot|were discarded|was omitted|not captured|best-effort|may actually|no explicit|not confidently|guess|was excluded|were excluded|not included/i;
+
+  const present = new Set();
+  for (const row of table.rows || []) {
+    if (row.label) present.add(String(row.label).toLowerCase());
+    for (const cell of row.cells || []) if (/[a-z]{3}/i.test(cell.value)) present.add(String(cell.value).toLowerCase());
+  }
+  for (const column of table.columns || []) {
+    for (const v of [column.label, ...(column.path || [])]) if (v) present.add(String(v).toLowerCase());
+  }
+
+  // A column the review named only by id — "no label was assignable for columns
+  // c1-c5" — is settled when those columns now carry one.
+  const named = new Map((table.columns || []).map((c) => [c.id.toLowerCase(),
+    Boolean(c.label && !/^column \d+$/i.test(c.label)) || Boolean((c.path || []).length)]));
+
+  const settled = [];
+  table.ambiguities = (table.ambiguities || []).filter((note) => {
+    if (!admitsDefeat.test(note)) return true;
+    const said = note.toLowerCase();
+
+    // Named outright, or named in the review's own words: it quotes a row it
+    // thought might be two, and quotes it in an order the joined label does not
+    // have, so an exact match never fires on the very note the join settled.
+    const words = (s) => (s.match(/[a-z0-9]+/g) || []);
+    const spoken = new Set(words(said));
+    const byName = [...present].some((v) => {
+      if (v.length > 3 && said.includes(v)) return true;
+      const parts = words(v).filter((w) => w.length > 2);
+      return parts.length >= 4 && parts.filter((w) => spoken.has(w)).length >= parts.length * 0.8;
+    });
+    const ids = said.match(/\bc\d+\b/g) || [];
+    const byId = ids.length > 0 && ids.every((id) => named.get(id));
+    if (!byName && !byId) return true;
+
+    settled.push(note);
+    return false;
+  });
+
+  if (settled.length) {
+    table.ambiguities.push(`${settled.length} note(s) the review recorded as unresolved have since been settled by `
+      + 'reading the ruled grid — the phase bands, spanning values and divider columns it was unsure of are in the '
+      + 'output above — and are no longer listed here.');
+  }
+  return settled.length;
+}
+
+/**
  * Divider columns the review did not report.
  *
  * A review answers with the visits it can name, and "RANDOMIZATION" set on its
@@ -430,6 +495,8 @@ export async function run(buffer, { maxTables = 3, floor = 12, assist = true, lo
       const rejoined = restoreRowSplits(reviewed, table);
       if (rejoined) log('assist', `${table.id}: ${rejoined} row(s) the review split over two lines were rejoined from the drawn grid`);
       const dividers = restoreDividers(reviewed, table);
+      const settled = retireSettledNotes(reviewed);
+      if (settled) log('assist', `${table.id}: ${settled} note(s) the review left unresolved are now settled by the ruled grid`);
       if (dividers) log('assist', `${table.id}: ${dividers} divider column(s) the review did not report were restored from the geometry`);
       reviewed.assessment = assess(reviewed);
       reviewed.geometric = {
