@@ -27,15 +27,20 @@ schedule from 11 columns to the 18 it actually has.
 
 Every figure below was checked against the source PDF.
 
-| Protocol | Read by | Columns | Rows | Footnotes |
-|---|---|---|---|---|
-| protocol1 | geometry | 14 | 28 | 4 |
-| protocol5 | review | 11 | 31 | 10 |
-| " (Appendix II) | review | 15 | 8 | 2 |
-| protocol9 | review | 11 | 39 | 6 |
-| protocol12 | review | 9 | 40 | 14 |
-| protocol15 | review | 10 | 34 | 5 |
-| Prot_000 (held out) | geometry | 18 | 29 | 12 |
+| Protocol | Schedule | Read by | Columns | Rows | Footnotes |
+|---|---|---|---|---|---|
+| protocol1 | Schedule of Events | geometry | 14 | 28 | 4 |
+| protocol5 | Appendix I — Time and Events | review | 11 | 31 | 10 |
+| protocol5 | Appendix II — Blood Collections | review | 15 | 8 | 2 |
+| protocol9 | Table 4 — Schedule of Measures | review | 11 | 39 | 6 |
+| protocol12 | Table 3 — Overview of Assessments | review | 9 | 40 | 14 |
+| protocol15 | Table 1 — Overview of Assessments | review | 10 | 34 | 5 |
+| Prot_000 (held out) | Table 1 — Time and Events | geometry | 18 | 29 | 12 |
+
+protocol5 is listed twice because it carries **two** schedules, and both are
+extracted: the main Time and Events table, and a separate blood-collection
+appendix with its own grid. Finding the second one rather than running it into
+the first is a requirement the brief names explicitly.
 
 The rule-based path alone — no key, no network, no cost — now reads every one of
 them with **no unnamed column and no unlabelled row**:
