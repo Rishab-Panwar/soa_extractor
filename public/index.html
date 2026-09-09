@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SoA Extractor</title>
+<style>
+  :root{
+    --bg:#0e1620; --panel:#ffffff; --ink:#101820; --dim:#64748b; --line:#e3e8ee;
+    --teal:#0d7a6b; --teal-soft:#e7f4f1; --amber:#b45309; --amber-soft:#fef6e7;
+    --rose:#b42318; --rose-soft:#fdecea; --shadow:0 1px 2px rgba(16,24,32,.06),0 8px 24px rgba(16,24,32,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f2f5f8;color:var(--ink);
+       font:14px/1.55 "Segoe UI",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+  /* ── masthead ─────────────────────────────────────────────── */
+  header{background:linear-gradient(135deg,#0e1620 0%,#14303a 100%);color:#fff;padding:26px 28px 30px}
+  .wrap{max-width:1560px;margin:0 auto}
+  header h1{margin:0;font-size:20px;font-weight:650;letter-spacing:-.2px}
+  header p{margin:6px 0 0;font-size:13px;color:#9fb3bd;max-width:760px}
+  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:11px;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.09);
+         border:1px solid rgba(255,255,255,.14);color:#c9dde4;padding:4px 9px;border-radius:99px}
+
+  main{max-width:1560px;margin:-16px auto 60px;padding:0 28px}
+
+  /* ── drop zone ────────────────────────────────────────────── */
+  .drop{display:block;background:var(--panel);border:2px dashed #c7d3de;border-radius:12px;
+        padding:34px 24px;text-align:center;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
+  .drop:hover{border-color:var(--teal);background:#fbfefd}
+  .drop.over{border-color:var(--teal);background:var(--teal-soft);transform:translateY(-1px)}
+  .drop input{position:absolute;width:0;height:0;opacity:0}
+  .drop .big{font-size:16px;font-weight:600}
+  .drop .sub{color:var(--dim);font-size:13px;margin-top:5px}
+  .drop .ring{width:42px;height:42px;border-radius:50%;background:var(--teal-soft);color:var(--teal);
+              display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px}
+
+  /* ── status ───────────────────────────────────────────────── */
+  .status{margin:18px 0 0;font-size:13px;color:var(--dim);display:flex;align-items:center;gap:10px}
+  .spinner{width:14px;height:14px;border:2px solid #cfd9e2;border-top-color:var(--teal);
+           border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .err{background:var(--rose-soft);border:1px solid #f3c1bc;color:var(--rose);
+       padding:10px 14px;border-radius:8px;font-size:13px}
+
+  /* ── stat strip ───────────────────────────────────────────── */
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:104px}
+  .stat b{display:block;font-size:21px;font-weight:650;line-height:1.15}
+  .stat span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim)}
+  .stat.good b{color:var(--teal)} .stat.warn b{color:var(--amber)}
+
+  /* ── cards ────────────────────────────────────────────────── */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        margin:18px 0;box-shadow:var(--shadow);overflow:hidden}
+  .card > header{background:none;color:inherit;padding:16px 20px 14px;border-bottom:1px solid var(--line)}
+  .card h2{margin:0;font-size:16px;font-weight:640;letter-spacing:-.2px;color:var(--ink)}
+  .meta{margin-top:5px;font-size:12px;color:var(--dim);display:flex;gap:14px;flex-wrap:wrap}
+  .meta code{background:#eef2f6;border-radius:4px;padding:1px 6px;font-size:11px}
+  .body{padding:16px 20px 20px}
+  h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);
+     margin:20px 0 8px;font-weight:650}
+  h3:first-child{margin-top:0}
+
+  /* ── the grid ─────────────────────────────────────────────── */
+  .grid-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px;background:#fff}
+  table{border-collapse:separate;border-spacing:0;font-size:12.5px;width:max-content;min-width:100%}
+  th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 8px;text-align:center}
+  thead th{position:sticky;top:0;z-index:3;background:#eff3f7;font-weight:640;font-size:11px;
+           color:#38495a;white-space:nowrap}
+  thead tr:nth-child(2) th{top:26px}
+  thead tr:nth-child(3) th{top:52px}
+  thead tr:nth-child(4) th{top:78px}
+  th.rowhead,td.rowhead{position:sticky;left:0;z-index:2;background:#fff;text-align:left;
+                        white-space:normal;min-width:250px;max-width:380px;border-right:2px solid var(--line)}
+  thead th.rowhead{z-index:4;background:#eff3f7}
+  tbody tr:nth-child(even) td{background:#fafcfd}
+  tbody tr:nth-child(even) td.rowhead{background:#fafcfd}
+  tbody tr:hover td{background:var(--teal-soft)}
+  tbody tr:hover td.rowhead{background:var(--teal-soft)}
+  td.val{font-variant-numeric:tabular-nums;font-weight:600;color:#123}
+  tr.category td{background:#eef4f8 !important;font-weight:650;text-align:left;color:#26414f;
+                 letter-spacing:.02em}
+  td.hit,th.hit{background:var(--amber-soft) !important;box-shadow:inset 0 0 0 2px #f0c078}
+  .mk{color:var(--amber);font-weight:700;font-size:10px;vertical-align:super;cursor:pointer;
+      padding:0 1px;border-radius:3px}
+  .mk:hover{background:var(--amber-soft)}
+
+  /* ── footnotes ────────────────────────────────────────────── */
+  .fns{display:grid;gap:6px}
+  .fn{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:7px 10px;
+      border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:.12s;background:#fff}
+  .fn:hover{border-color:#e0b877;background:#fffdf8}
+  .fn.on{border-color:var(--amber);background:var(--amber-soft)}
+  /* The marker is set the way the protocol sets it — in the margin, in the
+     document's own notation — rather than stamped into a coloured chip, where
+     "*" and "****" both come out as an unreadable smudge. */
+  .fn .m{flex:0 0 34px;text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+         font-weight:700;font-size:12px;color:#8a5a00;line-height:1.5;white-space:nowrap}
+  .fn .t{flex:1 1 auto}
+  .fn .where{font-size:11px;color:var(--dim);margin-top:2px}
+
+  /* ── notes ────────────────────────────────────────────────── */
+  /* The badge states how the table was read. It is not a warning light, so it
+     is not coloured like one — red and amber on a correct extraction read as an
+     alarm and cost the reader's trust in output that was fine. */
+  .prov{font-weight:600;padding:2px 9px;border-radius:99px;font-size:11px;background:#eef1f5;color:#41546b}
+  .hint{font-size:11px;color:var(--dim);margin:6px 0 2px}
+  thead tr.band th{background:#f2f5f8;font-weight:650;border-bottom:1px solid var(--line)}
+  .amb{background:var(--amber-soft);border-left:3px solid var(--amber);padding:9px 12px;
+       border-radius:0 8px 8px 0;font-size:13px;margin-bottom:6px;color:#5c3a06}
+  details{border:1px solid var(--line);border-radius:8px;padding:0;margin-top:8px;background:#fbfcfd}
+  summary{cursor:pointer;padding:9px 12px;font-size:12px;font-weight:600;color:#38495a;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";color:var(--dim)}
+  details[open] summary::before{content:"▾ "}
+  .src{padding:0 12px 12px;display:grid;gap:10px}
+  .srcpage b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+  .srcpage pre{margin:4px 0 0;padding:10px;background:#f7f9fb;border:1px solid var(--line);border-radius:6px;
+               font:11.5px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap;max-height:340px;overflow:auto}
+  .ev{padding:0 12px 12px;font-size:12px;color:var(--dim);display:grid;gap:3px}
+  .ev code{background:#eef2f6;border-radius:4px;padding:1px 5px;color:#38495a}
+  .btn{font:inherit;font-size:13px;padding:7px 14px;border:1px solid var(--line);background:#fff;
+       border-radius:8px;cursor:pointer;font-weight:600;color:#26414f}
+  .btn:hover{border-color:var(--teal);color:var(--teal)}
+  .samples{margin:14px 0 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--dim)}
+  .samples .btn{padding:5px 12px;font-size:12.5px}
+  .muted{font-size:12px;color:var(--dim);flex-basis:100%;margin-top:2px}
+  .hostednote{background:#eef4f8;border:1px solid var(--line);border-radius:8px;padding:9px 12px;
+              font-size:12.5px;color:#38495a;margin:14px 0 0}
+  .empty{text-align:center;padding:30px;color:var(--dim)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Schedule of Activities Extractor</h1>
+    <p>Give it a clinical trial protocol. It finds the Schedule of Activities — whatever the sponsor
+       called it, wherever it sits, however many pages it runs across — and rebuilds the grid
+       verbatim, with footnotes bound to the cells they modify.</p>
+    <div class="badges">
+      <span class="badge">no page numbers given</span>
+      <span class="badge">no API key</span>
+      <span class="badge">nothing leaves this machine</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="application/pdf,.pdf">
+    <div class="ring">↑</div>
+    <div class="big">Drop a protocol PDF here, or click to choose</div>
+    <div class="sub">80–250 pages is normal. Landscape and rotated pages are handled.</div>
+  </label>
+  <div class="samples">
+    <span>Or open a pre-computed output:</span>
+    <button class="btn sample" data-sample="protocol1">protocol1</button>
+    <button class="btn sample" data-sample="protocol5">protocol5</button>
+    <button class="btn sample" data-sample="protocol9">protocol9</button>
+    <button class="btn sample" data-sample="protocol12">protocol12</button>
+    <button class="btn sample" data-sample="protocol15">protocol15</button>
+    <button class="btn sample" data-sample="prot000">Prot_000 (unseen)</button>
+    <span class="muted">These are committed results, not the product — drop in a protocol above to see the tool run.</span>
+  </div>
+  <div class="status" id="status"></div>
+  <div id="out"></div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+let result = null;
+
+const drop = $('drop');
+['dragenter','dragover'].forEach((e) => drop.addEventListener(e, (ev) => { ev.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach((e) => drop.addEventListener(e, () => drop.classList.remove('over')));
+drop.addEventListener('drop', (ev) => { ev.preventDefault(); if (ev.dataTransfer.files[0]) send(ev.dataTransfer.files[0]); });
+$('file').addEventListener('change', (ev) => { if (ev.target.files[0]) send(ev.target.files[0]); });
+
+for (const button of document.querySelectorAll('button[data-sample]')) {
+  button.addEventListener('click', async () => {
+    const name = button.dataset.sample;
+    $('out').innerHTML = '';
+    $('status').innerHTML = `<span class="spinner"></span> loading ${name}…`;
+    try {
+      const response = await fetch(`outputs/${name}.json`);
+      if (!response.ok) throw new Error(`no committed output for ${name}`);
+      result = await response.json();
+      $('status').innerHTML = `<b>${name}.pdf</b> · committed output · ${result.pageCount} pages searched · ${result.tables.length} schedule(s)`;
+      render();
+    } catch (error) {
+      $('status').innerHTML = `<div class="err">${esc(error.message)}</div>`;
+    }
+  });
+}
+
+async function send(file) {
+  $('out').innerHTML = '';
+  $('status').innerHTML = `<span class="spinner"></span> reading <b>${esc(file.name)}</b> — scoring every page, then rebuilding the grid…`;
+  const started = Date.now();
+  try {
+    const response = await fetch('/extract', { method: 'POST', body: file });
+    result = await response.json();
+    if (result.error) throw new Error(result.error);
+    const secs = ((Date.now() - started) / 1000).toFixed(1);
+    $('status').innerHTML = `<b>${esc(file.name)}</b> · ${result.pageCount} pages searched · ${result.tables.length} schedule(s) · ${secs}s`;
+    render();
+  } catch (error) {
+    $('status').innerHTML = `<div class="err">${esc(error.message)}</div>`;
+  }
+}
+
+function render() {
+  const t0 = result.tables[0];
+  const cells = result.tables.reduce((n, t) => n + t.rows.reduce((m, r) => m + r.cells.length, 0), 0);
+  const notes = result.tables.reduce((n, t) => n + t.ambiguities.length, 0);
+  const stats = !t0 ? '' : `<div class="stats">
+      <div class="stat good"><b>${result.tables.length}</b><span>schedules</span></div>
+      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.columns.length,0)}</b><span>columns</span></div>
+      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.rows.length,0)}</b><span>rows</span></div>
+      <div class="stat"><b>${cells}</b><span>cells</span></div>
+      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.footnotes.length,0)}</b><span>footnotes</span></div>
+      ${notes ? `<div class="stat"><b>${notes}</b><span>noted</span></div>` : ''}
+    </div>`;
+
+  const hosted = result.hosted && result.hosted.note
+    ? `<div class="hostednote">${esc(result.hosted.note)}</div>` : '';
+  $('out').innerHTML = hosted + stats + (result.tables.length
+    ? result.tables.map(tableCard).join('')
+    : `<div class="card"><div class="body empty"><b>No schedule found.</b><div style="margin-top:6px">
+       The locator scored every page and none looked like a Schedule of Activities.
+       The highest scorers are listed below so you can see what it considered.</div></div></div>`)
+    + scoresCard();
+  wire();
+}
+
+function tableCard(t) {
+  const cols = t.columns;
+  const facts = [['visitNumber','Visit'],['studyDay','Study day'],['studyWeek','Study week'],['window','Window']]
+    .filter(([k]) => cols.some((c) => c[k]));
+
+  // The study-phase banding, drawn the way the protocol draws it: one heading
+  // spanning the columns it covers rather than the same words repeated across
+  // eight cells. Consecutive columns sharing a phase are one cell.
+  // A header row that repeats the row above it tells the reader nothing, and
+  // three near-identical rows of the same values is what made this unreadable.
+  const same = (a, b) => cols.every((c) => String(a(c) || '') === String(b(c) || ''));
+
+  /** Consecutive columns sharing a value, which is what a banding row draws. */
+  const spansOf = (of) => cols.reduce((spans, c) => {
+    const value = of(c) || '';
+    const last = spans[spans.length - 1];
+    if (last && last.value === value) last.n++;
+    else spans.push({ value, n: 1 });
+    return spans;
+  }, []);
+
+  // Which fact bands the columns is not fixed: some protocols print the study
+  // phase as the column's own heading, others print it above a row of visit
+  // names. The banding row is simply the one that actually spans — the fewest
+  // distinct runs across the table — and if nothing spans, there is no band.
+  // A column header carries its own markers, so a footnote that qualifies a
+  // whole visit has something to light when it is clicked.
+  const colHead = (c, text) => `<th${(c.markers || []).length ? ` data-mk="${esc(c.markers.join(' '))}"` : ''}>`
+    + `${esc(text === undefined ? c.label : text)}</th>`;
+
+  const phase = [(c) => c.label, (c) => (c.path || [])[0], (c) => (c.path || [])[(c.path || []).length - 1]]
+    .filter((of) => cols.some(of))
+    .map((of) => ({ of, spans: spansOf(of) }))
+    .filter((x) => x.spans.length < cols.length)
+    .sort((a, b) => a.spans.length - b.spans.length)[0];
+
+  const bandIsName = Boolean(phase) && same(phase.of, (c) => c.label);
+  const band = !phase ? '' : `<tr class="band"><th class="rowhead">${bandIsName ? 'Activity' : ''}</th>`
+    + phase.spans.map((s) => `<th colspan="${s.n}">${esc(s.value)}</th>`).join('') + '</tr>';
+
+  const head = band
+    // Where the phase IS the column's name, the banding row has already said it.
+    // Called with an arrow, not passed to map directly: map hands the callback
+    // the INDEX as its second argument, which colHead reads as the cell's text
+    // and prints instead of the column's name.
+    + (bandIsName ? '' : `<tr><th class="rowhead">Activity</th>${cols.map((c) => colHead(c)).join('')}</tr>`)
+    // A fact row is dropped when, everywhere it has a value, it says what the
+    // names above already say — protocol1's "Visit 1 2 3" under headings that
+    // are already "1 2 3".
+    + facts.filter(([k]) => !cols.filter((c) => c[k]).every((c) => String(c[k]) === String(c.label)))
+      .map(([k, name]) => `<tr><th class="rowhead">${name}</th>${cols.map((c) => colHead(c, c[k] || '')).join('')}</tr>`).join('');
+
+  const rows = t.rows.map((r) => {
+    if (r.kind === 'category') {
+      return `<tr class="category"><td class="rowhead" colspan="${cols.length + 1}">${esc(r.label)}</td></tr>`;
+    }
+    const byCol = new Map(r.cells.map((c) => [c.col, c]));
+    const rowMarks = (r.markers || []).map((m) => `<span class="mk" data-m="${esc(m)}">${esc(m)}</span>`).join('');
+    // The row cell carries its markers too. A footnote that qualifies a whole
+    // assessment — "* Morphine (0600, 1100, 1630, 2200 h)" — is attached to the
+    // row, not to any one visit, so without this it lit up nothing when clicked.
+    return `<tr><td class="rowhead" data-mk="${esc((r.markers || []).join(' '))}">${esc(r.label)}${rowMarks}</td>`
+      + cols.map((c) => {
+        const cell = byCol.get(c.id);
+        if (!cell) return '<td></td>';
+        const marks = (cell.markers || []).map((m) => `<span class="mk" data-m="${esc(m)}">${esc(m)}</span>`).join('');
+        return `<td class="val" data-mk="${esc((cell.markers || []).join(' '))}">${esc(cell.value)}${marks}</td>`;
+      }).join('') + '</tr>';
+  }).join('');
+
+  const assessments = t.rows.filter((r) => r.kind !== 'category').length;
+  const categories = t.rows.length - assessments;
+
+  return `<section class="card">
+    <header>
+      <h2>${esc(t.title || 'Schedule of Activities')}</h2>
+      <div class="meta">
+        <span class="prov">${verdictLabel(t.provenance)}</span>
+        <span>pages <code>${t.pages.join(', ')}</code></span>
+        <span>${cols.length} columns</span>
+        <span>${assessments} assessments${categories ? ` · ${categories} category rows` : ''}</span>
+        <span>${t.footnotes.length} footnotes</span>
+      </div>
+    </header>
+    <div class="body">
+      <div class="grid-wrap"><table><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+
+      ${footnotesHtml(t)}
+
+      ${t.ambiguities.length ? `<h3>What it could not settle</h3>
+        ${t.ambiguities.map((a) => `<div class="amb">${esc(a)}</div>`).join('')}` : ''}
+
+      <details><summary>Source pages — check the grid against them</summary>
+        <div class="src">${t.pages.map((n) => `<div class="srcpage"><b>page ${n}</b><pre>${esc((result.sourcePages?.[n] || []).join(String.fromCharCode(10)))}</pre></div>`).join('')}</div>
+      </details>
+
+      <details><summary>Checks the tool ran on its own output</summary>
+        <div class="ev">${checksHtml(t.provenance)}</div>
+      </details>
+
+      <details><summary>Why these pages</summary>
+        <div class="ev">${t.provenance.locatorEvidence.map((e) => `<div>page <code>${e.page}</code> scored <code>${e.score}</code> — ${esc(e.reasons.join('; '))}</div>`).join('')}</div>
+      </details>
+
+      <h3>Output</h3>
+      <button class="btn" data-json="${esc(t.id)}">Download ${esc(t.id)}.json</button>
+    </div>
+  </section>`;
+}
+
+/**
+ * The structural checks, in full.
+ *
+ * Kept out of the header and put here, where there is room to say what each one
+ * looks at. A reader deciding whether to go and check a row needs to know which
+ * check objected and to what — not a colour.
+ */
+function checksHtml(p) {
+  const CHECKS = {
+    unidentifiedColumns: 'every column got a label',
+    columnCountDisagrees: 'the pages of the table agree on how many columns there are',
+    duplicateColumns: 'no two columns are the same visit',
+    unlabelledRows: 'every row got a label',
+    unlinkedFootnotes: 'every footnote marker was found in the grid',
+    sparseGrid: 'the grid has marks in it',
+  };
+  const raised = new Map((p.findings || []).map((f) => [f.check, f]));
+  const rows = Object.entries(CHECKS).map(([key, what]) => {
+    const note = raised.get(key);
+    return note
+      ? `<div><b>${esc(what)}</b> — ${esc(note.detail)}</div>`
+      : `<div style="color:var(--dim)">${esc(what)} — nothing to report</div>`;
+  });
+  return `<div class="hint">These are structural checks the tool runs on its own output. They
+    compare the table against itself — not against the PDF — so they can point at a
+    place worth looking, and they cannot say how much of the table is correct.</div>`
+    + rows.join('');
+}
+
+/**
+ * What the badge says about this table: how it was read, and nothing else.
+ *
+ * It used to carry a verdict — "confidence 0.39", or later "self-checks failed"
+ * — in red or amber. Both were wrong to show here. The number reads as "39%
+ * likely to be correct", which is not what it measures and not a claim this
+ * tool can make; the wording read as an alarm about the extraction when it is
+ * only a note about which internal checks fired. A reader who wants that detail
+ * opens the panel below the table, where it is described plainly.
+ */
+function verdictLabel(p) {
+  return p.readBy === 'review' ? `reviewed by ${esc(p.model || 'a model')}` : 'read from page geometry';
+}
+
+/**
+ * Footnotes, and separately the notes that are not footnotes.
+ *
+ * A line that qualifies cells ("Xb — performed at this visit and via telephone
+ * interview") and a line that expands an acronym ("CT = computed tomography")
+ * are printed in the same block but do different work. Listing them together
+ * makes the reader search for which is which; the document's own distinction is
+ * whether anything in the grid points at it.
+ */
+function footnotesHtml(t) {
+  const links = (f) => (f.appliesTo || []).filter((a) => a.target !== 'table');
+  const marks = t.footnotes.filter((f) => f.kind !== 'note');
+  const notes = t.footnotes.filter((f) => f.kind === 'note');
+
+  // Said only when there is something to say. A count under every line turns the
+  // list into a wall of grey text and hides the one line that matters.
+  const where = (f) => {
+    const linked = links(f);
+    const cells = linked.filter((a) => a.target === 'cell').length;
+    const rows = linked.filter((a) => a.target === 'row').length;
+    const bits = [];
+    if (cells) bits.push(`${cells} cell${cells > 1 ? 's' : ''}`);
+    if (rows) bits.push(`${rows} row${rows > 1 ? 's' : ''}`);
+    if (f.continued) bits.push(`written across pages ${f.pages.join(' and ')}`);
+    if (!linked.length) bits.push('no marker matching this one was found in the grid');
+    return bits.join(' · ');
+  };
+
+  const block = (list, heading, hint) => !list.length ? '' : `<h3>${heading}</h3>
+    ${hint ? `<div class="hint">${hint}</div>` : ''}
+    <div class="fns">${list.map((f) => {
+      const note = where(f);
+      return `<div class="fn" data-m="${esc(f.marker)}">
+        <span class="m">${esc(f.printed || f.marker)}</span>
+        <span class="t">${esc(f.text)}${note ? `<div class="where">${note}</div>` : ''}</span>
+      </div>`;
+    }).join('')}</div>`;
+
+  return block(marks, 'Footnotes', 'As printed under the table. Click one — or a marker in the grid — to light up every cell it modifies.')
+    + block(notes, 'Abbreviations', 'Printed in the same block, but these expand a term rather than qualify a cell.');
+}
+
+function scoresCard() {
+  const top = result.pageScores.slice().sort((a, b) => b.score - a.score).slice(0, 12);
+  if (!top.length) return '';
+  return `<section class="card"><div class="body">
+    <details><summary>Locator — the highest-scoring pages in this document</summary>
+      <div class="ev">${top.map((s) => `<div>page <code>${s.page}</code> <code>${s.score}</code> — ${esc(s.reasons.join('; '))}</div>`).join('')}</div>
+    </details></div></section>`;
+}
+
+/** Clicking a marker or a footnote lights up everything carrying it. */
+function wire() {
+  const clear = () => {
+    document.querySelectorAll('.hit').forEach((n) => n.classList.remove('hit'));
+    document.querySelectorAll('.fn.on').forEach((n) => n.classList.remove('on'));
+  };
+  // Matched in JavaScript, not in a selector. CSS.escape escapes for an
+  // IDENTIFIER, so inside a quoted attribute value it turns the footnote marker
+  // "*" into a literal backslash-asterisk and matches nothing at all — which is
+  // why every symbol-marked footnote in the list was dead to the click.
+  const light = (marker) => {
+    clear();
+    const wanted = String(marker || '').trim();
+    if (!wanted) return;
+    document.querySelectorAll('td[data-mk], th[data-mk]').forEach((n) => {
+      if (n.dataset.mk.split(/\s+/).includes(wanted)) n.classList.add('hit');
+    });
+    document.querySelectorAll('.fn').forEach((n) => {
+      if (n.dataset.m === wanted) n.classList.add('on');
+    });
+  };
+  document.querySelectorAll('.mk, .fn').forEach((node) => {
+    node.addEventListener('click', (ev) => { ev.stopPropagation(); light(node.dataset.m); });
+  });
+  document.body.addEventListener('click', clear);
+  document.querySelectorAll('button[data-json]').forEach((b) => {
+    b.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const table = result.tables.find((t) => t.id === b.dataset.json);
+      const url = URL.createObjectURL(new Blob([JSON.stringify(table, null, 2)], { type: 'application/json' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = `${table.id}.json`; a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+}
+</script>
+</body>
+</html>

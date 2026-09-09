@@ -1,0 +1,21 @@
+{
+  "name": "soa-extractor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Finds the Schedule of Activities in a clinical trial protocol and extracts it faithfully.",
+  "scripts": {
+    "serve": "node src/server.js",
+    "extract": "node src/cli.js",
+    "sync-outputs": "node -e \"const f=require('fs');f.mkdirSync('public/outputs',{recursive:true});for(const n of f.readdirSync('outputs'))f.copyFileSync('outputs/'+n,'public/outputs/'+n);console.log('synced')\"",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.124.0",
+    "pdfjs-dist": "^6.3.289",
+    "zod": "^4.5.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,1894 @@
+{
+  "sourceFile": "protocol15.pdf",
+  "pageCount": 61,
+  "sourcePages": {
+    "25": [
+      "Table 1. Overview of Study Assessments",
+      "Assessment Screening Baseline Treatment Follow-up",
+      "Study Week -4 to 0* 1-3 4 5-7 8 9 -11 12 16",
+      "Screening",
+      "Informed consent X",
+      "SCID X",
+      "Psychiatric evaluation X",
+      "ADD evaluation X",
+      "Medical history X R",
+      "Prior medications X A",
+      "Infectious disease panel/ X N",
+      "syphilis test D",
+      "HIV Test (optional) X O",
+      "Safety",
+      "Physical exam/FEV d X M X c",
+      "1 I b b b b b c",
+      "Vital signs X X X X X X X",
+      "Hematology X Z X b X b X c",
+      "Blood chemistries X A X b X b X c",
+      "Ham-D X T X b X b X c",
+      "CSSA 3X I X b X b X b X b X b X c",
+      "Urinalysis X O X b X b X c",
+      "Pregnancy test X N X b X b X c",
+      "ECG X X c X",
+      "Adverse events X X 3X 3X 3X 3X 3X 3X X",
+      "Concomitant medications Weekly x 2 X b X b X b X b X b X b X",
+      "weeks",
+      "Efficacy",
+      "ASI-Lite X X b X b X c",
+      "HRBS X X c",
+      "BSCS Weekly x 2 X b X b X b X b X b X b",
+      "weeks",
+      "CCQ-NOW X X b",
+      "CGI-S Weekly x 2 X b X b X b X b X b X b",
+      "weeks",
+      "CGI-O Weekly x 2 X b X b X b X b X b X b",
+      "weeks",
+      "SUI 3 X/week 3 X 3 X 3 X 3 X 3 X 3 X X",
+      "for 2 weeks",
+      "Urine BE and creatinine 3 X/week 3 X 3 X 3 X 3 X 3 X 3 X X",
+      "for 2 weeks",
+      "Urine tox screen Weekly x 2 X b X b X b X b X b X b X",
+      "weeks",
+      "Serum prolactin X a X a X a X c",
+      "Treatment compliance 3 X 3 X 3 X 3 X 3 X 3 X",
+      "Follow-up interview X",
+      "*Baseline assessments must occur within 2 weeks during the screening period. The screening period is within 4",
+      "weeks of subject enrollment. Baseline and screening period may occur simultaneously.",
+      "X a – Blood is collected in fasted state at least once (preferably twice) before investigational agent administration,",
+      "once during weeks 3-6, and once at week 12 or at final visit if subject discontinues prematurely. The two specimens",
+      "prior to investigational agent may be drawn during baseline, or one may be drawn during baseline and one on study",
+      "day 1 prior to administration of first dose of investigational agent.",
+      "X b - Once during the week preferably at the first visit of the week.",
+      "X c - At the final scheduled study visit (last visit of week 12) or if the subjects discontinues prematurely.",
+      "X d - FEV 1 is only performed in those subjects suspected of having asthma.",
+      "NIDO-CTO-0007 Cabergoline for Cocaine Dependence 30",
+      "Version No.: 2, Date: 22 2 May 2001"
+    ],
+    "26": [
+      "13.1.1 Screening Procedures:",
+      "1. Informed consent",
+      "2. Complete medical history, physical exam including a respiratory function test (FEV 1 ) in",
+      "subjects suspected of having asthma, and vital signs",
+      "3. Psychiatric evaluation and SCID evaluation for DSM-IV diagnosis of cocaine dependence,",
+      "and Axis-I disorders",
+      "4. ADD interview",
+      "5. Prior medications. All medications (including prescription, over-the-counter, herbal",
+      "supplements and health store products) taken by the subject for the 30 days prior to the",
+      "screening period will be documented on a Prior Medication CRF.",
+      "6. ASI-Lite evaluation",
+      "7. Ham-D evaluation",
+      "8. Hematology",
+      "9. Blood chemistries",
+      "10. Urinalysis",
+      "11. Pregnancy test (if female)",
+      "12. Adverse Events",
+      "13. Infectious disease panel",
+      "14. Syphilis test",
+      "15. HRBS",
+      "16. ECG",
+      "17. HIV test (optional)",
+      "13.1.2 Baseline Assessments:",
+      "Baseline assessments to occur over a two-week period, will include the following:",
+      "1. Three-times weekly urine BE plus creatinine measurements for two weeks. Subjects must",
+      "provide at least 4 urine specimens in a consecutive 2-week period, at least one of which",
+      "must be positive for urine BE (> 300 ng/mL). Ideally, 3 of the specimens will be obtained",
+      "in one week and 3 in the next week. No more than 4 of the specimens may be obtained in",
+      "one week of the two-week baseline and no more than two specimens can be collected on",
+      "consecutive days.",
+      "2. The following must be obtained weekly for two weeks:",
+      "a. BSCS",
+      "b. CGI-S",
+      "c. CGI-O",
+      "d. Urine toxicology screen",
+      "e. Concomitant medications",
+      "f. Adverse events",
+      "3. The following must be obtained 3 times:",
+      "a. CSSA",
+      "4. A CCQ-NOW will be obtained once during baseline.",
+      "NIDO-CTO-0007 Cabergoline for Cocaine Dependence 31",
+      "Version No.: 2, Date: 22 2 May 2001"
+    ],
+    "27": [
+      "5. Serum prolactin level determination will be done at least once, preferably twice during",
+      "baseline.",
+      "6. Daily report of cocaine, alcohol, amphetamines, marijuana, opiates, and barbiturates use",
+      "will be recorded at each visit on a SUI CRF.",
+      "13.2 ASSESSMENTS DURING TREATMENT",
+      "Once during weeks 3-6, subjects should come to the clinic in the fasted state and have blood",
+      "drawn for serum prolactin determination.",
+      "Over the 12-week period of treatment, subjects will return to the clinic three times per week",
+      "(ideally on Monday, Wednesday, and Friday). Assessments will be performed as follows:",
+      "At each visit:",
+      "1. SUI",
+      "2. Urine BE and creatinine",
+      "3. AEs",
+      "4. Treatment compliance",
+      "5. Concomitant medications",
+      "Once per week at the first visit each week:",
+      "1. Urine toxicology screen",
+      "2. BSCS",
+      "3. CGI-S",
+      "4. CGI-O",
+      "5. Vital signs",
+      "6. CSSA",
+      "At the first visit of weeks 4, 8, and last visit of week 12:",
+      "1. Hematology",
+      "2. Blood chemistries",
+      "3. Urinalysis",
+      "4. Pregnancy test (if female)",
+      "5. Ham-D",
+      "6. ASI-Lite",
+      "13.3 ASSESSMENTS AT END OF STUDY TREATMENT (WEEK12)",
+      "At the final scheduled study treatment visit (week 12) or if the subject discontinues prematurely,",
+      "regardless of the reason (request that the subject return for final assessments), the following",
+      "assessments will be performed:",
+      "1. If the subject discontinued prematurely, determine the reason for termination.",
+      "2. Physical exam",
+      "3. Vital signs",
+      "NIDO-CTO-0007 Cabergoline for Cocaine Dependence 32",
+      "Version No.: 2, Date: 22 2 May 2001"
+    ]
+  },
+  "tables": [
+    {
+      "id": "t1",
+      "title": "Table 1. Overview of Study Assessments",
+      "pages": [
+        25,
+        26,
+        27
+      ],
+      "columns": [
+        {
+          "id": "c1",
+          "label": "Screening",
+          "path": [
+            "Screening"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "-4 to 0*",
+          "window": null,
+          "pages": [],
+          "markers": [
+            "*"
+          ]
+        },
+        {
+          "id": "c2",
+          "label": "Baseline",
+          "path": [
+            "Screening"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "-4 to 0*",
+          "window": null,
+          "pages": [],
+          "markers": [
+            "*"
+          ]
+        },
+        {
+          "id": "divider-randomization",
+          "label": "RANDOMIZATION",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "divider": true
+        },
+        {
+          "id": "c3",
+          "label": "Baseline (Week 1-3)",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "1-3",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c4",
+          "label": "Treatment Week 4",
+          "path": [
+            "Treatment"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "4",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c5",
+          "label": "Treatment Week 5-7",
+          "path": [
+            "Treatment"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "5-7",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c6",
+          "label": "Treatment Week 8",
+          "path": [
+            "Treatment"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "8",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c7",
+          "label": "Treatment Week 9-11",
+          "path": [
+            "Treatment"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "9-11",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c8",
+          "label": "Treatment Week 12",
+          "path": [
+            "Follow-up"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "12",
+          "window": null,
+          "pages": []
+        },
+        {
+          "id": "c9",
+          "label": "Follow-up Week 16",
+          "path": [
+            "Follow-up"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "16",
+          "window": null,
+          "pages": []
+        }
+      ],
+      "rows": [
+        {
+          "id": "r_screening_cat",
+          "kind": "category",
+          "label": "Screening",
+          "category": null,
+          "markers": [],
+          "cells": []
+        },
+        {
+          "id": "r_informed_consent",
+          "kind": "assessment",
+          "label": "Informed consent",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_scid",
+          "kind": "assessment",
+          "label": "SCID",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_psych_eval",
+          "kind": "assessment",
+          "label": "Psychiatric evaluation",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_add_eval",
+          "kind": "assessment",
+          "label": "ADD evaluation",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_med_history",
+          "kind": "assessment",
+          "label": "Medical history",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_prior_meds",
+          "kind": "assessment",
+          "label": "Prior medications",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_infectious",
+          "kind": "assessment",
+          "label": "Infectious disease panel/ syphilis test",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_hiv",
+          "kind": "assessment",
+          "label": "HIV Test (optional)",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_safety_cat",
+          "kind": "category",
+          "label": "Safety",
+          "category": null,
+          "markers": [],
+          "cells": []
+        },
+        {
+          "id": "r_physexam",
+          "kind": "assessment",
+          "label": "Physical exam/FEV1",
+          "category": null,
+          "markers": [
+            "d"
+          ],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_vitals",
+          "kind": "assessment",
+          "label": "Vital signs",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c3",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X"
+            },
+            {
+              "col": "c5",
+              "value": "X"
+            },
+            {
+              "col": "c6",
+              "value": "X"
+            },
+            {
+              "col": "c7",
+              "value": "X"
+            },
+            {
+              "col": "c8",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_hematology",
+          "kind": "assessment",
+          "label": "Hematology",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_bloodchem",
+          "kind": "assessment",
+          "label": "Blood chemistries",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_hamd",
+          "kind": "assessment",
+          "label": "Ham-D",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_cssa",
+          "kind": "assessment",
+          "label": "CSSA",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c2",
+              "value": "3X"
+            },
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_urinalysis",
+          "kind": "assessment",
+          "label": "Urinalysis",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_pregtest",
+          "kind": "assessment",
+          "label": "Pregnancy test",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_ecg",
+          "kind": "assessment",
+          "label": "ECG",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_ae",
+          "kind": "assessment",
+          "label": "Adverse events",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c2",
+              "value": "X"
+            },
+            {
+              "col": "c3",
+              "value": "3X"
+            },
+            {
+              "col": "c4",
+              "value": "3X"
+            },
+            {
+              "col": "c5",
+              "value": "3X"
+            },
+            {
+              "col": "c6",
+              "value": "3X"
+            },
+            {
+              "col": "c7",
+              "value": "3X"
+            },
+            {
+              "col": "c8",
+              "value": "3X"
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r_concomitant",
+          "kind": "assessment",
+          "label": "Concomitant medications",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            },
+            {
+              "col": "c1",
+              "value": "Weekly x 2 weeks"
+            },
+            {
+              "col": "c2",
+              "value": "Weekly x 2 weeks"
+            }
+          ]
+        },
+        {
+          "id": "r_efficacy_cat",
+          "kind": "category",
+          "label": "Efficacy",
+          "category": null,
+          "markers": [],
+          "cells": []
+        },
+        {
+          "id": "r_asilite",
+          "kind": "assessment",
+          "label": "ASI-Lite",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_hrbs",
+          "kind": "assessment",
+          "label": "HRBS",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c1",
+              "value": "X"
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_bscs",
+          "kind": "assessment",
+          "label": "BSCS",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c1",
+              "value": "Weekly x 2 weeks"
+            },
+            {
+              "col": "c2",
+              "value": "Weekly x 2 weeks"
+            }
+          ]
+        },
+        {
+          "id": "r_ccqnow",
+          "kind": "assessment",
+          "label": "CCQ-NOW",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c2",
+              "value": "X"
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_cgis",
+          "kind": "assessment",
+          "label": "CGI-S",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c1",
+              "value": "Weekly x 2 weeks"
+            },
+            {
+              "col": "c2",
+              "value": "Weekly x 2 weeks"
+            }
+          ]
+        },
+        {
+          "id": "r_cgio",
+          "kind": "assessment",
+          "label": "CGI-O",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c1",
+              "value": "Weekly x 2 weeks"
+            },
+            {
+              "col": "c2",
+              "value": "Weekly x 2 weeks"
+            }
+          ]
+        },
+        {
+          "id": "r_sui",
+          "kind": "assessment",
+          "label": "SUI",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c2",
+              "value": "3 X/week"
+            },
+            {
+              "col": "c3",
+              "value": "3 X"
+            },
+            {
+              "col": "c4",
+              "value": "3 X"
+            },
+            {
+              "col": "c5",
+              "value": "3 X"
+            },
+            {
+              "col": "c6",
+              "value": "3 X"
+            },
+            {
+              "col": "c7",
+              "value": "3 X"
+            },
+            {
+              "col": "c8",
+              "value": "3 X"
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            },
+            {
+              "col": "c1",
+              "value": "3 X/week"
+            }
+          ]
+        },
+        {
+          "id": "r_urinebe",
+          "kind": "assessment",
+          "label": "Urine BE and creatinine",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c2",
+              "value": "3 X/week"
+            },
+            {
+              "col": "c3",
+              "value": "3 X"
+            },
+            {
+              "col": "c4",
+              "value": "3 X"
+            },
+            {
+              "col": "c5",
+              "value": "3 X"
+            },
+            {
+              "col": "c6",
+              "value": "3 X"
+            },
+            {
+              "col": "c7",
+              "value": "3 X"
+            },
+            {
+              "col": "c8",
+              "value": "3 X"
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            },
+            {
+              "col": "c1",
+              "value": "3 X/week"
+            }
+          ]
+        },
+        {
+          "id": "r_urinetox",
+          "kind": "assessment",
+          "label": "Urine tox screen",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c5",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c6",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c7",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "c9",
+              "value": "X"
+            },
+            {
+              "col": "c1",
+              "value": "Weekly x 2 weeks"
+            },
+            {
+              "col": "c2",
+              "value": "Weekly x 2 weeks"
+            }
+          ]
+        },
+        {
+          "id": "r_serumprolactin",
+          "kind": "assessment",
+          "label": "Serum prolactin",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c2",
+              "value": "X",
+              "markers": [
+                "a"
+              ]
+            },
+            {
+              "col": "c3",
+              "value": "X",
+              "markers": [
+                "a"
+              ]
+            },
+            {
+              "col": "c4",
+              "value": "X",
+              "markers": [
+                "a"
+              ]
+            },
+            {
+              "col": "c8",
+              "value": "X",
+              "markers": [
+                "c"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r_treatcompliance",
+          "kind": "assessment",
+          "label": "Treatment compliance",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c3",
+              "value": "3 X"
+            },
+            {
+              "col": "c4",
+              "value": "3 X"
+            },
+            {
+              "col": "c5",
+              "value": "3 X"
+            },
+            {
+              "col": "c6",
+              "value": "3 X"
+            },
+            {
+              "col": "c7",
+              "value": "3 X"
+            },
+            {
+              "col": "c8",
+              "value": "3 X"
+            }
+          ]
+        },
+        {
+          "id": "r_followupinterview",
+          "kind": "assessment",
+          "label": "Follow-up interview",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "c9",
+              "value": "X"
+            }
+          ]
+        }
+      ],
+      "footnotes": [
+        {
+          "marker": "*",
+          "printed": "*",
+          "kind": "footnote",
+          "text": "Baseline assessments must occur within 2 weeks during the screening period. The screening period is within 4 weeks of subject enrollment. Baseline and screening period may occur simultaneously.",
+          "pages": [
+            25
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "column",
+              "col": "c1"
+            },
+            {
+              "target": "column",
+              "col": "c2"
+            },
+            {
+              "target": "column",
+              "column": "c1"
+            },
+            {
+              "target": "column",
+              "column": "c2"
+            }
+          ]
+        },
+        {
+          "marker": "a",
+          "printed": "a",
+          "kind": "footnote",
+          "text": "Blood is collected in fasted state at least once (preferably twice) before investigational agent administration, once during weeks 3-6, and once at week 12 or at final visit if subject discontinues prematurely. The two specimens prior to investigational agent may be drawn during baseline, or one may be drawn during baseline and one on study day 1 prior to administration of first dose of investigational agent.",
+          "pages": [
+            25
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "row",
+              "row": "r_serumprolactin"
+            }
+          ]
+        },
+        {
+          "marker": "b",
+          "printed": "b",
+          "kind": "footnote",
+          "text": "Once during the week preferably at the first visit of the week.",
+          "pages": [
+            25
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "column",
+              "col": "c3"
+            },
+            {
+              "target": "column",
+              "col": "c4"
+            },
+            {
+              "target": "column",
+              "col": "c5"
+            },
+            {
+              "target": "column",
+              "col": "c6"
+            },
+            {
+              "target": "column",
+              "col": "c7"
+            }
+          ]
+        },
+        {
+          "marker": "c",
+          "printed": "c",
+          "kind": "footnote",
+          "text": "At the final scheduled study visit (last visit of week 12) or if the subjects discontinues prematurely.",
+          "pages": [
+            25
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "column",
+              "col": "c8"
+            }
+          ]
+        },
+        {
+          "marker": "d",
+          "printed": "d",
+          "kind": "footnote",
+          "text": "FEV1 is only performed in those subjects suspected of having asthma.",
+          "pages": [
+            25
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "row",
+              "row": "r_physexam"
+            }
+          ]
+        }
+      ],
+      "ambiguities": [
+        "A vertical text spelling out \"RANDOMIZATION\" runs down the page at x≈310, one letter per assessment row (R,A,N,D,O,M,I,Z,A,T,I,O,N); it was excluded as a data column since it carries no marks, but it may indicate an unlabeled visit/column between Baseline and Week 1-3 that the rule-based pass mistakenly counted as a marked column.",
+        "Column c2 ('Baseline') has no explicit study-week header printed near it (only 'Weekly x 2 weeks' or '3 X/week' text labels appear in some rows at that x-position); its exact relationship to the 'Baseline' period label and the neighboring 'Week 1-3' column (c3) is inferred from x-position alignment, not an explicit header.",
+        "Row 'Physical exam/FEV1' has a continuation line (y=261) containing footnote-b markers at x-positions matching columns c3-c7 but with no accompanying X values in those cells; it is unclear whether Physical exam is actually performed weekly (marker b) at those visits without a printed X, or if this is a formatting artifact.",
+        "Pages 26 and 27 contain only narrative descriptions of the same assessments (screening, baseline, treatment, end-of-study procedures) without a tabular grid, so no additional columns/rows were extracted from them; they corroborate but do not add new schedule structure.",
+        "5 cell value(s) proposed by the second opinion were not found in the page text and have been discarded: Concomitant medications/c2=\"Weekly x 2 weeks\", BSCS/c2=\"Weekly x 2 weeks\", CGI-S/c2=\"Weekly x 2 weeks\", CGI-O/c2=\"Weekly x 2 weeks\", Urine tox screen/c2=\"Weekly x 2 weeks\""
+      ],
+      "provenance": {
+        "readBy": "review",
+        "model": "claude-sonnet-5",
+        "confidence": 0.85,
+        "verdict": "check",
+        "findings": [
+          {
+            "check": "duplicate-columns",
+            "severity": "low",
+            "detail": "1 pair(s) of columns hold an identical set of marks (c5≡c7). Real visits differ somewhere, so these are very likely one visit reported twice."
+          }
+        ],
+        "geometric": {
+          "columns": 10,
+          "rows": 40,
+          "confidence": 0.55,
+          "findings": [
+            "unidentified-columns",
+            "duplicate-columns",
+            "unlabelled-rows",
+            "unlinked-footnotes"
+          ]
+        },
+        "locatorScore": 24.67,
+        "locatorEvidence": [
+          {
+            "page": 25,
+            "score": 24.67,
+            "reasons": [
+              "title \"Table 1. Overview of Study Assessments\"",
+              "1 header row(s) of numbered timepoints",
+              "5 study-period words",
+              "132 cell-like marks",
+              "20 grid-like rows",
+              "5 footnote-definition lines"
+            ]
+          },
+          {
+            "page": 26,
+            "score": 5,
+            "reasons": [
+              "2 study-period words",
+              "29 footnote-definition lines"
+            ]
+          },
+          {
+            "page": 27,
+            "score": 7,
+            "reasons": [
+              "4 study-period words",
+              "25 footnote-definition lines"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "pageScores": [
+    {
+      "page": 3,
+      "score": 12.25,
+      "reasons": [
+        "6 study-period words",
+        "42 cell-like marks",
+        "13 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 4,
+      "score": 6.25,
+      "reasons": [
+        "5 study-period words",
+        "18 cell-like marks"
+      ]
+    },
+    {
+      "page": 5,
+      "score": 3.46,
+      "reasons": [
+        "17 cell-like marks",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 6,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 7,
+      "score": 5.33,
+      "reasons": [
+        "5 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 8,
+      "score": 5.67,
+      "reasons": [
+        "6 study-period words",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 9,
+      "score": 3.33,
+      "reasons": [
+        "2 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 10,
+      "score": 1.33,
+      "reasons": [
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 11,
+      "score": 4,
+      "reasons": [
+        "5 study-period words"
+      ]
+    },
+    {
+      "page": 12,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 13,
+      "score": 7,
+      "reasons": [
+        "4 study-period words",
+        "12 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 14,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 15,
+      "score": 6,
+      "reasons": [
+        "3 study-period words",
+        "14 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 16,
+      "score": 6.92,
+      "reasons": [
+        "2 study-period words",
+        "18 cell-like marks",
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 17,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "16 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 18,
+      "score": 4,
+      "reasons": [
+        "3 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 19,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 20,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 21,
+      "score": 6,
+      "reasons": [
+        "5 study-period words",
+        "6 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 22,
+      "score": 11,
+      "reasons": [
+        "title \"spent in completing study assessments. It will be emphasized\"",
+        "4 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 23,
+      "score": 5.67,
+      "reasons": [
+        "3 study-period words",
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 24,
+      "score": 10,
+      "reasons": [
+        "title \"Table 1 provides an overview of the schedule of assessments \"",
+        "5 study-period words"
+      ]
+    },
+    {
+      "page": 25,
+      "score": 24.67,
+      "reasons": [
+        "title \"Table 1. Overview of Study Assessments\"",
+        "1 header row(s) of numbered timepoints",
+        "5 study-period words",
+        "132 cell-like marks",
+        "20 grid-like rows",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 26,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "29 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 27,
+      "score": 7,
+      "reasons": [
+        "4 study-period words",
+        "25 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 28,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "27 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 29,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 30,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 31,
+      "score": 11.33,
+      "reasons": [
+        "title \"Depending upon the assessment schedule, urine samples will b\"",
+        "3 study-period words",
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 32,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 33,
+      "score": 3,
+      "reasons": [
+        "3 study-period words"
+      ]
+    },
+    {
+      "page": 34,
+      "score": 4,
+      "reasons": [
+        "3 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 36,
+      "score": 6,
+      "reasons": [
+        "3 study-period words",
+        "8 cell-like marks",
+        "6 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 37,
+      "score": 4.33,
+      "reasons": [
+        "2 study-period words",
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 38,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "9 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 39,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 40,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "12 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 41,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "11 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 42,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 43,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "9 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 44,
+      "score": 5.33,
+      "reasons": [
+        "4 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 47,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 51,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 52,
+      "score": 11,
+      "reasons": [
+        "178 cell-like marks",
+        "39 grid-like rows"
+      ]
+    },
+    {
+      "page": 53,
+      "score": 11,
+      "reasons": [
+        "191 cell-like marks",
+        "42 grid-like rows"
+      ]
+    },
+    {
+      "page": 54,
+      "score": 5.75,
+      "reasons": [
+        "30 cell-like marks",
+        "4 grid-like rows"
+      ]
+    },
+    {
+      "page": 55,
+      "score": 14,
+      "reasons": [
+        "3 study-period words",
+        "303 cell-like marks",
+        "30 grid-like rows"
+      ]
+    },
+    {
+      "page": 57,
+      "score": 2.63,
+      "reasons": [
+        "21 cell-like marks"
+      ]
+    },
+    {
+      "page": 58,
+      "score": 2.67,
+      "reasons": [
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 59,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 60,
+      "score": 5.88,
+      "reasons": [
+        "3 study-period words",
+        "15 cell-like marks",
+        "3 footnote-definition lines"
+      ]
+    }
+  ],
+  "extractedAt": "2026-09-09T13:06:51.632Z"
+}

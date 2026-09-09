@@ -1,0 +1,1763 @@
+{
+  "sourceFile": "protocol1.pdf",
+  "pageCount": 97,
+  "sourcePages": {
+    "53": [
+      "Protocol Attachment LZZT.1",
+      "Schedule of Events for Protocol H2Q-MC-LZZT(c)",
+      "VISIT 1 2 3 4 5 7 8",
+      "ACTIVITY WEEK -2 -.3 0 2 4 6 8",
+      "Informed consent X",
+      "Patient number assigned X",
+      "Hachinski ≤ 4 X",
+      "MMSE 10-23 X",
+      "Physical examination X",
+      "Medical History X",
+      "Habits X",
+      "Chest x-ray X",
+      "Apo E genotyping X",
+      "Patient randomized X",
+      "Vital signs/Temperature X X X X X X X",
+      "Ambulatory ECG placed X",
+      "Ambulatory ECG removed X",
+      "ECG X X X X X",
+      "Placebo TTS test X",
+      "CT Scan (if not within X",
+      "last year and patient passes",
+      "all other screens)",
+      "Concomitant Medications X X X X X X",
+      "Laboratory (Chem/Hemat): X X X X X",
+      "Laboratory (Urinalysis) X X",
+      "Plasma Specimen X X X X",
+      "(Xanomeline)",
+      "Hemoglobin A1C Xa",
+      "Study drug record X X X X X",
+      "Medications dispensed",
+      "Medications returned",
+      "TTS Acceptability Survey",
+      "ADAS-Cog P X X",
+      "CIBIC+ P X X",
+      "DAD P X X",
+      "NPI-X P X X X X Xb",
+      "Adverse events X X X X X X X",
+      "Abbreviations: CT = computed tomography; ECG = electrocardiogram",
+      "X = Performed at this visit.",
+      "Xa = Performed at this visit if patient is an insulin-dependent diabetic.",
+      "Xb = Performed at this visit and via telephone interview 2 weeks following this visit.",
+      "P = Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD,",
+      "and NPI-X be administered at Visit 1. Data from this sampling would not be",
+      "considered as study data and would not be collected.",
+      "Xanomeline (LY246708) H2Q-MC-LZZT(c) Copyright © 2006 Eli Lilly and Company",
+      "Clinical Study Protocol Document Page 53"
+    ],
+    "54": [
+      "Schedule of Events for Protocol H2Q-MC-LZZT(c) (concluded)",
+      "VISIT 9 10 11 12 13 ET RT",
+      "ACTIVITY WEEK 12 16 20 24 26",
+      "Informed consent",
+      "Patient number assigned",
+      "Hachinski ≤ 4",
+      "MMSE 10-23",
+      "Physical examination X X",
+      "Medical History",
+      "Habits",
+      "Chest x-ray",
+      "Apo E genotyping",
+      "Patient randomized",
+      "Vital signs/Temperature X X X X X X X",
+      "Ambulatory ECG placed",
+      "Ambulatory ECG removed",
+      "ECG X X X X X X",
+      "Placebo TTS test",
+      "CT Scan (if not within",
+      "last year and patient passes",
+      "all other screens)",
+      "Concomitant Medications X X X X X X X",
+      "Laboratory (Chem/Hemat): X X X X X X",
+      "Laboratory (Urinalysis) X X X",
+      "Plasma Specimen X X X",
+      "(Xanomeline)",
+      "Hemoglobin A1c",
+      "Study drug record X X X X X X",
+      "Medications dispensed",
+      "Medications returned",
+      "TTS Acceptability Survey X X",
+      "ADAS-Cog X X X X",
+      "CIBIC+ X X X X",
+      "DAD X X X X",
+      "NPI-X Xb Xb Xb X X X X",
+      "Adverse events X X X X X X X",
+      "Abbreviations: CT = computed tomography; ECG = electrocardiogram; ET = Early",
+      "Termination; RT = Retrieval",
+      "X = Performed at this visit.",
+      "Xb = Performed at this visit and via telephone interview 2 weeks following this visit.",
+      "Xanomeline (LY246708) H2Q-MC-LZZT(c) Copyright © 2006 Eli Lilly and Company",
+      "Clinical Study Protocol Document Page 54"
+    ]
+  },
+  "tables": [
+    {
+      "id": "t1",
+      "title": "Schedule of Events for Protocol H2Q-MC-LZZT(c)",
+      "pages": [
+        53,
+        54
+      ],
+      "columns": [
+        {
+          "id": "p53c1",
+          "label": "1",
+          "path": [],
+          "visitNumber": "1",
+          "studyDay": null,
+          "studyWeek": "-2",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c2",
+          "label": "2",
+          "path": [],
+          "visitNumber": "2",
+          "studyDay": null,
+          "studyWeek": "-.3",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c3",
+          "label": "3",
+          "path": [],
+          "visitNumber": "3",
+          "studyDay": null,
+          "studyWeek": "0",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c4",
+          "label": "4",
+          "path": [],
+          "visitNumber": "4",
+          "studyDay": null,
+          "studyWeek": "2",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c5",
+          "label": "5",
+          "path": [],
+          "visitNumber": "5",
+          "studyDay": null,
+          "studyWeek": "4",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c7",
+          "label": "7",
+          "path": [],
+          "visitNumber": "7",
+          "studyDay": null,
+          "studyWeek": "6",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p53c8",
+          "label": "8",
+          "path": [],
+          "visitNumber": "8",
+          "studyDay": null,
+          "studyWeek": "8",
+          "window": null,
+          "markers": [],
+          "pages": [
+            53
+          ]
+        },
+        {
+          "id": "p54c1",
+          "label": "9",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "12",
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c2",
+          "label": "10",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "16",
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c3",
+          "label": "11",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "20",
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c4",
+          "label": "12",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "24",
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c5",
+          "label": "13",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": "26",
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c6",
+          "label": "ET",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        },
+        {
+          "id": "p54c7",
+          "label": "RT",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            54
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "id": "r1",
+          "kind": "assessment",
+          "label": "Informed consent",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r2",
+          "kind": "assessment",
+          "label": "Patient number assigned",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r3",
+          "kind": "assessment",
+          "label": "Hachinski ≤ 4",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r4",
+          "kind": "assessment",
+          "label": "MMSE 10-23",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r5",
+          "kind": "assessment",
+          "label": "Physical examination",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r6",
+          "kind": "assessment",
+          "label": "Medical History",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r7",
+          "kind": "assessment",
+          "label": "Habits",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r8",
+          "kind": "assessment",
+          "label": "Chest x-ray",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r9",
+          "kind": "assessment",
+          "label": "Apo E genotyping",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c4",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r10",
+          "kind": "assessment",
+          "label": "Patient randomized",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r11",
+          "kind": "assessment",
+          "label": "Vital signs/Temperature",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c2",
+              "value": "X"
+            },
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r12",
+          "kind": "assessment",
+          "label": "Ambulatory ECG placed",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c2",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r13",
+          "kind": "assessment",
+          "label": "Ambulatory ECG removed",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r14",
+          "kind": "assessment",
+          "label": "ECG",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r15",
+          "kind": "assessment",
+          "label": "Placebo TTS test",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r16",
+          "kind": "assessment",
+          "label": "CT Scan (if not within last year and patient passes all other screens)",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r17",
+          "kind": "assessment",
+          "label": "Concomitant Medications",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r18",
+          "kind": "assessment",
+          "label": "Laboratory (Chem/Hemat):",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r19",
+          "kind": "assessment",
+          "label": "Laboratory (Urinalysis)",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r20",
+          "kind": "assessment",
+          "label": "Plasma Specimen (Xanomeline)",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r21",
+          "kind": "assessment",
+          "label": "Hemoglobin A1C",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "Xa",
+              "markers": [
+                "a"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "r22",
+          "kind": "assessment",
+          "label": "Study drug record Medications dispensed Medications returned",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r23",
+          "kind": "category",
+          "label": "TTS Acceptability Survey",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r24",
+          "kind": "assessment",
+          "label": "ADAS-Cog",
+          "category": "TTS Acceptability Survey",
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p53c1",
+              "value": "P",
+              "markers": [
+                "P"
+              ]
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r25",
+          "kind": "assessment",
+          "label": "CIBIC+",
+          "category": "TTS Acceptability Survey",
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p53c1",
+              "value": "P",
+              "markers": [
+                "P"
+              ]
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r26",
+          "kind": "assessment",
+          "label": "DAD",
+          "category": "TTS Acceptability Survey",
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p53c1",
+              "value": "P",
+              "markers": [
+                "P"
+              ]
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r27",
+          "kind": "assessment",
+          "label": "NPI-X",
+          "category": "TTS Acceptability Survey",
+          "markers": [
+            "X"
+          ],
+          "cells": [
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "Xb",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "p53c1",
+              "value": "P",
+              "markers": [
+                "P"
+              ]
+            },
+            {
+              "col": "p54c1",
+              "value": "Xb",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "p54c2",
+              "value": "Xb",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "p54c3",
+              "value": "Xb",
+              "markers": [
+                "b"
+              ]
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        },
+        {
+          "id": "r28",
+          "kind": "assessment",
+          "label": "Adverse events",
+          "category": "TTS Acceptability Survey",
+          "markers": [],
+          "cells": [
+            {
+              "col": "p53c1",
+              "value": "X"
+            },
+            {
+              "col": "p53c2",
+              "value": "X"
+            },
+            {
+              "col": "p53c3",
+              "value": "X"
+            },
+            {
+              "col": "p53c4",
+              "value": "X"
+            },
+            {
+              "col": "p53c5",
+              "value": "X"
+            },
+            {
+              "col": "p53c7",
+              "value": "X"
+            },
+            {
+              "col": "p53c8",
+              "value": "X"
+            },
+            {
+              "col": "p54c1",
+              "value": "X"
+            },
+            {
+              "col": "p54c2",
+              "value": "X"
+            },
+            {
+              "col": "p54c3",
+              "value": "X"
+            },
+            {
+              "col": "p54c4",
+              "value": "X"
+            },
+            {
+              "col": "p54c5",
+              "value": "X"
+            },
+            {
+              "col": "p54c6",
+              "value": "X"
+            },
+            {
+              "col": "p54c7",
+              "value": "X"
+            }
+          ]
+        }
+      ],
+      "footnotes": [
+        {
+          "marker": "X",
+          "printed": "X",
+          "kind": "footnote",
+          "text": "Performed at this visit.",
+          "pages": [
+            53
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "row",
+              "row": "r27"
+            }
+          ]
+        },
+        {
+          "marker": "a",
+          "printed": "Xa",
+          "kind": "footnote",
+          "text": "Performed at this visit if patient is an insulin-dependent diabetic.",
+          "pages": [
+            53
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "cell",
+              "row": "r21",
+              "col": "p53c1"
+            }
+          ]
+        },
+        {
+          "marker": "b",
+          "printed": "Xb",
+          "kind": "footnote",
+          "text": "Performed at this visit and via telephone interview 2 weeks following this visit.",
+          "pages": [
+            53
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "cell",
+              "row": "r27",
+              "col": "p53c8"
+            },
+            {
+              "target": "cell",
+              "row": "r27",
+              "col": "p54c1"
+            },
+            {
+              "target": "cell",
+              "row": "r27",
+              "col": "p54c2"
+            },
+            {
+              "target": "cell",
+              "row": "r27",
+              "col": "p54c3"
+            }
+          ]
+        },
+        {
+          "marker": "P",
+          "printed": "P",
+          "kind": "footnote",
+          "text": "Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD, and NPI-X be administered at Visit 1. Data from this sampling would not be considered as study data and would not be collected.",
+          "pages": [
+            53
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "cell",
+              "row": "r24",
+              "col": "p53c1"
+            },
+            {
+              "target": "cell",
+              "row": "r25",
+              "col": "p53c1"
+            },
+            {
+              "target": "cell",
+              "row": "r26",
+              "col": "p53c1"
+            },
+            {
+              "target": "cell",
+              "row": "r27",
+              "col": "p53c1"
+            }
+          ]
+        }
+      ],
+      "ambiguities": [
+        "Page 53 rules a column at x≈448 that carries no heading and no marks on any row. It has been left out rather than reported as a visit."
+      ],
+      "provenance": {
+        "readBy": "geometry",
+        "model": null,
+        "confidence": 0.7,
+        "verdict": "check",
+        "findings": [
+          {
+            "check": "duplicate-columns",
+            "severity": "low",
+            "detail": "2 pair(s) of columns hold an identical set of marks (p53c5≡p53c7, p53c8≡p54c2). Real visits differ somewhere, so these are very likely one visit reported twice."
+          }
+        ],
+        "rowsAreRuled": true,
+        "geometric": null,
+        "locatorScore": 22.67,
+        "locatorEvidence": [
+          {
+            "page": 53,
+            "score": 22.67,
+            "reasons": [
+              "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c)\"",
+              "2 header row(s) of numbered timepoints",
+              "81 cell-like marks",
+              "10 grid-like rows",
+              "5 footnote-definition lines"
+            ]
+          },
+          {
+            "page": 54,
+            "score": 22,
+            "reasons": [
+              "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c) (concluded)\"",
+              "2 header row(s) of numbered timepoints",
+              "79 cell-like marks",
+              "14 grid-like rows",
+              "3 footnote-definition lines"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "pageScores": [
+    {
+      "page": 2,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 3,
+      "score": 3,
+      "reasons": [
+        "3 study-period words"
+      ]
+    },
+    {
+      "page": 4,
+      "score": 6,
+      "reasons": [
+        "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c)\""
+      ]
+    },
+    {
+      "page": 5,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 7,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 8,
+      "score": 12.67,
+      "reasons": [
+        "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c), Attachment L\"",
+        "4 study-period words",
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 9,
+      "score": 11.63,
+      "reasons": [
+        "2 header row(s) of numbered timepoints",
+        "3 study-period words",
+        "21 cell-like marks",
+        "6 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 10,
+      "score": 3,
+      "reasons": [
+        "2 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 11,
+      "score": 4.67,
+      "reasons": [
+        "3 study-period words",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 12,
+      "score": 3,
+      "reasons": [
+        "14 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 13,
+      "score": 5,
+      "reasons": [
+        "2 study-period words",
+        "15 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 14,
+      "score": 3,
+      "reasons": [
+        "22 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 15,
+      "score": 3,
+      "reasons": [
+        "11 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 16,
+      "score": 6.67,
+      "reasons": [
+        "4 study-period words",
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 17,
+      "score": 2,
+      "reasons": [
+        "6 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 18,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 19,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 20,
+      "score": 2.33,
+      "reasons": [
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 21,
+      "score": 3.67,
+      "reasons": [
+        "2 study-period words",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 22,
+      "score": 3,
+      "reasons": [
+        "2 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 23,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 24,
+      "score": 3,
+      "reasons": [
+        "2 study-period words",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 25,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 26,
+      "score": 5.67,
+      "reasons": [
+        "6 study-period words",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 27,
+      "score": 3,
+      "reasons": [
+        "3 study-period words"
+      ]
+    },
+    {
+      "page": 28,
+      "score": 2,
+      "reasons": [
+        "6 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 29,
+      "score": 3.33,
+      "reasons": [
+        "2 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 30,
+      "score": 1.33,
+      "reasons": [
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 31,
+      "score": 1,
+      "reasons": [
+        "8 cell-like marks"
+      ]
+    },
+    {
+      "page": 33,
+      "score": 4,
+      "reasons": [
+        "2 study-period words",
+        "8 cell-like marks",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 34,
+      "score": 5.33,
+      "reasons": [
+        "3 study-period words",
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 35,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 36,
+      "score": 5.67,
+      "reasons": [
+        "4 study-period words",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 37,
+      "score": 9.25,
+      "reasons": [
+        "26 cell-like marks",
+        "6 grid-like rows",
+        "10 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 38,
+      "score": 7.25,
+      "reasons": [
+        "2 study-period words",
+        "18 cell-like marks",
+        "10 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 39,
+      "score": 6.33,
+      "reasons": [
+        "4 study-period words",
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 41,
+      "score": 4.33,
+      "reasons": [
+        "3 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 42,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 43,
+      "score": 4.33,
+      "reasons": [
+        "3 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 44,
+      "score": 3,
+      "reasons": [
+        "3 study-period words"
+      ]
+    },
+    {
+      "page": 45,
+      "score": 3.33,
+      "reasons": [
+        "2 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 46,
+      "score": 3,
+      "reasons": [
+        "3 study-period words"
+      ]
+    },
+    {
+      "page": 47,
+      "score": 4.33,
+      "reasons": [
+        "3 study-period words",
+        "4 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 49,
+      "score": 2.67,
+      "reasons": [
+        "8 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 50,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 52,
+      "score": 6,
+      "reasons": [
+        "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c)\""
+      ]
+    },
+    {
+      "page": 53,
+      "score": 22.67,
+      "reasons": [
+        "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c)\"",
+        "2 header row(s) of numbered timepoints",
+        "81 cell-like marks",
+        "10 grid-like rows",
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 54,
+      "score": 22,
+      "reasons": [
+        "title \"Schedule of Events for Protocol H2Q-MC-LZZT(c) (concluded)\"",
+        "2 header row(s) of numbered timepoints",
+        "79 cell-like marks",
+        "14 grid-like rows",
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 56,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 57,
+      "score": 1,
+      "reasons": [
+        "3 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 58,
+      "score": 3,
+      "reasons": [
+        "14 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 59,
+      "score": 3,
+      "reasons": [
+        "17 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 60,
+      "score": 3,
+      "reasons": [
+        "13 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 61,
+      "score": 3,
+      "reasons": [
+        "13 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 62,
+      "score": 3,
+      "reasons": [
+        "15 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 63,
+      "score": 3,
+      "reasons": [
+        "16 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 77,
+      "score": 3,
+      "reasons": [
+        "13 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 81,
+      "score": 1.67,
+      "reasons": [
+        "5 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 86,
+      "score": 2,
+      "reasons": [
+        "2 study-period words"
+      ]
+    },
+    {
+      "page": 87,
+      "score": 3,
+      "reasons": [
+        "16 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 88,
+      "score": 3,
+      "reasons": [
+        "9 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 90,
+      "score": 5.46,
+      "reasons": [
+        "25 cell-like marks",
+        "7 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 94,
+      "score": 6.25,
+      "reasons": [
+        "26 cell-like marks",
+        "13 footnote-definition lines"
+      ]
+    },
+    {
+      "page": 96,
+      "score": 6.13,
+      "reasons": [
+        "21 cell-like marks",
+        "3 grid-like rows",
+        "6 footnote-definition lines"
+      ]
+    }
+  ],
+  "extractedAt": "2026-09-09T13:44:28.389Z"
+}
