@@ -263,7 +263,69 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
       }
     }
     console.log(`  ${printed.length} printed rows checked · ${missing} missing · ${misplaced} cell mismatches`);
+
+    /*
+     * The header, against what is printed above the grid.
+     *
+     * Rows and cells were checked and headers were not, which is how a schedule
+     * came to be banded "Screening Period" over five visits where the page rules
+     * it over two, and how visit names ended up filed as visit windows — both
+     * found by eye, late, because nothing was looking.
+     */
+    let headerFaults = 0;
+    drawn.forEach((c, i) => {
+      const col = mineHere[i];
+      if (!col) return;
+      const head = headOf(c);
+      if (!head) return;
+      const said = [col.label, col.studyDay, col.studyWeek, col.visitNumber, col.window, ...(col.path || [])]
+        .filter(Boolean).map(key).filter((v) => v.length > 1);
+      // Everything printed in this column's header should be somewhere in what
+      // we say about the column; anything else is a heading we did not read.
+      const covered = said.some((v) => head.includes(v) || v.includes(head));
+      if (!covered) {
+        console.log(`  ! HEADER column ${i + 1}: page="${headerRows.map((r) => r[c]).filter(Boolean).join(' / ').slice(0, 34)}"`
+          + ` ours="${[col.label, col.studyDay, col.studyWeek].filter(Boolean).join(' / ').slice(0, 34)}"`);
+        headerFaults++;
+        problems++;
+      }
+    });
+    if (headerRows.length) console.log(`  ${drawn.length} column headings checked · ${headerFaults} not accounted for`);
    }
+
+   /*
+    * Footnote text, against the page it is printed on.
+    *
+    * The brief grades the full text of every footnote, and nothing here was
+    * comparing it — a footnote truncated at a line break, or one that stops at
+    * a page boundary, would have gone unnoticed exactly as the brief warns.
+    */
+   const onPages = table.pages
+     .flatMap((n) => (pages.find((p) => p.number === n)?.lines || []).map((l) => norm(l.text)))
+     .join(' ');
+   let cut = 0;
+   for (const footnote of table.footnotes || []) {
+     const text = norm(footnote.text);
+     if (text.length < 8) continue;
+     /*
+      * Compared with the spaces taken out, then on words.
+      *
+      * The page breaks a footnote wherever the column ends and puts a space
+      * there; it also sets "FEV1" as "FEV" and a small "1", which reads back
+      * with a space between. Ours joins it, correctly, and a word-by-word
+      * comparison then called a footnote that is verbatim on the page missing.
+      */
+     const flat = (s) => s.replace(/[^a-z0-9]+/g, '');
+     if (flat(onPages).includes(flat(text))) continue;
+     const words = text.split(' ').filter((w) => w.length > 2);
+     const found = words.filter((w) => onPages.includes(w) || flat(onPages).includes(flat(w))).length;
+     if (found < words.length * 0.9) {
+       console.log(`  ! FOOTNOTE "${footnote.printed || footnote.marker}": ${words.length - found} of ${words.length} words are not on the table's pages`);
+       cut++;
+       problems++;
+     }
+   }
+   console.log(`  ${(table.footnotes || []).length} footnotes checked against the page · ${cut} with text not found there`);
   }
 }
 console.log(`\n${problems} discrepancy line(s) in all.`);

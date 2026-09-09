@@ -463,9 +463,21 @@ is known to fail — a schedule running across four pages, headers that repeat o
 do not, a continuation printed landscape. Whatever went wrong on page three went
 unmeasured, and "verified" meant verified on the easy page.
 
-Current state — **273 printed rows across 20 pages of 6 documents, 0 rows
-missing, 0 value mismatches.** Seven lines are reported and all seven are the
-reconstruction's own limits:
+It checks the three things the brief grades separately — the grid, the header
+above it, and the footnotes beneath:
+
+| Checked against the printed page | Count | Faults |
+|---|---|---|
+| Rows and their values, every page | **273 rows** | **0 missing · 0 mismatches** |
+| Column headings, every page | **127 headings** | **0 unaccounted for** |
+| Footnote text, whole | **53 footnotes** | **0 not found on the page** |
+
+Footnote text is compared with the spaces taken out and then word by word,
+because the page breaks a footnote wherever its column ends, and sets "FEV1" as
+"FEV" and a small "1" — which reads back with a space. Comparing literally
+called a footnote that is verbatim on the page missing.
+
+Seven lines are reported and all seven are the reconstruction's own limits:
 
 | Reported | Why it is not a defect |
 |---|---|
