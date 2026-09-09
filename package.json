@@ -8,7 +8,7 @@
     "serve": "node src/server.js",
     "extract": "node src/cli.js",
     "sync-outputs": "node -e \"const f=require('fs');f.mkdirSync('public/outputs',{recursive:true});for(const n of f.readdirSync('outputs'))f.copyFileSync('outputs/'+n,'public/outputs/'+n);console.log('synced')\"",
-    "test": "node --test \"test/*.test.mjs\"",
+    "test": "node --test",
     "audit": "node scripts/audit.mjs"
   },
   "dependencies": {

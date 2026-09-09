@@ -6,6 +6,13 @@
 # loads, reads a 97-page PDF, and still finds the eighteen columns and
 # twenty-nine rows it is supposed to. A reviewer with the protocols beside the
 # checkout gets the full suite from the same command.
+#
+# Both ends of the supported Node range are run, because the first CI run failed
+# on a difference between them: `node --test "test/*.test.mjs"` passed locally,
+# where the shell leaves the glob alone and Node expands it, and failed on
+# Linux, where Node was handed a path with a star in it. `node --test` on its
+# own discovers the files on every platform — and running two versions is how
+# that stays true.
 name: tests
 
 on:
@@ -16,11 +23,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
       - run: npm test
