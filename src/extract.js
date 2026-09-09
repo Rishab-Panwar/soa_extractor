@@ -831,16 +831,28 @@ function readHeader(rows, bands, firstDataY, page) {
     return at < 0 ? null : at;
   };
 
+  // The table's top edge, where the page draws one. Null on an unruled page,
+  // which is what sends the check below back to reading the words.
+  const topEdge = edges.length >= 3 ? edges[0] : null;
+
   const header = [];
   for (const row of rows) {
     if (row.y >= firstDataY) break;
     const cells = [...row.marks, ...row.other].filter((w) => columnFor(w, bands));
     if (!cells.length) continue;
-    // The running head is above the table, not part of it. "TJ301 Protocol
-    // No.: CTJ301UC201 Date: 16 May 2017" spreads across the page like a
-    // header row and was being banded over the columns as though it named
-    // them.
-    if (PAGE_FURNITURE.test(row.text || '')) continue;
+    /*
+     * The running head is above the table, and the table says where it starts.
+     *
+     * "TJ301 Protocol No.: CTJ301UC201 Date: 16 May 2017" spreads across the
+     * page exactly like a header row, and was banded over the columns as though
+     * it named them. Recognising it by its words — page numbers, copyright,
+     * version — works on these six documents and would fail on the seventh,
+     * whose running head says something else. Where the page rules a table, its
+     * top edge is a line: everything above that line is on the page, not in the
+     * table, whatever it happens to say. The word list stays only for pages
+     * that draw no rules at all.
+     */
+    if (topEdge !== null ? row.y < topEdge - 2 : PAGE_FURNITURE.test(row.text || '')) continue;
 
     // The left-hand text of a header line counts as that line's caption only
     // when it names a dimension. The table's own title is frequently set INSIDE
