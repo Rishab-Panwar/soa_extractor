@@ -314,10 +314,21 @@ already read keeps the verbatim guarantee and lets every value be checked
 mechanically. If scans mattered, this is the first thing to add.
 
 **Not evaluated: Camelot, Tabula, AWS Textract, Azure Document Intelligence.**
-Camelot and Tabula depend on ruled-line or whitespace heuristics plus heavier
-system dependencies; the cloud services need paid accounts, and their table
-models flatten multi-row grouped headers, which is a graded requirement here.
-This is a judgement call, not a measurement.
+The cloud services need paid accounts, and their table models flatten multi-row
+grouped headers, which is a graded requirement here. This is a judgement call,
+not a measurement.
+
+Camelot and Tabula deserve a straighter answer, because their "lattice" mode
+does what this tool ended up doing: read the ruled lines. That approach is
+right, and arriving at it the slow way is the most useful thing this exercise
+taught me. What is not in a general table library is the part that makes a
+schedule readable — a footnote bound to the cell its marker sits on, a value
+written across three columns, a heading that bands a group of visits, a word
+set vertically between two phases, and a guard that refuses a better structural
+reading when it would lose a mark. Those are the graded requirements, they are
+most of the code here, and they would have had to be written on top of Camelot
+regardless. Given the week again I would still read the rules directly, but I
+would look at lattice mode on day one rather than on day six.
 
 ## Manual verification, per protocol
 
