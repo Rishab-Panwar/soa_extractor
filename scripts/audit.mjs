@@ -105,13 +105,21 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
   const { pages } = await readPdf(readFileSync(pdf));
 
   for (const table of doc.tables) {
-    // Only the first page: it carries the header, and every later page repeats
-    // the same columns. Checking one page cell by cell is the point.
-    const page = pages.find((p) => p.number === table.pages[0]);
+   /*
+    * Every page of the table, not only the one carrying the header.
+    *
+    * Checking page one covered seven of these twenty pages, and left out
+    * precisely where naive extraction is known to fail: a schedule running
+    * across four pages, headers that repeat or do not or repeat abbreviated, a
+    * continuation printed landscape. Whatever went wrong on page three went
+    * unmeasured, and "verified" meant verified on the easy page.
+    */
+   for (const pageNumber of table.pages) {
+    const page = pages.find((p) => p.number === pageNumber);
     const grid = page && gridOf(page);
-    if (!grid) { console.log(`\n${name} ${table.id}: page ${table.pages[0]} draws no usable grid — skipped`); continue; }
+    if (!grid) { console.log(`\n${name} ${table.id} p${pageNumber}: no usable grid — skipped`); continue; }
 
-    console.log(`\n${'='.repeat(74)}\n${name} ${table.id} — page ${table.pages[0]} as printed vs as extracted`);
+    console.log(`\n${'='.repeat(74)}\n${name} ${table.id} — page ${pageNumber} as printed vs as extracted`);
 
     /*
      * How many leading columns are the activity column.
@@ -171,6 +179,22 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
 
     const printed = grid.matrix.filter((r) => r.slice(0, labelCols).some(Boolean));
 
+    /*
+     * Is this page's grid even this table's?
+     *
+     * A table lists the pages its footnotes spill onto as well as the pages it
+     * is printed on, and protocol5's footnotes spill onto the page where its
+     * blood-collection appendix begins. Audited against that page, the main
+     * schedule was told it had lost every row of a different table. If almost
+     * none of what is printed here belongs to this table, the grid is somebody
+     * else's and there is nothing to compare.
+     */
+    const another = doc.tables.find((t) => t !== table && t.pages[0] === pageNumber);
+    if (another) {
+      console.log(`  · ${another.id} starts on this page, so the grid here is its — not compared`);
+      continue;
+    }
+
     let missing = 0;
     let misplaced = 0;
     for (const row of printed) {
@@ -178,8 +202,22 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
       const mine = ours.get(key(label));
       if (!mine) {
         if (grid.matrix.indexOf(row) < firstData) continue;
-        // A label may wrap or be split; only report if no row starts with it.
-        const near = [...ours.keys()].some((k) => k.startsWith(key(label)) || key(label).startsWith(k));
+        /*
+         * Matched on the words, in any order, ignoring bullets.
+         *
+         * A row's name is one thing; how a reading writes it down is another.
+         * protocol9 bullets every assessment on its continuation pages and
+         * wraps "(15)" onto a second line, so exact and prefix matching called
+         * ten rows missing that are plainly present. An audit that cries wolf
+         * on formatting hides the losses it exists to find.
+         */
+        const words = (s) => new Set(String(s).toLowerCase().match(/[a-z0-9]+/g) || []);
+        const want = words(label);
+        const near = want.size < 2 || [...ours.values()].some((r) => {
+          const have = words(r.label);
+          const shared = [...want].filter((w) => have.has(w)).length;
+          return shared >= Math.min(want.size, have.size) * 0.7;
+        });
         if (!near && key(label).length > 3) { console.log(`  ! ROW MISSING: "${label.slice(0, 52)}"`); missing++; problems++; }
         continue;
       }
@@ -225,6 +263,7 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
       }
     }
     console.log(`  ${printed.length} printed rows checked · ${missing} missing · ${misplaced} cell mismatches`);
+   }
   }
 }
 console.log(`\n${problems} discrepancy line(s) in all.`);

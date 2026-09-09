@@ -457,22 +457,28 @@ forty wrong cells in correct output twice before the check was rewritten. What
 the brief penalises is a *lost* value, and that survives any disagreement about
 columns.
 
-Current state — the printed page against the committed output:
+It checks **every page of every schedule**, not the first. Checking page one
+covered seven of these twenty pages and left out exactly where naive extraction
+is known to fail — a schedule running across four pages, headers that repeat or
+do not, a continuation printed landscape. Whatever went wrong on page three went
+unmeasured, and "verified" meant verified on the easy page.
 
-| Protocol | Rows checked | Rows missing | Value mismatches |
-|---|---|---|---|
-| protocol1 | 30 | 0 | 0 |
-| protocol5 (Appendix I) | 32 | 0 | 0 |
-| protocol5 (Appendix II) | 11 | 1 · a footnote legend, not a row | 0 |
-| protocol9 | 21 | 0 | 3 · see below |
-| protocol12 | 42 | 1 · same row, words reordered | 0 |
-| protocol15 | 37 | 2 · footnote legends | 0 |
-| Prot_000 | 24 | 0 | 0 |
+Current state — **273 printed rows across 20 pages of 6 documents, 0 rows
+missing, 0 value mismatches.** Seven lines are reported and all seven are the
+reconstruction's own limits:
 
-protocol9's three are the audit's own limitation: the page prints "Prior to Day
-4" once, in a cell merged across three days, and we report it on each of the
-three days it covers. The extraction is right and the reconstruction cannot see
-merged cells.
+| Reported | Why it is not a defect |
+|---|---|
+| protocol9 ×3 · "Prior to Day 4" extra | The page prints it once, in a cell **merged** across three days; we report it on each of the three. The reconstruction cannot see merged cells. |
+| protocol5 ×1, protocol15 ×1 · a "row" missing | Footnote legend lines — `a S = serum, P = plasma` — which are footnotes, not rows. |
+| Prot_000 ×1 · a "row" missing | The footnote block, read as a row by the reconstruction. |
+| protocol15 ×1 · "physical exam/fev d 1" | A superscript marker the reconstruction put in the label cell; the row is present as "Physical exam/FEV1". |
+
+Pages carrying no grid — footnote continuation pages — are skipped and said to
+be skipped. A page where a *different* table begins is not compared against this
+one: protocol5's footnotes spill onto the page its blood-collection appendix
+starts on, and audited naively the main schedule was told it had lost every row
+of a table that is not its own.
 
 ## Guarding against regression
 
