@@ -436,6 +436,44 @@ The review now retries once before giving up.
   not in the page text is discarded and recorded. A review that drops named rows
   is thrown away in favour of the rule-based read.
 
+## Checking the output against the page
+
+```bash
+npm run audit        # rebuilds each page's printed table and diffs it against ours
+```
+
+Every defect found late in this build was found by eye, one cell at a time,
+which is slow and misses things. `npm run audit` does it mechanically: it
+rebuilds the table **as the page draws it** — straight from the ruled
+intersections and the words inside them, with none of the extractor's row
+assembly, header roles or footnote logic — and reports every row and value where
+the two disagree.
+
+It compares values per row rather than cell by cell, deliberately. Cell-by-cell
+needs both grids to agree on where every column boundary is, and they do not: a
+narrow rule short enough to read as a cell border drops out of the
+reconstruction, and one missing edge slides everything after it. That reported
+forty wrong cells in correct output twice before the check was rewritten. What
+the brief penalises is a *lost* value, and that survives any disagreement about
+columns.
+
+Current state — the printed page against the committed output:
+
+| Protocol | Rows checked | Rows missing | Value mismatches |
+|---|---|---|---|
+| protocol1 | 30 | 0 | 0 |
+| protocol5 (Appendix I) | 32 | 0 | 0 |
+| protocol5 (Appendix II) | 11 | 1 · a footnote legend, not a row | 0 |
+| protocol9 | 21 | 0 | 3 · see below |
+| protocol12 | 42 | 1 · same row, words reordered | 0 |
+| protocol15 | 37 | 2 · footnote legends | 0 |
+| Prot_000 | 24 | 0 | 0 |
+
+protocol9's three are the audit's own limitation: the page prints "Prior to Day
+4" once, in a cell merged across three days, and we report it on each of the
+three days it covers. The extraction is right and the reconstruction cannot see
+merged cells.
+
 ## Guarding against regression
 
 `npm test` runs twelve checks over the six documents, pinned to counts verified

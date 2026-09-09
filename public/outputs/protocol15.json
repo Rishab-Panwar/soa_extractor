@@ -812,10 +812,6 @@
             {
               "col": "c1",
               "value": "Weekly x 2 weeks"
-            },
-            {
-              "col": "c2",
-              "value": "Weekly x 2 weeks"
             }
           ]
         },
@@ -933,10 +929,6 @@
             {
               "col": "c1",
               "value": "Weekly x 2 weeks"
-            },
-            {
-              "col": "c2",
-              "value": "Weekly x 2 weeks"
             }
           ]
         },
@@ -1012,10 +1004,6 @@
             {
               "col": "c1",
               "value": "Weekly x 2 weeks"
-            },
-            {
-              "col": "c2",
-              "value": "Weekly x 2 weeks"
             }
           ]
         },
@@ -1071,10 +1059,6 @@
             {
               "col": "c1",
               "value": "Weekly x 2 weeks"
-            },
-            {
-              "col": "c2",
-              "value": "Weekly x 2 weeks"
             }
           ]
         },
@@ -1087,7 +1071,7 @@
           "cells": [
             {
               "col": "c2",
-              "value": "3 X/week"
+              "value": "3 X/week for 2 weeks"
             },
             {
               "col": "c3",
@@ -1110,16 +1094,12 @@
               "value": "3 X"
             },
             {
-              "col": "c8",
-              "value": "3 X"
-            },
-            {
               "col": "c9",
               "value": "X"
             },
             {
-              "col": "c1",
-              "value": "3 X/week"
+              "col": "c8",
+              "value": "3 X"
             }
           ]
         },
@@ -1132,7 +1112,7 @@
           "cells": [
             {
               "col": "c2",
-              "value": "3 X/week"
+              "value": "3 X/week for 2 weeks"
             },
             {
               "col": "c3",
@@ -1155,16 +1135,12 @@
               "value": "3 X"
             },
             {
-              "col": "c8",
-              "value": "3 X"
-            },
-            {
               "col": "c9",
               "value": "X"
             },
             {
-              "col": "c1",
-              "value": "3 X/week"
+              "col": "c8",
+              "value": "3 X"
             }
           ]
         },
@@ -1223,10 +1199,6 @@
             },
             {
               "col": "c1",
-              "value": "Weekly x 2 weeks"
-            },
-            {
-              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]

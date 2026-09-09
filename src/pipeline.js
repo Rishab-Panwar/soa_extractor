@@ -186,14 +186,38 @@ export function restoreDividers(reviewed, geometric) {
  */
 export function restoreCells(reviewed, geometric) {
   const key = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-  const isPhrase = (v) => /[a-z]{3}/i.test(String(v || ''));
-
-  const byKey = new Map();
-  for (const column of geometric.columns || []) for (const k of columnKeys(column)) if (!byKey.has(k)) byKey.set(k, column.id);
-  const columnFor = (reviewedColumn) => {
-    for (const k of columnKeys(reviewedColumn)) if (byKey.has(k)) return byKey.get(k);
-    return null;
+  /*
+   * A value that says something beyond "this happens".
+   *
+   * Three letters in a row was the test, and it quietly excluded "X wk 6" —
+   * "wk" is two — so a cell naming the week an assessment falls in was never
+   * treated as a value worth restoring. Abbreviated timing is exactly the kind
+   * of thing these tables carry, so a letter and a digit together count too.
+   */
+  const isPhrase = (v) => {
+    const s = String(v || '').trim();
+    return /[a-z]{3}/i.test(s) || (/[a-z]/i.test(s) && /\d/.test(s) && s.length > 2);
   };
+
+  /*
+   * Every geometric column a reviewed one could be, not just the first.
+   *
+   * Two columns can share a fact: protocol15 heads both Screening and Baseline
+   * "-4 to 0*", and taking the first match sent Screening's cells to Baseline —
+   * so "3 X/week for 2 weeks" was compared against a cell holding "3 X",
+   * decided nothing needed restoring, and the truncated value stayed. The right
+   * one is whichever actually has the value in question.
+   */
+  const byKey = new Map();
+  for (const column of geometric.columns || []) {
+    for (const k of columnKeys(column)) {
+      if (!byKey.has(k)) byKey.set(k, []);
+      byKey.get(k).push(column.id);
+    }
+  }
+  const columnsFor = (reviewedColumn) => [...new Set(
+    columnKeys(reviewedColumn).flatMap((k) => byKey.get(k) || []),
+  )];
 
   let filled = 0;
   for (const row of reviewed.rows || []) {
@@ -206,21 +230,51 @@ export function restoreCells(reviewed, geometric) {
     });
     if (!match) continue;
 
+    // One printed cell belongs to one column. Where the review splits a visit
+    // in two — protocol15 heads two columns "-4 to 0*" — filling both from the
+    // same cell puts a value on the page twice.
+    const spent = new Set();
     for (const column of reviewed.columns || []) {
       // A divider is a boundary between phases; nothing is scheduled in it.
       if (column.divider) continue;
-      const there = columnFor(column);
-      const cell = there && (match.cells || []).find((c) => c.col === there && isPhrase(c.value));
+      const there = columnsFor(column);
+      const cell = there.length
+        && (match.cells || []).find((c) => there.includes(c.col) && isPhrase(c.value) && !spent.has(c));
       if (!cell) continue;
+      spent.add(cell);
       const already = (row.cells || []).find((c) => c.col === column.id);
-      // A mark the review placed is the review's; it is not second-guessed. A
-      // written-out value is copied from the page, so the geometry's reading of
-      // it is the literal one and stands.
-      if (already && !isPhrase(already.value)) continue;
+      /*
+       * A mark the review placed is the review's; it is not second-guessed.
+       *
+       * Except where the geometry holds that same mark with the words that
+       * qualify it — "X" against "X wk 6". That is not a competing reading, it
+       * is the rest of the cell, and keeping the shorter one drops the half
+       * that says when the assessment happens.
+       */
+      const extends_ = already && cell.value.startsWith(already.value) && cell.value.length > already.value.length;
+      if (already && !isPhrase(already.value) && !extends_) continue;
       if (already && already.value === cell.value) continue;
       if (already) already.value = cell.value;
       else row.cells.push({ col: column.id, value: cell.value });
       filled++;
+    }
+
+    /*
+     * A written-out value printed once, held once.
+     *
+     * Where the review splits one visit into two columns, both can end up with
+     * the same phrase — one restored, one left from an earlier pass — and the
+     * row then claims the page says a thing twice. The geometry knows how many
+     * times it is printed, so any copy beyond that count goes.
+     */
+    // Only real prose is policed this way. "3 X" appears legitimately in six
+    // columns of a row, and counting copies of it against the geometry trims
+    // cells that belong there.
+    const spelledOut = (v) => /[a-z]{3}/i.test(String(v || ''));
+    for (const [value, times] of (match.cells || []).filter((c) => spelledOut(c.value))
+      .reduce((m, c) => m.set(c.value, (m.get(c.value) || 0) + 1), new Map())) {
+      const copies = row.cells.filter((c) => c.value === value);
+      for (const spare of copies.slice(times)) row.cells.splice(row.cells.indexOf(spare), 1);
     }
   }
   return filled;
@@ -381,6 +435,24 @@ export async function run(buffer, { maxTables = 3, floor = 12, assist = true, lo
       for (const extra of found.slice(1)) {
         if (!extra.rows?.length || extra.columns?.length < 2) continue;
         extra.id = `t${tables.length + 1}`;
+        /*
+         * Its own pages, not the whole range it was found in.
+         *
+         * A second schedule is read from the same run of pages as the first, so
+         * it inherited that whole range — protocol5's blood-collection appendix
+         * claimed to start on page 50, where only the main schedule is printed.
+         * A reader turning to page 50 to check it finds a different table, and
+         * anything comparing the two is told they occupy the same paper. Where
+         * the review names the pages a row of this table actually sits on, they
+         * are what the table reports.
+         */
+        const range = extra.pages?.length ? extra.pages : (table.pages || []);
+        const title = String(extra.title || '').toLowerCase().slice(0, 24);
+        const at = title ? range.findIndex((n) =>
+          (doc.pages[n - 1]?.lines || []).some((l) => l.text.toLowerCase().includes(title))) : -1;
+        // Row names cannot decide this: an appendix of blood collections repeats
+        // the assessment names of the schedule it follows.
+        if (at > 0) extra.pages = range.slice(at);
         extra.locatorScore = table.locatorScore;
         extra.locatorEvidence = table.locatorEvidence;
         extra.assessment = assess(extra);

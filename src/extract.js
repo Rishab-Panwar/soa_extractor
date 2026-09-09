@@ -1282,7 +1282,26 @@ export function extractTable(pages, { title = '' } = {}) {
       for (const span of spans) {
         for (const band of span.bands) {
           const column = pageColumns.find((c) => c._band === band);
-          if (!column || row.cells.some((c) => c.col === column.id)) continue;
+          if (!column) continue;
+          /*
+           * A cell can hold a mark AND words qualifying it: protocol12 prints
+           * "X wk 6" for an assessment done once, in week 6 of a range, and
+           * dropping the words because the mark got there first loses the half
+           * that says WHEN.
+           *
+           * Only real content is added, though. A footnote marker beside a mark
+           * is a marker, not a value, and appending those turned protocol15's
+           * "X" cells into "X b b b b b". A value says something on its own: it
+           * carries a number, or a word long enough to be a word.
+           */
+          const already = row.cells.find((c) => c.col === column.id);
+          if (already) {
+            const saysSomething = /\d/.test(span.value) || /[a-z]{3}/i.test(span.value);
+            if (saysSomething && !already.value.includes(span.value)) {
+              already.value = `${already.value} ${span.value}`;
+            }
+            continue;
+          }
           row.cells.push({ col: column.id, value: span.value });
         }
       }

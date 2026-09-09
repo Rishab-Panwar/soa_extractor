@@ -835,6 +835,10 @@
               "markers": [
                 "e"
               ]
+            },
+            {
+              "col": "c4",
+              "value": "X b wk 6"
             }
           ]
         },
@@ -1075,7 +1079,7 @@
             },
             {
               "col": "c4",
-              "value": "X"
+              "value": "X wk 6"
             },
             {
               "col": "c7",
