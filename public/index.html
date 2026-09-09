@@ -44,12 +44,6 @@
   .err{background:var(--rose-soft);border:1px solid #f3c1bc;color:var(--rose);
        padding:10px 14px;border-radius:8px;font-size:13px}
 
-  /* ── stat strip ───────────────────────────────────────────── */
-  .stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0}
-  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:104px}
-  .stat b{display:block;font-size:21px;font-weight:650;line-height:1.15}
-  .stat span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim)}
-  .stat.good b{color:var(--teal)} .stat.warn b{color:var(--amber)}
 
   /* ── cards ────────────────────────────────────────────────── */
   .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
@@ -213,21 +207,19 @@ async function send(file) {
 }
 
 function render() {
-  const t0 = result.tables[0];
-  const cells = result.tables.reduce((n, t) => n + t.rows.reduce((m, r) => m + r.cells.length, 0), 0);
-  const notes = result.tables.reduce((n, t) => n + t.ambiguities.length, 0);
-  const stats = !t0 ? '' : `<div class="stats">
-      <div class="stat good"><b>${result.tables.length}</b><span>schedules</span></div>
-      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.columns.length,0)}</b><span>columns</span></div>
-      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.rows.length,0)}</b><span>rows</span></div>
-      <div class="stat"><b>${cells}</b><span>cells</span></div>
-      <div class="stat"><b>${result.tables.reduce((n,t)=>n+t.footnotes.length,0)}</b><span>footnotes</span></div>
-      ${notes ? `<div class="stat"><b>${notes}</b><span>noted</span></div>` : ''}
-    </div>`;
-
+  /*
+   * No strip of totals across the top.
+   *
+   * It summed every schedule in the document into one row of figures, so
+   * protocol5 — which carries a Time and Events table of 11 columns and a
+   * blood-collection appendix of 15 — announced "26 COLUMNS", a number no table
+   * in that protocol has and no reader could use. Each schedule already states
+   * its own count on its own card, beside the pages it came from, where the
+   * figure means something.
+   */
   const hosted = result.hosted && result.hosted.note
     ? `<div class="hostednote">${esc(result.hosted.note)}</div>` : '';
-  $('out').innerHTML = hosted + stats + (result.tables.length
+  $('out').innerHTML = hosted + (result.tables.length
     ? result.tables.map(tableCard).join('')
     : `<div class="card"><div class="body empty"><b>No schedule found.</b><div style="margin-top:6px">
        The locator scored every page and none looked like a Schedule of Activities.
