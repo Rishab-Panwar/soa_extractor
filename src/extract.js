@@ -492,20 +492,41 @@ function continueHeading(values, cells, bands, reach) {
   // lands within a column's width of what the previous one just extended, so all
   // four fuse into "Visit 0 Visit 1 Visit 1.1 Visit 2" in a single column.
   const before = [...values.values()].map((v) => ({ value: v, x0: v.x0, x1: v.x1 }));
+  // Word by word, a wrapped qualifier wider than one column is torn up between
+  // its neighbours: Prot_111 continues "At discharge" with "If discharged
+  // before +/- 3 days", and the three columns under it came out named "At
+  // discharge If discharged before", "Week 4 +/ -" and "Week 8 3 days". The
+  // words of a phrase sit a space apart and the columns sit a column apart, so
+  // the phrase is gathered first and placed whole, by where it begins.
+  const phrases = [];
   for (const word of [...cells].sort((a, b) => a.x - b.x)) {
-    const middle = centre(word);
+    const open = phrases[phrases.length - 1];
+    if (open && word.x - open.x1 <= reach * 0.3) {
+      open.words.push(word);
+      open.x1 = Math.max(open.x1, word.x + word.w);
+    } else phrases.push({ words: [word], x0: word.x, x1: word.x + word.w });
+  }
+  for (const phrase of phrases) {
+    // From where it starts, not from its middle: a qualifier reaching across
+    // three columns belongs to the one it begins under.
+    const from = phrase.words.length > 1 ? phrase.x0 : centre(phrase.words[0]);
     let nearest = null;
     let best = Infinity;
     for (const { value, x0, x1 } of before) {
-      const gap = middle < x0 ? x0 - middle : middle > x1 ? middle - x1 : 0;
+      const gap = from < x0 ? x0 - from : from > x1 ? from - x1 : 0;
       if (gap < best) { best = gap; nearest = value; }
     }
     // Beyond about a column's width it is not a continuation of that heading —
     // it is a heading of its own that the line above happened not to print.
-    if (!nearest || best > reach) { placeCells(values, [word], bands, (a, b) => `${a} ${b}`); continue; }
-    nearest.text = joinWrapped(nearest.text, clean(word.text));
-    nearest.x0 = Math.min(nearest.x0, word.x);
-    nearest.x1 = Math.max(nearest.x1, word.x + word.w);
+    if (!nearest || best > reach) {
+      placeCells(values, phrase.words, bands, (a, b) => `${a} ${b}`);
+      continue;
+    }
+    for (const word of phrase.words) {
+      nearest.text = joinWrapped(nearest.text, clean(word.text));
+      nearest.x0 = Math.min(nearest.x0, word.x);
+      nearest.x1 = Math.max(nearest.x1, word.x + word.w);
+    }
   }
 }
 
@@ -862,6 +883,36 @@ function readHeader(rows, bands, firstDataY, page) {
   // which is what sends the check below back to reading the words.
   const topEdge = edges.length >= 3 ? edges[0] : null;
 
+  /*
+   * The header a sponsor prints ABOVE the box it drew.
+   *
+   * Prot_111 rules its table from y142 down and sets the line that names every
+   * column — "Day 0 · Day 0 · Day 0-3 · Daily · At discharge · Week 4 · Week 8"
+   * — at y118, outside its own border, with the qualifiers under it. Cut at the
+   * top edge, the only heading left inside the box is the third line, and all
+   * seven columns were named "Control arm", "(<72h)" or "day 28/56".
+   *
+   * A running head cannot be told from this by where it sits: "Page 44 of 97"
+   * is three points above Prot_000's top edge, closer than anything here. It
+   * can be told by how much of the table it describes. A header row reaches the
+   * columns — this one reaches all seven — and a running head reaches two of
+   * eighteen and stops. So a line above the edge is admitted only if it reaches
+   * at least half the columns, and only while each line touches the one below
+   * it: one gap and the rest of the page is the page.
+   */
+  const admitted = new Set();
+  if (topEdge !== null) {
+    let reach = topEdge;
+    const above = rows.filter((r) => r.bottom <= topEdge + 2).sort((a, b) => b.y - a.y);
+    for (const row of above) {
+      if (reach - row.bottom > Math.max(row.bottom - row.y, 6) * 1.5) break;
+      const cells = [...row.marks, ...row.other].filter((w) => columnFor(w, bands));
+      if (new Set(cells.map((w) => columnFor(w, bands).id)).size * 2 < bands.length) break;
+      admitted.add(row);
+      reach = row.y;
+    }
+  }
+
   const header = [];
   for (const row of rows) {
     if (row.y >= firstDataY) break;
@@ -879,7 +930,9 @@ function readHeader(rows, bands, firstDataY, page) {
      * table, whatever it happens to say. The word list stays only for pages
      * that draw no rules at all.
      */
-    if (topEdge !== null ? row.y < topEdge - 2 : PAGE_FURNITURE.test(row.text || '')) continue;
+    if (topEdge !== null
+      ? (row.y < topEdge - 2 && !admitted.has(row))
+      : PAGE_FURNITURE.test(row.text || '')) continue;
 
     // The left-hand text of a header line counts as that line's caption only
     // when it names a dimension. The table's own title is frequently set INSIDE
@@ -1204,9 +1257,14 @@ export function extractTable(pages, { title = '' } = {}) {
     const pageColumns = bands.map((band, i) => {
       const facts = {};
       const path = [];
+      // Every heading over this column, top line first — which is the order a
+      // reader takes them in, and so the order to name the column from when no
+      // heading names the visits outright.
+      const headings = [];
       for (const h of header) {
         const value = h.values.get(band.id)?.text;
         if (!value) continue;
+        headings.push(value);
         if (h.role && !facts[h.role]) facts[h.role] = value;
         else path.push(value);
       }
@@ -1217,7 +1275,13 @@ export function extractTable(pages, { title = '' } = {}) {
 
       return {
         id: `p${page.number}c${i + 1}`,
-        label: facts.visitName || facts.visitNumber || facts.period || path[0] || `Column ${i + 1}`,
+        // Falling back to the first heading, not to the first UNCLAIMED one.
+        // Prot_111 names its columns by timepoint — "Day 0", "Week 4" — which
+        // is a day row, so the day claims it and the fallback was left with
+        // whatever qualifier the sponsor set underneath: four of its seven
+        // columns came out called "day 28/56".
+        label: facts.visitName || facts.visitNumber || facts.period
+          || headings[0] || `Column ${i + 1}`,
         path,
         visitNumber: facts.visitNumber || null,
         studyDay: facts.studyDay || null,
