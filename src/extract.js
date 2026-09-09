@@ -967,10 +967,22 @@ function readHeader(rows, bands, firstDataY, page) {
  */
 const PAGE_FURNITURE = /(?:^|\s)(?:page\s+\d{1,4}\s*$|copyright|©\s*\d{4}|version\s*(?:no\.?|number)?\s*[:.]?\s*\d|confidential|clinical\s+study\s+protocol|protocol\s+(?:no\.?|number)\s*[:.]?)/i;
 
+/** Whether one marker takes the place directly after another: a→b, 3→4. */
+function follows(marker, previous) {
+  if (!previous) return false;
+  const from = String(previous).toLowerCase().replace(/^x/, '');
+  const to = String(marker).toLowerCase().replace(/^x/, '');
+  if (!/^[a-z0-9]$/.test(from) || !/^[a-z0-9]$/.test(to)) return false;
+  // Letters follow letters and digits follow digits; "9" does not follow "i".
+  if (/\d/.test(from) !== /\d/.test(to)) return false;
+  return to.charCodeAt(0) === from.charCodeAt(0) + 1;
+}
+
 /** Footnote definitions on a page, including lines that continue one. */
-export function readFootnotes(page, fromY = 0, plausible = null) {
+export function readFootnotes(page, fromY = 0, plausible = null, after = null) {
   const found = [];
   let current = null;
+  let previous = after;
   for (const line of page.lines) {
     if (line.y < fromY) continue;
     const text = clean(line.text);
@@ -999,11 +1011,18 @@ export function readFootnotes(page, fromY = 0, plausible = null) {
       !plausible
       || plausible.has(key) || (bare && plausible.has(bare))
       || LEGEND_MARK.test(marker)
-      // A single character is the ordinary shape of a footnote marker. Two
-      // letters is the shape of a word, and "be recorded..." is not a footnote.
-      || /^[a-z0-9]$/i.test(marker)
+      // A footnote the grid does not appear to mark is still a footnote if it
+      // takes the next place in the block's own sequence: "a b c" then "d".
+      // Not every marker survives into the cells — a superscript can sit on a
+      // word the reader never sees as a label — and the list itself is then
+      // the only evidence the marker is real. Continuing a sequence is the
+      // whole test, never starting one, so the numbered narrative that follows
+      // a schedule cannot open a block of its own: its "1." has nothing to
+      // continue, and once that is refused its "2." has nothing either.
+      || follows(marker, previous)
     );
     if (m && believable && text.length > 3) {
+      previous = marker;
       if (current) found.push(current);
       current = {
         marker,
@@ -1011,11 +1030,22 @@ export function readFootnotes(page, fromY = 0, plausible = null) {
         text: clean(m.groups.text),
         page: page.number,
         continued: false,
+        height: line.height,
       };
     } else if (current) {
       // The block has ended if this line is page furniture; everything after it
       // belongs to the page, not to the footnote.
       if (PAGE_FURNITURE.test(text)) { found.push(current); current = null; continue; }
+      // Or if the type gets bigger. Sponsors set footnotes smaller than the
+      // body — protocol12 prints its block at 10pt and the narrative that
+      // follows at 12 — so a line in larger type is where the schedule's
+      // apparatus stops and the protocol resumes. Without this the paragraphs
+      // after a schedule wrap themselves onto the last footnote: one of them
+      // grew from 1,000 characters to 1,770 that way, all of it prose about
+      // something else.
+      if (current.height && line.height > current.height + 0.5) {
+        found.push(current); current = null; continue;
+      }
       current.text = `${current.text} ${text}`.trim();
     }
   }
@@ -1341,14 +1371,45 @@ export function extractTable(pages, { title = '' } = {}) {
 
   // Markers the document actually printed on its cells and row labels.
   const plausible = new Set();
+  // Case-sensitively, and deliberately: this pattern is built around the "X"
+  // a schedule marks a cell with, so "Xb" must read as the marker "b" printed
+  // on an X. Matched without regard to case it reads as the marker "xb", which
+  // is not a marker at all, and the footnote that defines b goes unrecognised.
   const TRAILING = /(?:^|[Xx0-9)s])([a-z]{1,2}|[*†‡§¶#]{1,3})$/;
+  // A superscript that follows an ordinary word arrives with a space in front
+  // of it — "Physical examination d", "Week 4 a". Only one character counts
+  // there: two letters after a space is the last word of the label, and
+  // treating "Vital signs" as marker "ns" would let anything into the block.
+  // Case-insensitively: protocol1 marks four of its rows with a capital "P"
+  // and defines "P = Practice only" under the table.
+  const SPACED = /\s([a-z]|[*†‡§¶#]{1,3})$/i;
+  // And a cell whose whole value is one letter is marking that visit with it.
+  // protocol1 writes "P" in four cells and defines "P = Practice only" under
+  // the table; nothing about "P" trails anything, so neither pattern above can
+  // see it and the legend it belongs to went unread.
+  const WHOLE = /^([a-z]|[*†‡§¶#]{1,3})$/i;
+  const markersOf = (text, whole = false) => {
+    const t = clean(text);
+    const found = [TRAILING.exec(t), SPACED.exec(t)];
+    if (whole) found.push(WHOLE.exec(t));
+    return found.filter(Boolean).map((m) => m[1].toLowerCase());
+  };
+  // Column headings carry markers too — "Week 4 a", "Screening b" — and a
+  // footnote that qualifies a visit rather than an assessment is defined in the
+  // same block as the rest. Reading only the rows would leave it unaccounted
+  // for, and the block would end at the first footnote that names a visit.
+  for (const column of columns) {
+    for (const marker of column.markers || []) plausible.add(marker.toLowerCase());
+    for (const field of [column.label, column.window, column.visitName, column.studyDay]) {
+      for (const marker of markersOf(field || '')) plausible.add(marker);
+    }
+  }
   for (const row of rowOrder) {
-    const fromLabel = TRAILING.exec(clean(row.label));
-    if (fromLabel) plausible.add(fromLabel[1].toLowerCase());
+    for (const marker of row.markers || []) plausible.add(marker.toLowerCase());
+    for (const marker of markersOf(row.label)) plausible.add(marker);
     for (const cell of row.cells) {
       for (const marker of cell.markers || []) plausible.add(marker.toLowerCase());
-      const fromCell = TRAILING.exec(clean(cell.value));
-      if (fromCell) plausible.add(fromCell[1].toLowerCase());
+      for (const marker of markersOf(cell.value, true)) plausible.add(marker);
     }
   }
   // Markers are unique within a table: "a, b, c" then "a" again is a second
@@ -1357,7 +1418,10 @@ export function extractTable(pages, { title = '' } = {}) {
   // marker repeats, the footnote block has ended and the rest is prose.
   const claimed = new Set();
   for (const { page, fromY, spilled } of footnotePages) {
-    for (const f of readFootnotes(page, fromY, plausible)) {
+    // The sequence runs on across a page break: the block that reaches "g" at
+    // the foot of one page carries on at "h" on the next.
+    const last = allFootnotes.length ? allFootnotes[allFootnotes.length - 1].marker : null;
+    for (const f of readFootnotes(page, fromY, plausible, last)) {
       const key = f.marker.toLowerCase();
       if (claimed.has(key)) {
         // Not a footnote — but it may be the continuation of the last one.

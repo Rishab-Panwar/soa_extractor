@@ -174,3 +174,35 @@ test('lines inside one ruled header cell are one header row', async (t) => {
   // And no visit identifier ended up filed as a visit window.
   assert.equal(table.columns.filter((c) => /visit/i.test(c.window || '')).length, 0);
 });
+
+test('the numbered narrative after a schedule is not read as footnotes', async (t) => {
+  if (!existsSync(at('protocol12')) || !existsSync(at('protocol5'))) return t.skip('protocols not present');
+  // Both documents set a numbered list of prose immediately after the
+  // schedule, and both had it read as footnotes 1..6 — thousands of characters
+  // about eligibility filed under a table that never refers to them. A footnote
+  // marker has to be one the grid prints, or take the next place in the block's
+  // own sequence; "1." after "j" does neither, and once it is refused its "2."
+  // has nothing to continue either.
+  for (const name of ['protocol12', 'protocol5']) {
+    const result = await run(readFileSync(at(name)), { assist: false });
+    const numbered = result.tables[0].footnotes.filter((f) => /^\d+$/.test(f.marker));
+    assert.deepEqual(numbered.map((f) => f.marker), [], `${name} invents no numbered footnotes`);
+  }
+  // And the last real one stops where the prose starts, instead of absorbing it.
+  const twelve = await run(readFileSync(at('protocol12')), { assist: false });
+  const last = twelve.tables[0].footnotes.find((f) => f.marker === 'J');
+  assert.ok(last, 'footnote J is still read');
+  assert.ok(!/eligibility requirements/.test(last.text), 'and it does not swallow the paragraph after it');
+});
+
+test('a legend marker the grid writes as a whole cell is read', async (t) => {
+  if (!existsSync(at('protocol1'))) return t.skip('protocol1.pdf not present');
+  // protocol1 writes "P" into four cells and defines "P = Practice only" under
+  // the table. Nothing trails anything — the marker IS the cell — so the
+  // patterns that find "Xa" and "examination d" cannot see it, and the legend
+  // it belongs to was being appended to the footnote above it instead.
+  const result = await run(readFileSync(at('protocol1')), { assist: false });
+  const legend = result.tables[0].footnotes.find((f) => f.marker === 'P');
+  assert.ok(legend, 'the P legend is read as its own footnote');
+  assert.match(legend.text, /^Practice only/);
+});

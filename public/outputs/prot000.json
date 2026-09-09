@@ -209,9 +209,7 @@
           "studyDay": "2",
           "studyWeek": null,
           "window": null,
-          "markers": [
-            "1"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -339,9 +337,7 @@
           "studyDay": "72",
           "studyWeek": null,
           "window": null,
-          "markers": [
-            "1"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -405,9 +401,7 @@
           "studyDay": "90",
           "studyWeek": null,
           "window": "±2",
-          "markers": [
-            "1"
-          ],
+          "markers": [],
           "pages": [
             44,
             45
@@ -931,9 +925,7 @@
           "kind": "assessment",
           "label": "Blood sampling for anti-TJ301 antibodies",
           "category": null,
-          "markers": [
-            "1"
-          ],
+          "markers": [],
           "cells": [
             {
               "col": "p44c4",
@@ -1504,34 +1496,6 @@
             {
               "target": "row",
               "row": "r29"
-            }
-          ]
-        },
-        {
-          "marker": "1",
-          "printed": "1",
-          "kind": "footnote",
-          "text": "st dose 2 nd -5 th dose 6th dose Dose (day) Day 0 Day 14,28,42,56 Day 70 Day 105 Pre-dose End of dose Pre-dose End of dose Pre-dose End of study PK Subgroup: -1~0 0.5 1 2 6 48 144 240 -1~0 2 -1~0 0.5 1 2 6 48 144 240 336 480 840 All patients: ADA Sampling （ h ） -1~0(Day 0) -1~0(Day14,28,56) 336(Day 84) 840(Day105) All patients: Biomarker Sampling(h) -1~0(Day 0) -1~0(Day28, 56) 336(Day 84) Figure 5 PK, Anti-TJ301 Antibodies and Biomarker Samples Schedule",
-          "pages": [
-            47
-          ],
-          "continued": true,
-          "appliesTo": [
-            {
-              "target": "row",
-              "row": "r20"
-            },
-            {
-              "target": "column",
-              "column": "p44c5"
-            },
-            {
-              "target": "column",
-              "column": "p44c13"
-            },
-            {
-              "target": "column",
-              "column": "p44c17"
             }
           ]
         }
@@ -2195,5 +2159,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-09T22:54:10.933Z"
+  "extractedAt": "2026-09-09T23:09:40.233Z"
 }
