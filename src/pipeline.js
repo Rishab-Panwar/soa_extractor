@@ -486,7 +486,7 @@ export async function run(buffer, {
       log('assist', `${table.id}: confidence ${table.assessment.confidence} (${table.assessment.findings.filter((f) => f.severity === 'high').map((f) => f.check).join(', ')}); reviewing pages ${table.pages.join(', ')}`);
       // And abandoned if it overruns anyway, so the reading below survives.
       const found = await Promise.race([
-        secondOpinion(pages, { geometric: table, log }),
+        secondOpinion(pages, { geometric: table, log, budgetMs: left }),
         new Promise((resolve) => { setTimeout(() => resolve('timeout'), Math.max(1000, left - 6000)).unref?.(); }),
       ]);
       if (found === 'timeout') {

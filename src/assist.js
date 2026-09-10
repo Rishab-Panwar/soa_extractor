@@ -65,6 +65,42 @@ function provider() {
 
 const modelId = () => provider().model;
 
+/*
+ * What to ask for when there is a clock running.
+ *
+ * The default is Sonnet with adaptive thinking and room for a long answer,
+ * which is the right shape when nothing is waiting: the model reasons about a
+ * stacked header for as long as it needs. Under a hard deadline it is the wrong
+ * shape entirely — a review that would have been good takes ninety seconds and
+ * is thrown away at fifty-five, so the request is billed and the answer is
+ * never seen.
+ *
+ * Asked in haste, the same work goes to a fast model with the thinking turned
+ * off. That trade is only defensible because of what happens downstream: every
+ * value the model returns is checked against the words actually on the page, so
+ * a weaker reading costs a missed cell, never an invented one. A missed cell
+ * inside the budget beats a perfect one that arrives after the door is shut.
+ */
+// Read when asked, not when this module loads: .env is applied after the
+// imports are evaluated, so anything captured up here misses it.
+const hasteModel = () => process.env.SOA_FAST_MODEL || 'claude-haiku-4-5-20251001';
+function shape(budgetMs) {
+  const rushed = Number.isFinite(budgetMs) && budgetMs < 90_000;
+  if (!rushed) {
+    return {
+      model: modelId(),
+      max_tokens: 16000,
+      thinking: { type: 'adaptive' },
+      output_config: { effort: process.env.SOA_EFFORT || 'medium', format: FORMAT },
+    };
+  }
+  return {
+    model: hasteModel(),
+    max_tokens: 8000,
+    output_config: { format: FORMAT },
+  };
+}
+
 /** Dollars per million tokens, so a run can report what it actually cost. */
 const RATES = {
   'claude-opus-5': [5, 25],
@@ -400,12 +436,10 @@ ${body}`;
     }
 
     const client = new Anthropic();
+    const asked = shape(options.budgetMs);
     const response = await client.messages.parse({
-      model: modelId(),
-      max_tokens: 16000,
+      ...asked,
       system: SYSTEM,
-      thinking: { type: 'adaptive' },
-      output_config: { effort: process.env.SOA_EFFORT || 'medium', format: FORMAT },
       messages: [{
         role: 'user',
         content: `Rebuild the Schedule of Activities from these pages.${context}\n\n${body}`,
@@ -428,14 +462,16 @@ ${body}`;
       rejected += validate(table, vocabulary).rejected;
       table.pages = pages.map((p) => p.number);
       table.source = 'second-opinion';
-      table.model = modelId();
+      // The model that actually answered, not the one configured — under a
+      // deadline these differ, and the table says which read it.
+      table.model = asked.model;
     }
     const cost = priceOf(cfg.model, {
       input: response.usage?.input_tokens ?? 0,
       output: response.usage?.output_tokens ?? 0,
     });
     if (cost) found[0].usage = cost;
-    log('assist', `${modelId()} returned ${found.length} table(s): `
+    log('assist', `${asked.model} returned ${found.length} table(s): `
       + found.map((t) => `${t.columns.length}×${t.rows.length}`).join(', ')
       + (rejected ? `, ${rejected} unsupported value(s) discarded` : '')
       + (cost ? `  [${cost.input} in / ${cost.output} out = ${cost.dollars.toFixed(4)}]` : ''));
