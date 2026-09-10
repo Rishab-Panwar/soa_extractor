@@ -27,20 +27,24 @@ schedule from 11 columns to the 18 it actually has.
 
 Every figure below was checked against the source PDF.
 
-| Protocol | Schedule | Read by | Columns | Rows | Footnotes |
-|---|---|---|---|---|---|
-| protocol1 | Schedule of Events | geometry | 14 | 28 | 4 |
-| protocol5 | Appendix I — Time and Events | review | 11 | 31 | 10 |
-| protocol5 | Appendix II — Blood Collections | review | 15 | 8 | 2 |
-| protocol9 | Table 4 — Schedule of Measures | review | 11 | 39 | 6 |
-| protocol12 | Table 3 — Overview of Assessments | review | 9 | 40 | 14 |
-| protocol15 | Table 1 — Overview of Assessments | review | 10 | 34 | 5 |
-| Prot_000 (held out) | Table 1 — Time and Events | geometry | 18 | 29 | 12 |
+| Protocol | Schedule it finds |
+|---|---|
+| protocol1 | Schedule of Events |
+| protocol5 | Appendix I — Time and Events |
+| protocol9 | Table 4 — Schedule of Measures and Data Collection |
+| protocol12 | Table 3 — Overview of Study Assessments |
+| protocol15 | Table 1 — Overview of Study Assessments |
+| Prot_000 (held out) | Table 1 — Time and Events Schedule |
+| 3041835, Prot_111 (unseen) | 5.5 Schedule of Events · 11. Schedule of visits |
 
-protocol5 is listed twice because it carries **two** schedules, and both are
-extracted: the main Time and Events table, and a separate blood-collection
-appendix with its own grid. Finding the second one rather than running it into
-the first is a requirement the brief names explicitly.
+Every one of those is found by title and page, in documents of 61 to 97 pages,
+with no page number given to it.
+
+One thing the rules do **not** yet do: protocol5 carries a second schedule, a
+blood-collection appendix with its own grid on the page its footnotes spill
+onto, and the rule-based reader finds only the first. With a review configured
+it finds both. That is a real gap and it is measured rather than described —
+`npm run audit` reports the appendix's grid as another table's and says so.
 
 The rule-based path alone — no key, no network, no cost — now reads every one of
 them with **no unnamed column and no unlabelled row**:
@@ -107,7 +111,6 @@ eight documents here, seven never reach it. Without the log there is no telling
 ## Deploying it
 
 ```bash
-npm run sync-outputs     # copy outputs/ to the page's public/outputs/
 npx vercel               # or push to a repo and import it at vercel.com
 ```
 
@@ -124,9 +127,17 @@ reasons, and both are constraints rather than preferences:
 
 So the deployment reads the protocol, reports its confidence, and says plainly
 when a table is one its own checks do not trust — with the note that running the
-tool locally with a key sends those pages for a second opinion. The five
-committed outputs are loadable from the page, clearly labelled as committed
-results rather than as the product.
+tool locally with a key sends those pages for a second opinion.
+
+**There are no pre-computed outputs any more, and their removal is the point.**
+The page used to offer six committed results beside the drop zone. They were
+produced by a model review, so they were richer than a fresh read — and they
+drifted from it. A column the reader was deleting was held correctly in the
+committed file; a phase band the reader had learnt to place was still wrong in
+it. Worse, the audit read those files and nothing else, so it reported the
+documents clean while the thing a reviewer actually exercises was broken. Two
+artefacts that can disagree, with the check pointed at the one nobody runs, is a
+class of bug with nothing to recommend it. What is measured is now what ships.
 
 Set `SOA_ALLOW_REVIEW=1` plus a key in the Vercel project to enable reviews
 there, accepting both consequences above.
@@ -477,7 +488,7 @@ The review now retries once before giving up.
 ## Checking the output against the page
 
 ```bash
-npm run audit                       # every document, BOTH readings
+npm run audit                       # every document, read fresh and compared
 node scripts/audit.mjs protocol9    # one of them, in full
 node scripts/audit.mjs ../any.pdf   # a document that is not in this repo:
                                     # extracted on the spot, then compared
@@ -516,7 +527,7 @@ what it is centred over, which put week 12 under Follow-up.
 
 | Checked against the printed page | Count | Result |
 |---|---|---|
-| Rows and their values, every page, both readings | **546 rows** | 2 rows the rules leave out |
+| Rows and their values, every page | **273 rows** | 2 rows the rules leave out |
 | Every cell, in the column the page prints it in | every paired column | 2 reports, both traced |
 | Column headings, every page | **127 headings** | 0 unaccounted for |
 | Footnote text, whole | **53 footnotes** | 0 not found on the page |
@@ -697,5 +708,4 @@ src/pipeline.js   the sequence the CLI and UI share
 src/server.js     the UI server (no framework, no build step)
 src/ui.html       upload, rendered grid, clickable footnote linkage
 src/cli.js        batch extraction to outputs/
-outputs/          committed output for all five protocols
 ```

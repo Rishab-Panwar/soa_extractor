@@ -144,38 +144,31 @@ const targets = adhoc
   : Object.entries(SOURCES);
 let problems = 0;
 
-/*
- * Both readings of every document, not just the committed one.
- *
- * This script read `public/outputs/*.json` and nothing else, and those carry a
- * model review. So it checked the FILES and never the reader — while a reviewer
- * dropping a PDF into the UI gets the rule-based path, which is a different
- * answer. A bug living only there was invisible to every run of this audit, and
- * one did: protocol15's Treatment Week 1-3 column was being deleted outright by
- * the live reader while the committed file held it correctly, and this reported
- * the document clean for as long as that was true.
- *
- * Each document is now audited twice — as committed, and as the reader produces
- * it today — because those are two different claims and both get made.
- */
 const readings = [];
 for (const [name, pdf] of targets) {
   if (!adhoc && only && name !== only) continue;
   if (!have(pdf)) { console.log(`${name}: ${pdf} not present — skipped`); continue; }
-  if (!adhoc) readings.push([`${name} (as committed)`, name, pdf, 'committed']);
-  readings.push([`${name} (as read today)`, name, pdf, 'live']);
+  readings.push([name, name, pdf, 'live']);
 }
 
-for (const [title, name, pdf, how] of readings) {
-  let doc;
-  if (how === 'live') {
-    const { run } = await import(pathToFileURL(resolve('src/pipeline.js')).href);
-    doc = await run(readFileSync(pdf), { assist: false });
-    console.log(`\n### ${title} — rules only, extracted here: ${doc.tables.length} schedule(s)`);
-  } else {
-    doc = JSON.parse(readFileSync(`public/outputs/${name}.json`, 'utf8'));
-    console.log(`\n### ${title}`);
-  }
+/*
+ * The reader, always — there is nothing else left to check.
+ *
+ * This used to read `public/outputs/*.json`, files carrying a model review, and
+ * for most of the build that was ALL it read: it checked the files and never
+ * the reader, while anyone dropping a PDF into the UI got the rule-based path.
+ * A bug living only there was invisible to it, and one did — protocol15's
+ * Treatment Week 1-3 column was being deleted outright while the committed file
+ * held it correctly, and every run called the document clean.
+ *
+ * Those files are gone now: two artefacts that can disagree is a class of bug
+ * with nothing to recommend it, and the one a reviewer actually exercises is
+ * the reader. So every run extracts, and what is measured is what ships.
+ */
+for (const [title, name, pdf] of readings) {
+  const { run } = await import(pathToFileURL(resolve('src/pipeline.js')).href);
+  const doc = await run(readFileSync(pdf), { assist: false });
+  console.log(`\n### ${title} — ${doc.tables.length} schedule(s), read from the page`);
   const { pages } = await readPdf(readFileSync(pdf));
 
   for (const table of doc.tables) {

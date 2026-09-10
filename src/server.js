@@ -56,19 +56,6 @@ function body(request, limit = 80 * 1024 * 1024) {
 
 const server = createServer(async (request, response) => {
   try {
-    // Serve the committed outputs so the sample buttons work locally too.
-    if (request.method === 'GET' && request.url.startsWith('/outputs/')) {
-      const name = request.url.slice('/outputs/'.length).replace(/[^a-zA-Z0-9._-]/g, '');
-      try {
-        const file = await readFile(fileURLToPath(new URL('../public/outputs/' + name, import.meta.url)));
-        response.writeHead(200, { 'content-type': 'application/json' });
-        response.end(file);
-      } catch {
-        response.writeHead(404); response.end('not found');
-      }
-      return;
-    }
-
     if (request.method === 'GET' && (request.url === '/' || request.url.startsWith('/?'))) {
       response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
       response.end(await readFile(page));

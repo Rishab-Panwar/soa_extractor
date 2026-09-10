@@ -148,16 +148,6 @@
     <div class="big">Drop a protocol PDF here, or click to choose</div>
     <div class="sub">80–250 pages is normal. Landscape and rotated pages are handled.</div>
   </label>
-  <div class="samples">
-    <span>Or open a pre-computed output:</span>
-    <button class="btn sample" data-sample="protocol1">protocol1</button>
-    <button class="btn sample" data-sample="protocol5">protocol5</button>
-    <button class="btn sample" data-sample="protocol9">protocol9</button>
-    <button class="btn sample" data-sample="protocol12">protocol12</button>
-    <button class="btn sample" data-sample="protocol15">protocol15</button>
-    <button class="btn sample" data-sample="prot000">Prot_000 (unseen)</button>
-    <span class="muted">These are committed results, not the product — drop in a protocol above to see the tool run.</span>
-  </div>
   <div class="status" id="status"></div>
   <div id="out"></div>
 </main>
@@ -172,23 +162,6 @@ const drop = $('drop');
 ['dragleave','drop'].forEach((e) => drop.addEventListener(e, () => drop.classList.remove('over')));
 drop.addEventListener('drop', (ev) => { ev.preventDefault(); if (ev.dataTransfer.files[0]) send(ev.dataTransfer.files[0]); });
 $('file').addEventListener('change', (ev) => { if (ev.target.files[0]) send(ev.target.files[0]); });
-
-for (const button of document.querySelectorAll('button[data-sample]')) {
-  button.addEventListener('click', async () => {
-    const name = button.dataset.sample;
-    $('out').innerHTML = '';
-    $('status').innerHTML = `<span class="spinner"></span> loading ${name}…`;
-    try {
-      const response = await fetch(`outputs/${name}.json`);
-      if (!response.ok) throw new Error(`no committed output for ${name}`);
-      result = await response.json();
-      $('status').innerHTML = `<b>${name}.pdf</b> · committed output · ${result.pageCount} pages searched · ${result.tables.length} schedule(s)`;
-      render();
-    } catch (error) {
-      $('status').innerHTML = `<div class="err">${esc(error.message)}</div>`;
-    }
-  });
-}
 
 async function send(file) {
   $('out').innerHTML = '';
