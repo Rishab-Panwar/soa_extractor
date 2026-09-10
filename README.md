@@ -110,12 +110,13 @@ eight documents here, seven never reach it. Without the log there is no telling
 
 ## Deploying it
 
-```bash
-npx vercel               # or push to a repo and import it at vercel.com
-```
+Import the repository at vercel.com and press deploy — there is nothing to
+configure. `vercel.json` names `public/` as the site and `api/extract.js` as the
+endpoint, and rewrites `/extract` onto it, so the hosted page and the local
+server answer the same URL with the same code. A custom domain is two fields in
+the project's Domains tab.
 
-`public/index.html` is the page and `api/extract.js` the endpoint; the local
-server serves the same file, so what you test is what ships.
+Live at **soa.rishabai.me**.
 
 **The hosted version runs the geometric reader only, deliberately.** Two
 reasons, and both are constraints rather than preferences:
