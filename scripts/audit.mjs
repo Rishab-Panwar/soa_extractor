@@ -163,18 +163,68 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
     const headerRows = firstData > 0 ? grid.matrix.slice(0, firstData) : [];
     const headOf = (c) => key(headerRows.map((r) => r[c]).filter(Boolean).join(' '));
 
-    const mineHere = [];
-    const unmatched = [];
+    /*
+     * One printed column to one of ours, and never the same one twice.
+     *
+     * The "already taken" test used to read `!mineHere[i]`, where `i` indexes
+     * table.columns and mineHere is indexed by printed position — two different
+     * spaces, so it never excluded anything. One of our columns could be paired
+     * with every printed column at once, which is how a fifteen-visit page came
+     * to report every cell against a column called "9".
+     */
+    /*
+     * Paired by WHAT EACH COLUMN CONTAINS, with the heading only as a tiebreak.
+     *
+     * Headings were tried first and are not up to it: they repeat ("Clinical
+     * review" four times), abbreviate differently on a continuation page, and
+     * collapse to a bare number that matches anything it appears inside. Exact
+     * matching left fourteen columns of one page unpaired and therefore
+     * unchecked, which is the same blindness in a politer form.
+     *
+     * A column's real identity on a page is the set of assessments marked in
+     * it. Two visits almost never carry the same set, the set survives any
+     * disagreement about headings, and — the point of the whole exercise — a
+     * single cell in the wrong column shifts one member of a set of many, so
+     * the best-overlap pairing still lands and the stray cell is left over as
+     * the report.
+     */
+    const rowsOnPage = grid.matrix
+      .map((r) => ({ row: ours.get(key(r.slice(0, labelCols).filter(Boolean).join(' '))), cells: r }))
+      .filter((r) => r.row);
+    const printFinger = new Map(drawn.map((c) =>
+      [c, new Set(rowsOnPage.filter((r) => r.cells[c]).map((r) => r.row.id))]));
+    const mineFinger = new Map(table.columns.map((col) =>
+      [col.id, new Set(rowsOnPage.filter((r) => r.row.cells.some((x) => x.col === col.id)).map((r) => r.row.id))]));
+
+    const scores = [];
     for (const c of drawn) {
-      const head = headOf(c);
-      const found = head && table.columns.find((col, i) => !mineHere[i]
-        && [col.label, col.studyDay, col.studyWeek, col.visitNumber, ...(col.path || [])]
-          .some((v) => v && (head.includes(key(v)) || key(v).includes(head)) && key(v).length > 1));
-      if (found) mineHere[drawn.indexOf(c)] = found;
-      else unmatched.push(c);
+      for (const col of table.columns) {
+        const a = printFinger.get(c);
+        const b = mineFinger.get(col.id);
+        if (!a.size && !b.size) continue;
+        const shared = [...a].filter((id) => b.has(id)).length;
+        const union = new Set([...a, ...b]).size;
+        // The heading breaks a tie between two visits marked identically; it
+        // never makes a pairing on its own.
+        const agrees = [col.label, col.studyDay, col.studyWeek, col.visitNumber, ...(col.path || [])]
+          .some((v) => v && key(v).length > 1 && headOf(c) && key(v) === headOf(c));
+        scores.push({ c, col, score: (union ? shared / union : 0) + (agrees ? 0.01 : 0) });
+      }
     }
+    scores.sort((p, q) => q.score - p.score);
+
+    const mineHere = [];
+    const taken = new Set();
+    const usedPrinted = new Set();
+    for (const { c, col, score } of scores) {
+      if (score <= 0 || taken.has(col.id) || usedPrinted.has(c)) continue;
+      mineHere[drawn.indexOf(c)] = col;
+      taken.add(col.id);
+      usedPrinted.add(c);
+    }
+    const unmatched = drawn.filter((c) => !usedPrinted.has(c));
     if (unmatched.length) {
-      console.log(`  · ${unmatched.length} drawn column(s) could not be paired by their heading — not checked`);
+      console.log(`  · ${unmatched.length} drawn column(s) could not be paired to one of ours — not checked`);
     }
 
     const printed = grid.matrix.filter((r) => r.slice(0, labelCols).some(Boolean));
@@ -285,6 +335,44 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
         problems++;
       }
 
+      /*
+       * And now every cell, mark or not, in the column the page prints it in.
+       *
+       * This is the check the audit refused to make, and the reason it refused
+       * no longer holds. Comparing cell by cell failed twice because the two
+       * grids were aligned by POSITION, and a narrow divider rule dropping out
+       * of the reconstruction slid everything after it by one column — forty
+       * reports, all of them the audit's own fault. Pairing each printed column
+       * to ours by the text at its head, which is what a person does, removes
+       * that failure entirely: a dropped edge no longer shifts anything,
+       * because nothing is being counted along a row.
+       *
+       * Unpaired columns are skipped and already reported as unchecked, so this
+       * only ever speaks where it has a partner it is sure of.
+       */
+      for (const c of drawn) {
+        const should = mineHere[drawn.indexOf(c)];
+        if (!should) continue;
+        const printedHere = norm(row[c] || '');
+        const oursHere = mine.cells.filter((x) => x.col === should.id).map((x) => norm(x.value)).join(' ');
+        if (!printedHere && !oursHere) continue;
+        // A value written across columns is printed once and held in each of
+        // them, so containment either way counts as agreement.
+        const agrees = printedHere && oursHere
+          && (key(printedHere).includes(key(oursHere)) || key(oursHere).includes(key(printedHere)));
+        if (agrees) continue;
+        if (!printedHere && !/[a-z]{3}/i.test(oursHere) && oursHere.length <= 2) {
+          // A lone mark we hold where the page rules an empty cell. Reported,
+          // but as its own kind of fault so it cannot hide among the rest.
+          console.log(`  ! "${label.slice(0, 28)}" — "${oursHere}" under "${should.label}", which the page leaves empty`);
+        } else if (!oursHere) {
+          console.log(`  ! "${label.slice(0, 28)}" — nothing under "${should.label}", where the page prints "${printedHere.slice(0, 24)}"`);
+        } else {
+          console.log(`  ! "${label.slice(0, 28)}" — under "${should.label}" the page prints "${printedHere.slice(0, 20)}" and we hold "${oursHere.slice(0, 20)}"`);
+        }
+        problems++;
+      }
+
       if (lost.length || extra.length) {
         console.log(`  ! "${label.slice(0, 34)}"`
           + (lost.length ? `  MISSING ${lost.join(' ')}` : '')
@@ -313,7 +401,13 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
         .filter(Boolean).map(key).filter((v) => v.length > 1);
       // Everything printed in this column's header should be somewhere in what
       // we say about the column; anything else is a heading we did not read.
-      const covered = said.some((v) => head.includes(v) || v.includes(head));
+      // Or the whole of what we say, joined. A visit headed "1 / -2" has a
+      // label and a week that are each one character long, and testing them
+      // one at a time discarded both as too short to be distinctive — so a
+      // column we had read perfectly reported itself as unaccounted for.
+      const whole = key([col.label, col.studyDay, col.studyWeek, col.visitNumber, col.window, ...(col.path || [])].filter(Boolean).join(" "));
+      const covered = said.some((v) => head.includes(v) || v.includes(head))
+        || (whole.length > 1 && (head.includes(whole) || whole.includes(head)));
       if (!covered) {
         console.log(`  ! HEADER column ${i + 1}: page="${headerRows.map((r) => r[c]).filter(Boolean).join(' / ').slice(0, 34)}"`
           + ` ours="${[col.label, col.studyDay, col.studyWeek].filter(Boolean).join(' / ').slice(0, 34)}"`);
