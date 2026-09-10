@@ -194,7 +194,7 @@ Method: render the source pages, put them beside the extracted grid, compare cel
 | Protocol | Result | Verdict |
 |---|---|---|
 | protocol1 (Lilly LZZT, pp. 53–54) | 14 columns · 28 rows · 4 footnotes | exact |
-| protocol5 (atomoxetine, pp. 50–53, rotated) | two tables: 11 × 31 · 9 footnotes, and 15 × 10 | both returned; see the appendix note |
+| protocol5 (atomoxetine, pp. 50–53, rotated) | two tables: 11 × 31 · 9 footnotes, and 15 × 8 · 1 footnote | both exact |
 | protocol9 (lofexidine, pp. 26–29, rotated) | 11 columns · 32 rows · 3 footnotes | columns exact; 2 rows and 1 value short |
 | protocol12 (modafinil, pp. 48–50) | 9 columns · 39 rows · 13 footnotes | exact |
 | protocol15 (cabergoline, pp. 25–27) | 9 columns · 33 rows · 7 footnotes | exact |
@@ -202,8 +202,7 @@ Method: render the source pages, put them beside the extracted grid, compare cel
 **protocol1.** The printed table has a **blank spacer column** where visit 6 would be. No visit is invented for it and the gap is recorded as an ambiguity. Page 54's `Hemoglobin A1c` stitches onto page 53's `Hemoglobin A1C` rather than becoming a second row. `Xa`, `Xb` and the `P` legend link to the right cells.
 
 **protocol5.** Appendix I is exact: 11 columns (Up to −35, −15* to −9, −6, −2, −1, 7, 8, 12, 13, 17, 31) and 31 rows. It also satisfies a check the document implies: PK samples for cocaine, 5 mL × (15+15+15) = **225 mL**, exactly the printed Total Volume, with a grand total of 390 mL.
-It carries a **second schedule** too, `APPENDIX II: Schedule of Blood Collections`, printed on page 51 under the tail of the first. Both are returned, as `t1` and `t2`; the audit rebuilds the appendix from its own drawn rules and finds 11 rows with no missing row and no cell mismatch.
-**What is wrong:** two lines of page furniture below the appendix, its legend `a S = serum, P = plasma` and the running footer, are read as rows with no name, and its `Type a` column comes out unnamed. Both are reported in the ambiguities and drop it to `check` rather than `trust`.
+It carries a **second schedule** too, `APPENDIX II: Schedule of Blood Collections`, printed on page 51 under the tail of the first. Both are returned, as `t1` and `t2`; the audit rebuilds the appendix from its own drawn rules and finds 11 printed rows with no missing row, no cell mismatch, and all 15 column headings accounted for — a two-line banding header (`Type` over `a`, `Number of Samples per Day` over the twelve day columns, `Total` over `Volume`) resolved to the right name for each. Its own legend, `a S = serum, P = plasma; b D = day`, is read as a footnote rather than an extra row with no name, and the sponsor's running footer beneath it is recognised as page furniture rather than one more row of data.
 
 **protocol9.** The hardest of the five: four rotated pages. Inferring the grid from marks produced **30 columns for an 11 day study**; reading the drawn rules produces **11**, which the printed header confirms. Shaded-only rows carry **no cells**, because the document marks them with grey and no character, and neither path invents an X. Spanning cells printed as `Prior to Day 4` across days 1–3 survive verbatim, recorded against each day they cover. CRF numbers `(01)`–`(14)` stay in the row labels.
 **What is wrong:** `Emesis Tracking (14)` and `Drop Out Day (…)` are not returned, and `Urine Toxicology (28)`'s written-out value `Admission, Monday, Wednesday, Friday, Discharge and As Needed` is dropped. All three sit below the last marked row on a rotated page, beside a legend line, and the rules exclude them. The review recovers them.

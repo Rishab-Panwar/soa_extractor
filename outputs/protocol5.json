@@ -1211,7 +1211,7 @@
           "marker": "f",
           "printed": "Xf",
           "kind": "footnote",
-          "text": "atomoxetine blood levels will be determined on days 6, 8, 11 and 13. a S = serum, P = plasma; b D = day NIDA-CPU-atomoxetine-0001 Atomoxetine - Cocaine Interaction Study 51",
+          "text": "atomoxetine blood levels will be determined on days 6, 8, 11 and 13. a S = serum, P = plasma; b D = day",
           "pages": [
             51
           ],
@@ -1226,7 +1226,6 @@
         }
       ],
       "ambiguities": [
-        "Page 51: the ruled row boundaries account for 37 of the 39 marks found by reading the lines, so the rules were not used for rows on this page.",
         "Page 51 carries the caption of a different table, so its grid has not been appended to this schedule. It is extracted separately; the footnotes printed here are read for both."
       ],
       "provenance": {
@@ -1235,7 +1234,7 @@
         "confidence": 1,
         "verdict": "trust",
         "findings": [],
-        "rowsAreRuled": false,
+        "rowsAreRuled": true,
         "geometric": null,
         "locatorScore": 22,
         "locatorEvidence": [
@@ -1287,9 +1286,9 @@
       "columns": [
         {
           "id": "p51c1",
-          "label": "Per Sample",
+          "label": "Volume Per Sample",
           "path": [
-            "Per Sample"
+            "Volume Per Sample"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -1302,21 +1301,27 @@
         },
         {
           "id": "p51c2",
-          "label": "Column 2",
-          "path": [],
+          "label": "Type a",
+          "path": [
+            "Type a"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,
           "window": null,
-          "markers": [],
+          "markers": [
+            "a"
+          ],
           "pages": [
             51
           ]
         },
         {
           "id": "p51c3",
-          "label": "Screening",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "Screening",
           "studyWeek": null,
@@ -1328,8 +1333,10 @@
         },
         {
           "id": "p51c4",
-          "label": "D-8",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D-8",
           "studyWeek": null,
@@ -1341,8 +1348,10 @@
         },
         {
           "id": "p51c5",
-          "label": "D-1",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D-1",
           "studyWeek": null,
@@ -1354,8 +1363,10 @@
         },
         {
           "id": "p51c6",
-          "label": "D1",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D1",
           "studyWeek": null,
@@ -1367,8 +1378,10 @@
         },
         {
           "id": "p51c7",
-          "label": "D2",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D2",
           "studyWeek": null,
@@ -1380,8 +1393,10 @@
         },
         {
           "id": "p51c8",
-          "label": "D3",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D3",
           "studyWeek": null,
@@ -1393,8 +1408,10 @@
         },
         {
           "id": "p51c9",
-          "label": "D6",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D6",
           "studyWeek": null,
@@ -1406,8 +1423,10 @@
         },
         {
           "id": "p51c10",
-          "label": "D8",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D8",
           "studyWeek": null,
@@ -1419,8 +1438,10 @@
         },
         {
           "id": "p51c11",
-          "label": "D11",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D11",
           "studyWeek": null,
@@ -1432,8 +1453,10 @@
         },
         {
           "id": "p51c12",
-          "label": "D13",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D13",
           "studyWeek": null,
@@ -1445,8 +1468,10 @@
         },
         {
           "id": "p51c13",
-          "label": "D17",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D17",
           "studyWeek": null,
@@ -1458,8 +1483,10 @@
         },
         {
           "id": "p51c14",
-          "label": "D31",
-          "path": [],
+          "label": "Number of Samples per Day b",
+          "path": [
+            "Number of Samples per Day b"
+          ],
           "visitNumber": null,
           "studyDay": "D31",
           "studyWeek": null,
@@ -1471,9 +1498,9 @@
         },
         {
           "id": "p51c15",
-          "label": "Volume",
+          "label": "Total Volume",
           "path": [
-            "Volume"
+            "Total Volume"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -1733,57 +1760,42 @@
               "value": "390 mL"
             }
           ]
-        },
+        }
+      ],
+      "footnotes": [
         {
-          "id": "r9",
-          "kind": "category",
-          "label": "a",
-          "category": null,
-          "markers": [],
-          "cells": []
-        },
-        {
-          "id": "r10",
-          "kind": "assessment",
-          "label": "",
-          "category": "a",
-          "markers": [],
-          "cells": [
+          "marker": "a",
+          "printed": "a",
+          "kind": "footnote",
+          "text": "S = serum, P = plasma; b D = day",
+          "pages": [
+            51
+          ],
+          "continued": false,
+          "appliesTo": [
             {
-              "col": "p51c3",
-              "value": "-"
-            },
-            {
-              "col": "p51c10",
-              "value": "51"
+              "target": "column",
+              "column": "p51c2"
             }
           ]
         }
       ],
-      "footnotes": [],
       "ambiguities": [
-        "Page 51: the ruled row boundaries account for 37 of the 39 marks found by reading the lines, so the rules were not used for rows on this page.",
-        "Page 51: 4 item(s) of text inside the grid belong to no row and no column, so they are not in the table: \"S = serum, P = plasma;\", \"D = day\", \"NIDA-CPU-atomoxetine-0001 Atomoxetine\", \"Cocaine Interaction Study\". This happens where a column holds words instead of marks — the columns are found from the marks, so one with none of its own is not found.",
         "1 column(s) carry no readable visit number, day or week in the printed header (pages 51). Those columns could not be matched against the same visit on another page, so a table that spans pages may list a visit more than once. The cells under them are still verbatim."
       ],
       "provenance": {
         "readBy": "geometry",
         "model": null,
-        "confidence": 0.8,
+        "confidence": 0.95,
         "verdict": "check",
         "findings": [
           {
             "check": "unidentified-columns",
             "severity": "low",
             "detail": "1 of 15 columns (7%) carry no visit number, study day, week or window. Columns like these cannot be recognised as the same visit on another page, so a schedule spanning pages may be listing the same visits more than once."
-          },
-          {
-            "check": "unlabelled-rows",
-            "severity": "low",
-            "detail": "1 row(s) carry marks but no activity name. Every assessment has a name, so these are very likely prose or page furniture read as table rows."
           }
         ],
-        "rowsAreRuled": false,
+        "rowsAreRuled": true,
         "geometric": null,
         "locatorScore": 22,
         "locatorEvidence": [
@@ -2211,5 +2223,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-10T13:45:16.698Z"
+  "extractedAt": "2026-09-10T15:00:38.650Z"
 }

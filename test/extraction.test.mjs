@@ -132,15 +132,54 @@ test('rows the page rules apart stay apart', async (t) => {
 });
 
 test('a page whose rules do not account for every mark is not read from them', async (t) => {
-  if (!existsSync(at('protocol5')) || !existsSync(at('protocol9'))) return t.skip('protocols not present');
+  if (!existsSync(at('protocol9'))) return t.skip('protocol9 not present');
   // The gate that keeps a better source of structure from becoming a worse
-  // answer. protocol9 is ruled throughout and says so; protocol5 has a page
-  // whose rules would lose two marks, so it refuses them and says that too.
+  // answer: a ruled reading is adopted only if it accounts for every mark the
+  // inferred one found. protocol9 is ruled throughout and says so.
+  //
+  // This used to be tested against protocol5, whose page 51 was said to
+  // "lose two marks" and fall back. It did not lose them — a plain underline
+  // fifty points below the table's own border, drawn under a footnote note,
+  // was being read as one more row, and the sponsor's running footer under
+  // it supplied the two "marks" ("-", "51") the ruled reading correctly
+  // never produced. Once that stray rule is excluded rather than mistaken
+  // for a row divider, protocol5's own schedule is ruled throughout too, and
+  // there is no longer a real case among these documents where the guard
+  // has something to refuse.
   const nine = await run(readFileSync(at('protocol9')), { assist: false });
-  const five = await run(readFileSync(at('protocol5')), { assist: false });
   assert.equal(nine.tables[0].provenance.rowsAreRuled, true, 'protocol9 rows come from the rules');
-  assert.equal(five.tables[0].provenance.rowsAreRuled, false, 'protocol5 falls back, and reports it');
-  assert.ok(five.tables[0].ambiguities.some((a) => /ruled row boundaries/.test(a)), 'and says why');
+});
+
+test('a running footer is not one more row of the table above it', async (t) => {
+  if (!existsSync(at('protocol5'))) return t.skip('protocol5 not present');
+  const result = await run(readFileSync(at('protocol5')), { assist: false });
+  const [t1, t2] = result.tables;
+  assert.equal(t1.provenance.rowsAreRuled, true, 'the main schedule is ruled throughout');
+  assert.ok(!t1.ambiguities.some((a) => /ruled row boundaries/.test(a)), 'and needs no fallback notice');
+
+  // The blood-collection appendix on the same page: its own rows, not a
+  // phantom one made of the sponsor's running footer and legend line.
+  assert.ok(t2, 'the appendix is returned as its own table');
+  assert.equal(t2.title, 'APPENDIX II: Schedule of Blood Collections');
+  const labels = t2.rows.map((r) => r.label);
+  assert.ok(!labels.includes('a'), 'the legend line is not a row named "a"');
+  assert.ok(!labels.some((l) => /^-?$/.test(l) || /NIDA-CPU|Interaction Study/.test(l)), 'nor the page footer');
+  // The two-line header names every column: "Type a" and "Total Volume" are
+  // each their own leaf column, and the twelve day columns sit under one
+  // banding heading ("Number of Samples per Day b") — which the label
+  // carries verbatim, same as the page prints it, while studyDay carries
+  // each column's own day so a reader (or the UI's own facts row) still
+  // gets "Screening", "D-8", "D1" … distinctly per column.
+  assert.equal(t2.columns[0].label, 'Volume Per Sample');
+  assert.equal(t2.columns[1].label, 'Type a');
+  assert.equal(t2.columns[t2.columns.length - 1].label, 'Total Volume');
+  assert.deepEqual(
+    t2.columns.slice(2, -1).map((c) => c.studyDay),
+    ['Screening', 'D-8', 'D-1', 'D1', 'D2', 'D3', 'D6', 'D8', 'D11', 'D13', 'D17', 'D31'],
+    'each day column keeps its own day, even where the label above it is one heading shared by all twelve',
+  );
+  assert.ok(t2.footnotes.some((f) => f.marker === 'a' && /serum/.test(f.text)), 'the legend is read as a footnote');
+  assert.ok(t2.footnotes.some((f) => /b D = day/.test(f.text)), 'and the second definition on the same line with it');
 });
 
 test('a footnote marker is kept beside its value, not glued onto it', async (t) => {

@@ -885,7 +885,7 @@ function ruledRows(page, splitRows, gridLeft) {
 
   // Only rules that cross the grid: a rule under one cell is a cell border.
   const width = page.width - gridLeft;
-  const spanning = rules
+  let spanning = rules
     .filter((h) => Math.min(h.x1, page.width) - Math.max(h.x0, gridLeft) >= width * 0.5)
     .map((h) => h.y)
     .sort((a, b) => a - b);
@@ -895,6 +895,41 @@ function ruledRows(page, splitRows, gridLeft) {
     if (!edges.length || y - edges[edges.length - 1] > 3) edges.push(y);
   }
   if (edges.length < 4) return null;
+
+  /*
+   * A rule this far past the box's own border is not one of its edges.
+   *
+   * protocol5 draws a plain underline under a footnote note, fifty points
+   * below where the table's verticals stop, full width and otherwise
+   * indistinguishable from a row divider — reading it as one more row pulled
+   * the sponsor's running footer in as data, "-" and "51" as marks in a row
+   * with no name. protocol15's real closing rows run past that same border by
+   * twelve to twenty-four points, because its border simply is not drawn for
+   * the last couple of rows, and those still belong to the table. The
+   * distance that tells them apart is measured in the table's own row pitch,
+   * not in points: two rows' worth of margin is generous headroom for a
+   * border drawn short, and nothing a real row wraps onto leaves more than
+   * that clear before the next rule.
+   */
+  const inGrid = (page.rules?.verticals || []).filter((v) => v.x >= gridLeft - 2);
+  if (inGrid.length >= 3 && edges.length >= 4) {
+    const boxBottom = Math.max(...inGrid.map((v) => v.y1));
+    const boxTop = Math.min(...inGrid.map((v) => v.y0));
+    const gaps = edges.slice(1).map((y, i) => y - edges[i]);
+    // A wrapped row spans several of these gaps at once — "Chemistries plus
+    // liver function tests" alone accounts for two 42pt ones on protocol5's
+    // own main schedule — so the table's own worst case, not its average or
+    // its most common gap, is what a genuine row is allowed to cost. Only a
+    // gap past BOTH that worst case and the box's own border, at once, is an
+    // outside rule and not one more wrapped row the box happens to end short of.
+    const finalGap = gaps[gaps.length - 1];
+    const worstOfRest = Math.max(...gaps.slice(0, -1), 14);
+    if (finalGap > worstOfRest * 1.2 && edges[edges.length - 1] > boxBottom + 10) edges.pop();
+
+    const firstGap = gaps[0];
+    const worstOfRemainder = Math.max(...gaps.slice(1), 14);
+    if (edges.length >= 4 && firstGap > worstOfRemainder * 1.2 && edges[0] < boxTop - 10) edges.shift();
+  }
 
   const bands = [];
   for (let i = 1; i < edges.length; i++) bands.push({ top: edges[i - 1], bottom: edges[i], lines: [] });
@@ -1033,7 +1068,31 @@ function readHeader(rows, bands, firstDataY, page) {
   const header = [];
   for (const row of rows) {
     if (row.y >= firstDataY) break;
-    const cells = [...row.marks, ...row.other].filter((w) => columnFor(w, bands));
+    /*
+     * A footnote marker is part of the word before it, not a heading of its
+     * own. protocol5's "Number of Samples per Day b" sits far enough from
+     * "Type a" that the marker maps to the nearest COLUMN under it, not to
+     * the phrase it annotates — so "Number of Samples per Day" and "b" became
+     * two separate headings, each redistributed across the same twelve
+     * columns, and whichever was read second overwrote the other, leaving
+     * every one of them captioned "b" alone. Folded into the word it follows
+     * before columns are even matched, it can no longer stand as a heading by
+     * itself.
+     */
+    const bodyHeight = Math.max(...(row.words || []).map((w) => w.h), 0);
+    const marker = (w) => w.text.length <= 2 && w.h <= bodyHeight * 0.75;
+    const folded = [];
+    for (const w of [...row.marks, ...row.other].sort((a, b) => a.x - b.x)) {
+      const last = folded[folded.length - 1];
+      if (marker(w) && last && w.x - (last.x + last.w) < bodyHeight * 2) {
+        // A space, not run together: readFootnotes only recognises a header
+        // marker as "word<space>letter" ("Week 4 a"), the same shape a
+        // superscript takes after an ordinary word anywhere else on the page.
+        last.text = `${last.text} ${w.text}`;
+        last.w = Math.max(last.w, w.x + w.w - last.x);
+      } else folded.push({ ...w });
+    }
+    const cells = folded.filter((w) => columnFor(w, bands));
     if (!cells.length) continue;
     /*
      * The running head is above the table, and the table says where it starts.
@@ -1046,9 +1105,22 @@ function readHeader(rows, bands, firstDataY, page) {
      * top edge is a line: everything above that line is on the page, not in the
      * table, whatever it happens to say. The word list stays only for pages
      * that draw no rules at all.
+     *
+     * Measured past any superscript marker, not past any short word.
+     * protocol5 captions this row's superscripts "Type a" and "…Day b", each
+     * one character, at two thirds the height of the word beside it and
+     * raised to match — a footnote marker, not a word. Taking the smallest y
+     * among every word, superscript included, lets it push the whole row
+     * above a border it is printed inside of. Font size alone is not enough
+     * to tell it from an ordinary word set smaller: protocol9's own header
+     * clusters two captions of different point sizes onto one line, neither
+     * of them raised on anything, and a real word can be small. A footnote
+     * marker is both small AND short, which a caption is not.
      */
+    const ordinary = (row.words || []).filter((w) => !marker(w));
+    const rowTop = ordinary.length ? Math.min(...ordinary.map((w) => w.y)) : row.y;
     if (topEdge !== null
-      ? (row.y < topEdge - 2 && !admitted.has(row))
+      ? (rowTop < topEdge - 2 && !admitted.has(row))
       : PAGE_FURNITURE.test(row.text || '')) continue;
 
     // The left-hand text of a header line counts as that line's caption only
@@ -1072,7 +1144,9 @@ function readHeader(rows, bands, firstDataY, page) {
      * cell around all three lines and says they are one row.
      */
     const previous = header[header.length - 1];
-    const cell = cellOf(row.y);
+    // Same baseline, same reason: a raised marker must not carry the row into
+    // a ruled cell above the one it is actually printed in.
+    const cell = cellOf(rowTop);
     const sameCell = previous && cell !== null && cell === previous.cell;
 
     if (sameCell || (!label && previous && cell === null)) {
@@ -1107,12 +1181,21 @@ function readHeader(rows, bands, firstDataY, page) {
     // in the role list — and it is filed as a second, competing day row.
     const role = roleOf(label, row.text);
     const entry = {
-      role, label, y: row.y, top: row.y, bottom: row.bottom, cell: cellOf(row.y), values: new Map(),
+      // `top` is what ruledSpans measures a ruled cell's crossing verticals
+      // against; the same raised marker that skews cellOf skews this the same
+      // way, and by just enough to put a full-height vertical's own y0 outside
+      // the tolerance — so a genuinely ruled heading row reads as unruled and
+      // falls through to being inferred instead.
+      role, label, y: row.y, top: rowTop, bottom: row.bottom, cell: cellOf(rowTop), values: new Map(),
     };
     placeCells(entry.values, cells, bands, (a, b) => `${a} ${b}`);
     // "VISIT 1 2 3 4" names visits by number, whatever the caption calls them.
     if (role === 'visitName' && [...entry.values.values()].every((v) => /^\d{1,3}[a-z]?$/i.test(v.text))) {
       entry.role = 'visitNumber';
+    }
+    if (process.env.SOA_DEBUG && page.number === 26) {
+      console.error('HDR role=' + entry.role + ' label=' + JSON.stringify(entry.label) + ' cell=' + entry.cell
+        + ' y=' + entry.y + ' c1=' + JSON.stringify(entry.values.get('c1')?.text));
     }
     header.push(entry);
   }
@@ -1234,10 +1317,28 @@ export function readFootnotes(page, fromY = 0, plausible = null, after = null) {
   const found = [];
   let current = null;
   let previous = after;
+  let previousBottom = null;
   for (const line of page.lines) {
     if (line.y < fromY) continue;
     const text = clean(line.text);
     if (!text) continue;
+    /*
+     * A gap this wide is not a wrapped line.
+     *
+     * Footnotes wrap at ordinary line spacing. protocol5 leaves fifty points
+     * of clear air between its last footnote and the sponsor's running
+     * footer — "NIDA-CPU-atomoxetine-0001 Atomoxetine - Cocaine Interaction
+     * Study 51" — which names no page number and no version, so the word list
+     * above does not catch it, and it read on as sixty more characters of a
+     * footnote about serum and plasma. A block that has already started ends
+     * here regardless of what the line says, because nothing a footnote wraps
+     * onto leaves a gap like this.
+     */
+    if (current && previousBottom !== null
+      && line.y - previousBottom > Math.max(current.height, 8) * 2.5) {
+      found.push(current); current = null;
+    }
+    previousBottom = line.bottom;
     const m = FOOTNOTE_DEF.exec(text);
     // A short line that starts with a marker begins a footnote; anything else
     // that follows one continues it. Continuations are the failure the brief

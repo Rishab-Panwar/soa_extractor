@@ -1722,7 +1722,7 @@
           "marker": "d",
           "printed": "Xd",
           "kind": "footnote",
-          "text": "FEV 1 is only performed in those subjects suspected of having asthma. NIDO-CTO-0007 Cabergoline for Cocaine Dependence 30",
+          "text": "FEV 1 is only performed in those subjects suspected of having asthma.",
           "pages": [
             25
           ],
@@ -2228,5 +2228,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-10T13:45:15.859Z"
+  "extractedAt": "2026-09-10T15:00:38.055Z"
 }
