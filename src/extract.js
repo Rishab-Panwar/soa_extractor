@@ -335,6 +335,7 @@ export function columnBands(rows, pageWidth) {
     }));
 }
 
+
 /** The column a word belongs to, or null when it sits between them. */
 function columnFor(word, bands) {
   const c = centre(word);
@@ -439,7 +440,27 @@ function assembleRows(rows) {
   const out = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    if (!row.label && !row.marks.length) continue;
+    if (!row.label && !row.marks.length) {
+      /*
+       * No name and no mark is not the same as nothing.
+       *
+       * A cell holding a list runs down several lines, and only the first sits
+       * beside the row's name — Prot_111 collects "Urine / AlereLAM # / Sputum
+       * Ultra* / Blood CD4" at one visit, one per line in the one cell. Every
+       * line after the first has no label and no mark, and was dropped here
+       * before anything downstream could see it: nine lines of the page gone,
+       * and the two footnotes whose markers are printed among them left with
+       * nothing to qualify.
+       *
+       * It belongs to the row above, whose cell it continues. Only when it
+       * follows on immediately — a line further down the page, under a blank,
+       * is something else.
+       */
+      const previous = out[out.length - 1];
+      const last = previous && previous.lines[previous.lines.length - 1];
+      if (row.other.length && last && row.y - last.bottom <= 8) previous.lines.push(row);
+      continue;
+    }
 
     if (row.marks.length) {
       const entry = { kind: 'assessment', label: row.label, y: row.y, marks: [...row.marks], lines: [row] };
