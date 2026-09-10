@@ -1340,6 +1340,7 @@ export function extractTable(pages, { title = '' } = {}) {
 
     // Rows, attaching cells to the columns of this page.
     let lastCategory = null;
+    const dropped = [];
     for (const entry of assembled) {
       if (HEADER_LABEL.test(entry.label || '') && entry.marks.length) continue;
       if (entry.y < firstDataY - 2 || entry.y > lastDataBottom + 2) continue;
@@ -1359,6 +1360,24 @@ export function extractTable(pages, { title = '' } = {}) {
           .filter((s) => !PAGE_FURNITURE.test(s.value));
 
       if (!entry.marks.length && !spans.length) {
+        /*
+         * Text inside the grid that reached nothing, said out loud.
+         *
+         * Prot_111 lists what is collected at each of its first two visits —
+         * "AlereLAM #", "Sputum Ultra*", "Urine FujiLAM", "Blood for CRP" — in
+         * cells that hold words instead of marks, and set left of where the
+         * marks stack. The columns are found from the marks, so those words
+         * belong to no column and no row, and nine lines of the page went
+         * missing without a word about it. Reading them properly means finding
+         * a column that has no marks in it at all, which this does not yet do.
+         * Losing them quietly is the part that is not acceptable.
+         */
+        if (!entry.label && entry.lines.some((l) => (l.other || []).length)) {
+          for (const line of entry.lines) {
+            for (const word of line.other || []) dropped.push(clean(word.text));
+          }
+          continue;
+        }
         if (findRow(rowsByLabel, entry.label)) continue; // already a row elsewhere
         // A label with nothing under it, that was not absorbed as a wrap.
         lastCategory = entry.label;
@@ -1426,6 +1445,24 @@ export function extractTable(pages, { title = '' } = {}) {
           row.cells.push({ col: column.id, value: span.value });
         }
       }
+
+      // What the row was written with, against what it ended up holding. A
+      // word inside the grid that reached no cell is content the page prints
+      // and the table does not, and the reader has to be told which.
+      const said = [...row.cells.map((c) => c.value), ...(row.markers || [])].join(' ');
+      for (const word of loose) {
+        const text = clean(word.text);
+        if (text.length < 2 || said.includes(text)) continue;
+        if (PAGE_FURNITURE.test(text)) continue;
+        dropped.push(text);
+      }
+    }
+
+    if (dropped.length) {
+      ambiguities.push(`Page ${page.number}: ${dropped.length} item(s) of text inside the grid belong to no row `
+        + `and no column, so they are not in the table: ${dropped.map((t) => `"${t}"`).join(', ')}. `
+        + 'This happens where a column holds words instead of marks — the columns are found from the marks, '
+        + 'so one with none of its own is not found.');
     }
 
     // Footnotes printed under this page's grid.
