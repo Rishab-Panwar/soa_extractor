@@ -64,7 +64,9 @@ regression suite pins the rule-based reading and not the published one.
 
 ```bash
 npm install
-npm run serve          # UI on http://localhost:3100 — drop in any protocol PDF
+npm run serve            # UI on http://localhost:3100 — drop in any protocol PDF
+npm run serve:geometry   # the same, with the model review forced OFF
+npm run serve:review     # the same, with it forced ON
 npm run extract -- path/to/protocol.pdf [more.pdf ...]   # writes outputs/<name>.json
 ```
 
@@ -84,6 +86,16 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 `--no-assist` forces the geometric path even with a key configured, which is how
 the two columns of the table above were measured.
+
+A key in `.env` used to be enough to turn the review on, with nothing announcing
+it — so the same upload could cost an API call or not depending on a file last
+looked at weeks ago, and there was no way to run the two readings side by side.
+`SOA_ALLOW_REVIEW` now decides when it is set (`0` off, `1` on), the server says
+which mode it started in, and every upload logs what the pipeline did. That last
+part matters: the review only runs on a table the checks distrust, so a
+well-read protocol comes out **identical either way and costs nothing** — of the
+eight documents here, seven never reach it. Without the log there is no telling
+"the switch did nothing" from "the switch is broken".
 
 ## Deploying it
 
@@ -422,6 +434,23 @@ The review now retries once before giving up.
   marks, with every weakness that has: a sparse column can go missing, a wrapped
   label can merge. All five assignment protocols and our mock are ruled, so the
   fallback is the *less* tested path despite being the original one.
+- **A column whose cells hold words instead of marks is still not found.** This
+  is the one known loss left. Columns are located from where the marks stack, so
+  a visit recorded by *writing* in its column — a protocol listing which samples
+  are collected at each visit — has no column to be found in. On the one unseen
+  document that does this, five items of its sample list reach no cell. They are
+  **named in the ambiguities** rather than dropped in silence, which is the
+  difference between a known gap and an invisible one. Two attempts at reading
+  the label boundary from the page's own whitespace were measured, changed
+  nothing on the other seven documents, still failed to place the words, and
+  were reverted.
+- **Two unseen protocols were run end to end** and are the honest measure of how
+  far the in-sample tuning travels. One reads clean against its printed page —
+  37 rows, no missing values, nothing in the wrong column — after a single fix.
+  The other exposed three faults at once and still has the loss above. Both sets
+  of fixes were general: a row merged into a section heading it merely begins
+  like, a header printed outside the box it belongs to, a timepoint read as a
+  mark, placeholder column names blocking a continuation page from attaching.
 - **Scanned pages.** No text layer means nothing to read and nothing to send.
   The tool says so; it does not invent a table. Page images would be the fix.
 - **Visit windows.** The schema holds the field and it populates — Prot_000
@@ -441,64 +470,121 @@ The review now retries once before giving up.
 ## Checking the output against the page
 
 ```bash
-npm run audit        # rebuilds each page's printed table and diffs it against ours
+npm run audit                       # the six documents with committed outputs
+node scripts/audit.mjs protocol9    # one of them, in full
+node scripts/audit.mjs ../any.pdf   # a document that is not in this repo:
+                                    # extracted on the spot, then compared
 ```
 
-Every defect found late in this build was found by eye, one cell at a time,
-which is slow and misses things. `npm run audit` does it mechanically: it
-rebuilds the table **as the page draws it** — straight from the ruled
-intersections and the words inside them, with none of the extractor's row
-assembly, header roles or footnote logic — and reports every row and value where
-the two disagree.
+Every defect found early in this build was found by eye, one cell at a time,
+which is slow and misses things. This does it mechanically: it rebuilds the
+table **as the page draws it** — straight from the ruled intersections and the
+words inside them, with none of the extractor's row assembly, header roles,
+footnote logic or continuation handling — and reports every place the two
+disagree.
 
-It compares values per row rather than cell by cell, deliberately. Cell-by-cell
-needs both grids to agree on where every column boundary is, and they do not: a
-narrow rule short enough to read as a cell border drops out of the
-reconstruction, and one missing edge slides everything after it. That reported
-forty wrong cells in correct output twice before the check was rewritten. What
-the brief penalises is a *lost* value, and that survives any disagreement about
-columns.
+The third command is the one that earns its keep. The documents that find real
+faults are the ones nobody has looked at, and those cannot be committed here, so
+the audit takes a path and extracts on the spot. Both unseen protocols tried
+this way were read correctly bar one row each, and both faults were general
+enough to have been waiting for any document with the same shape.
 
-It checks **every page of every schedule**, not the first. Checking page one
-covered seven of these twenty pages and left out exactly where naive extraction
-is known to fail — a schedule running across four pages, headers that repeat or
-do not, a continuation printed landscape. Whatever went wrong on page three went
-unmeasured, and "verified" meant verified on the easy page.
+### What it compares
 
-It checks the three things the brief grades separately — the grid, the header
-above it, and the footnotes beneath:
-
-| Checked against the printed page | Count | Faults |
+| Checked against the printed page | Count | Result |
 |---|---|---|
-| Rows and their values, every page | **273 rows** | **0 missing · 0 mismatches** |
-| Column headings, every page | **127 headings** | **0 unaccounted for** |
-| Footnote text, whole | **53 footnotes** | **0 not found on the page** |
+| Rows and their values, every page | **273 rows** | 0 missing · 0 mismatches |
+| Every cell, in the column the page prints it in | every paired column | 1 known artifact |
+| Column headings, every page | **127 headings** | 0 unaccounted for |
+| Footnote text, whole | **53 footnotes** | 0 not found on the page |
+
+**Placement is the check that took longest to earn.** For most of this build the
+audit compared each row's values as a multiset — "the page shows seven marks
+here and we hold seven" — and never asked *which* column each was in. Cell by
+cell had been tried twice and abandoned both times, because the two grids were
+aligned by **position** and one narrow rule dropping out of the reconstruction
+slid everything after it into forty reports that were the audit's own fault.
+
+That blindness had a price. protocol15 prints "Weekly x 2 weeks" under Baseline
+for five assessments and the published output filed all five under Screening;
+every run passed, because every value was present. It took reading the two
+tables side by side to see it.
+
+What makes cell-by-cell work is pairing columns by **what they contain** — the
+set of assessments marked in each — rather than by position or by heading.
+Headings repeat, abbreviate on continuation pages, and collapse to a bare number
+that matches anything containing it. A contents fingerprint survives all of
+that, and one cell in the wrong place shifts a single member of a set of many,
+so the pairing still lands and the stray cell falls out as the report. Two
+further rules keep it honest: a pairing that **crosses** is wrong whatever it
+scored, since neither table reorders its visits; and an exact heading match is
+worth a great deal rather than a nudge, including for headings one character
+long, which is every day column protocol9 has.
+
+Comparison is deliberately forgiving where the page and the schema differ in
+form but not in fact: cells match as token sets, so "a x" and "x a" are the same
+cell; a marker counts as printed content, because "X" and its superscript "b"
+are stored apart on purpose; a value written across **merged** cells is printed
+once and held in every column it covers; and a bare marker letter alone in a
+cell is not compared at all, because a superscript sits above its mark and
+crosses the rule into the row above.
+
+### What it says it cannot check
+
+A checker that reports a clean bill for a document it never opened is worse than
+no checker, because it is believed. So:
+
+- **Pages with no ruled columns are counted and named**, and the run ends by
+  saying that a count of zero on such a document means nothing was compared.
+  Prot_111 draws no column rules at all: every page of it is skipped, and it
+  used to finish with "0 discrepancy line(s) in all".
+- **Columns with no counterpart in our table are listed with their headings**,
+  not summed. Of 27 on these six documents, 13 belong to a *second grid* on
+  protocol5's page 51 — the blood-collection appendix, never this schedule's to
+  hold — and 2 are the divider column, which the extractor holds nothing in by
+  design. Twelve are genuine gaps and are named so they can be argued with.
+- Pages carrying no grid, and pages where a *different* table begins, are not
+  compared against this one: protocol5's footnotes spill onto the page its
+  appendix starts on, and audited naively the main schedule was told it had lost
+  every row of a table that is not its own.
+
+Reaching further by guessing was tried and rejected. Pairing on a heading that
+merely *contains* the visit closes one of those twelve gaps and opens a false
+report, matching a column headed "2 / 14 / ±1 / V 3" against "V 5".
+
+### What it found
+
+Eight cells across three documents, every one of them in output a model had
+already reviewed, every one invisible to the checks that existed at the time:
+
+| Document | Fault | Evidence on the page |
+|---|---|---|
+| protocol15 ×5 | "Weekly x 2 weeks" filed under Screening | The words sit at x257–294; Screening is ruled x202–251 and Baseline x251–301 |
+| protocol12 ×1 | AISRS mark filed under Study Week 1-3 | The mark sits at x373, inside the cell ruled 362–389, which is Week 4 |
+| protocol12 ×1 | ASI-Lite's Week 5-7 cell stripped of its "X" | "X" at y449 with "b" at y446 over "wk 6" at y457 — one cell, two lines |
+| 3041835 ×1 | "Randomisation via Sealed Envelope" merged into the section head above it | Row matching allowed a prefix of any length |
+
+The last one is worth reading twice: the row's mark was filed against a section
+heading the page marks nowhere, and the row's own name was gone from the table.
 
 Footnote text is compared with the spaces taken out and then word by word,
 because the page breaks a footnote wherever its column ends, and sets "FEV1" as
 "FEV" and a small "1" — which reads back with a space. Comparing literally
 called a footnote that is verbatim on the page missing.
 
-Seven lines are reported and all seven are the reconstruction's own limits:
-
-| Reported | Why it is not a defect |
-|---|---|
-| protocol9 ×3 · "Prior to Day 4" extra | The page prints it once, in a cell **merged** across three days; we report it on each of the three. The reconstruction cannot see merged cells. |
-| protocol5 ×1, protocol15 ×1 · a "row" missing | Footnote legend lines — `a S = serum, P = plasma` — which are footnotes, not rows. |
-| Prot_000 ×1 · a "row" missing | The footnote block, read as a row by the reconstruction. |
-| protocol15 ×1 · "physical exam/fev d 1" | A superscript marker the reconstruction put in the label cell; the row is present as "Physical exam/FEV1". |
-
-Pages carrying no grid — footnote continuation pages — are skipped and said to
-be skipped. A page where a *different* table begins is not compared against this
-one: protocol5's footnotes spill onto the page its blood-collection appendix
-starts on, and audited naively the main schedule was told it had lost every row
-of a table that is not its own.
 
 ## Guarding against regression
 
-`npm test` runs twelve checks over the six documents, pinned to counts verified
+`npm test` runs sixteen checks over the six documents, pinned to counts verified
 against the printed pages. They skip rather than fail when the protocols are not
 beside the project, since those are not redistributable.
+
+They are also what makes it safe to keep changing the reader. Every fix in this
+build was measured against **all eight** documents before it was kept, and the
+bar was that the seven it was not aimed at come back byte-identical — same rows,
+same labels, same cells, same columns. Three changes that did not clear that bar
+were reverted rather than argued for, and two more were removed once measurement
+showed they changed nothing on any document.
 
 The suite exists because almost every defect found while building this was a
 *regression*: a rule added for one protocol quietly took a row or a column away
