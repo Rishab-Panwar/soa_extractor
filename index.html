@@ -206,11 +206,37 @@ async function send(file) {
     const secs = ((Date.now() - started) / 1000).toFixed(1);
     // Said plainly, because the review only runs on a table the checks distrust:
     // asking for it and not getting it is the ordinary case, not a failure.
+    /*
+     * What the review DID, not what it was allowed to do.
+     *
+     * "Claude was available" answered the wrong question. Pressing the Claude
+     * button and getting a table badged "read from page geometry" leaves a
+     * reader unable to tell whether the model was asked at all, whether it
+     * answered, whether its answer was rejected — or whether they were billed.
+     * The pipeline records every outcome; this says it.
+     */
+    const SAID = {
+      'not-needed': 'not needed — the rules vouched for this table',
+      'skipped-no-time': 'not asked — too little time left in this request',
+      'abandoned-on-the-clock': 'asked, but it ran past the time budget and was abandoned',
+      'no-answer': 'asked, but it did not answer',
+      'found-no-table': 'asked, but it found no table on these pages',
+      'rejected-dropped-rows': 'asked, and its answer was rejected for dropping rows',
+      used: 'asked, and its answer was used',
+    };
     let asked = '';
     if (result.reviewAsked) {
-      asked = result.reviewRan
-        ? ' · <b>Claude was available</b> for anything the rules could not vouch for'
-        : ' · Claude was <b>not consulted</b>: ' + esc(result.hosted?.note ? 'not enabled on this deployment' : 'no API key configured');
+      const calls = result.review?.attempted || 0;
+      const outcomes = (result.review?.outcome || [])
+        .map((o) => SAID[o.outcome] || o.outcome)
+        .filter((v, i, all) => all.indexOf(v) === i);
+      if (!result.reviewRan) {
+        asked = ' · Claude <b>not consulted</b>: '
+          + esc(result.hosted?.note ? 'not enabled on this deployment' : 'no API key configured');
+      } else {
+        asked = ` · Claude ${calls ? `<b>called ${calls}×</b>` : '<b>not called</b>'}`
+          + (outcomes.length ? ' — ' + esc(outcomes.join('; ')) : '');
+      }
     }
     $('status').innerHTML = `<b>${esc(file.name)}</b> · ${result.pageCount} pages searched · ${result.tables.length} schedule(s) · ${secs}s${asked}`;
     render();

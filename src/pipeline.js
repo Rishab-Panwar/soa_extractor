@@ -460,9 +460,20 @@ export async function run(buffer, {
   // A second opinion, only where the self-checks say the geometric read cannot
   // be trusted, and only on the pages they name. A clean table never costs a
   // call; a broken one costs a few pages, not the document.
+  /*
+   * What the review actually did, per table.
+   *
+   * "Claude was available" is not the same as "Claude was asked", which is not
+   * the same as "Claude's answer was used" — and a reader looking at a table
+   * badged "read from page geometry" after pressing the Claude button cannot
+   * tell which of the four happened, nor whether they were billed for it. Every
+   * outcome is recorded and published.
+   */
+  const review = { attempted: 0, outcome: [] };
+  const record = (id, outcome, detail) => review.outcome.push({ table: id, outcome, ...(detail ? { detail } : {}) });
   if (assist && available()) {
     for (const table of tables) {
-      if (table.assessment.verdict !== 'fallback') continue;
+      if (table.assessment.verdict !== 'fallback') { record(table.id, 'not-needed', `the checks scored it ${table.assessment.verdict}`); continue; }
       // The WHOLE table goes, not just the pages the checks complained about.
       // A continuation page without its header page is unreadable, and asking
       // only about the footnote pages of a good table gets the honest answer
@@ -479,11 +490,13 @@ export async function run(buffer, {
           + 'attempted: too little time remained of this request\'s budget to finish one. '
           + 'What is below is the rule-based reading, unaltered.';
         table.ambiguities = [...(table.ambiguities || []), note];
+        record(table.id, 'skipped-no-time', `${Math.round(left / 1000)}s left of the budget`);
         log('assist', `${table.id}: skipped, ${Math.round(left / 1000)}s left of the budget`);
         continue;
       }
 
       log('assist', `${table.id}: confidence ${table.assessment.confidence} (${table.assessment.findings.filter((f) => f.severity === 'high').map((f) => f.check).join(', ')}); reviewing pages ${table.pages.join(', ')}`);
+      review.attempted++;
       // And abandoned if it overruns anyway, so the reading below survives.
       const found = await Promise.race([
         secondOpinion(pages, { geometric: table, log, budgetMs: left }),
@@ -494,10 +507,11 @@ export async function run(buffer, {
           + 'did not finish inside this request\'s budget, so it was abandoned; what is below is '
           + 'the rule-based reading, unaltered.';
         table.ambiguities = [...(table.ambiguities || []), note];
+        record(table.id, 'abandoned-on-the-clock');
         log('assist', `${table.id}: review abandoned on the clock; keeping the rule-based read`);
         continue;
       }
-      if (!found || !found.length) continue;
+      if (!found || !found.length) { record(table.id, 'no-answer'); continue; }
       const reviewed = found[0];
 
       // A second opinion that found nothing is not an improvement on something.
@@ -505,6 +519,7 @@ export async function run(buffer, {
       // most heavily, so the geometric read stands unless the review at least
       // matches it in size.
       if (!reviewed.rows?.length || reviewed.columns?.length < 2) {
+        record(table.id, 'found-no-table');
         log('assist', `${table.id}: the review found no table on these pages; keeping the rule-based read`);
         continue;
       }
@@ -519,6 +534,7 @@ export async function run(buffer, {
       if (named(reviewed) < named(table) * 0.7) {
         log('assist', `${table.id}: the review returned ${named(reviewed)} named rows against ${named(table)} `
           + 'already found — it dropped rows, so the rule-based read stands');
+        record(table.id, 'rejected-dropped-rows', `${named(reviewed)} named rows against ${named(table)}`);
         continue;
       }
 
@@ -547,6 +563,7 @@ export async function run(buffer, {
         findings: table.assessment.findings.map((f) => f.check),
       };
       tables[tables.indexOf(table)] = reviewed;
+      record(reviewed.id, 'used', `read by ${reviewed.model || 'the review'}`);
       log('assist', `${reviewed.id}: confidence ${table.assessment.confidence} → ${reviewed.assessment.confidence}`);
 
       // A second schedule on the same pages — a sub-study, a PK sampling or a
@@ -592,6 +609,10 @@ export async function run(buffer, {
 
   return {
     pageCount: doc.pageCount,
+    // Whether a second opinion was asked for, and what came of it. `attempted`
+    // is the number of API calls this run actually made, so a reader can tell
+    // what they were billed for.
+    review,
     // The lines of every page a table came from, so the grid can be checked
     // against the document without opening the PDF separately.
     sourcePages,
