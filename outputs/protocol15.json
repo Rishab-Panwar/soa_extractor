@@ -810,7 +810,7 @@
               "value": "X"
             },
             {
-              "col": "c1",
+              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]
@@ -927,7 +927,7 @@
               ]
             },
             {
-              "col": "c1",
+              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]
@@ -1002,7 +1002,7 @@
               ]
             },
             {
-              "col": "c1",
+              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]
@@ -1057,7 +1057,7 @@
               ]
             },
             {
-              "col": "c1",
+              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]
@@ -1198,7 +1198,7 @@
               "value": "X"
             },
             {
-              "col": "c1",
+              "col": "c2",
               "value": "Weekly x 2 weeks"
             }
           ]
