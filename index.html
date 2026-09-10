@@ -307,7 +307,27 @@ function tableCard(t) {
   const band = !phase ? '' : `<tr class="band"><th class="rowhead">${bandIsName ? 'Activity' : ''}</th>`
     + phase.spans.map((s) => `<th colspan="${s.n}">${esc(s.value)}</th>`).join('') + '</tr>';
 
+  /*
+   * The level BELOW the band, where the band is all the names say.
+   *
+   * 3041835 heads four of its six columns "Clinical review" and tells them
+   * apart on the line under it — Baseline Week 0, Three months, Six months,
+   * 12 months. Those live in the deepest level of each column's path, and the
+   * banding row skipped them for having a different value in every column,
+   * which is precisely what a per-column row is for. The names row was skipped
+   * too, because the band already said "Clinical review". So the page showed
+   * four identical columns and the reader had no way to tell which visit was
+   * which.
+   */
+  const deepest = (c) => (c.path || [])[(c.path || []).length - 1] || '';
+  const bandSaysAll = phase && same(phase.of, deepest);
+  const tells = !bandSaysAll && cols.some((c) => deepest(c) && deepest(c) !== c.label);
+  const under = bandIsName && tells
+    ? `<tr><th class="rowhead"></th>${cols.map((c) => colHead(c, deepest(c) === c.label ? '' : deepest(c))).join('')}</tr>`
+    : '';
+
   const head = band
+    + under
     // Where the phase IS the column's name, the banding row has already said it.
     // Called with an arrow, not passed to map directly: map hands the callback
     // the INDEX as its second argument, which colHead reads as the cell's text
