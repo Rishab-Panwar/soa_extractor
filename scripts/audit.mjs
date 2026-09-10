@@ -254,6 +254,37 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
       const extra = [...got].filter(([v, n]) => (wanted.get(v) || 0) < n)
         .map(([v, n]) => `${v}×${n - (wanted.get(v) || 0)}`);
 
+      /*
+       * WHERE a written-out value sits, not only that we hold it.
+       *
+       * The multiset above is blind to placement on purpose, and that blindness
+       * had a cost: protocol15 prints "Weekly x 2 weeks" under Baseline for
+       * five assessments, the published output filed all five under Screening,
+       * and every run of this audit passed because the values were all present.
+       *
+       * A phrase is not an X. It appears once on its row, so which column holds
+       * it is unambiguous — and wherever the heading pairing above found a
+       * partner for the printed column, the two can simply be compared. That is
+       * the whole check, and it is deliberately limited to phrases: comparing
+       * marks cell by cell is what produced forty false reports twice before.
+       */
+      for (const c of drawn) {
+        const value = norm(row[c] || '');
+        if (!/[a-z]{3}/i.test(value)) continue;
+        const should = mineHere[drawn.indexOf(c)];
+        if (!should) continue;
+        // Every cell holding it, not the first: a value written ACROSS several
+        // columns belongs to each of them, and matching only the first reported
+        // protocol9's "Prior to Day 4" as misplaced in two of the three days it
+        // is written over.
+        const held = mine.cells.filter((x) => norm(x.value) === value);
+        if (!held.length || held.some((x) => x.col === should.id)) continue;
+        const at = table.columns.find((col) => col.id === held[0].col);
+        console.log(`  ! "${label.slice(0, 28)}" — "${value.slice(0, 24)}" is printed under `
+          + `"${should.label}" but filed under "${at ? at.label : held.col}"`);
+        problems++;
+      }
+
       if (lost.length || extra.length) {
         console.log(`  ! "${label.slice(0, 34)}"`
           + (lost.length ? `  MISSING ${lost.join(' ')}` : '')
