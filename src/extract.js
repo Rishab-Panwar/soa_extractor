@@ -263,11 +263,42 @@ function ruledBands(page, dataRows, gridLeft) {
   const height = bottom - top;
   if (height <= 0) return null;
 
-  // A rule that covers most of the rows is a column boundary.
-  const spanning = rules
-    .filter((v) => Math.min(v.y1, bottom) - Math.max(v.y0, top) >= height * 0.6)
-    .map((v) => v.x)
-    .sort((a, b) => a - b);
+  /*
+   * A boundary drawn in pieces is still a boundary.
+   *
+   * This measured one segment at a time, and protocol12 draws each of its
+   * column rules as two — one run down the screening block, another down the
+   * treatment block — so every rule looked too short, the drawn grid was
+   * discarded whole, and the columns were inferred from where the marks stack
+   * instead. Marks inside one wide cell can stack in two places, which is how a
+   * ruled column came out as two and the week row was smeared across the pair.
+   *
+   * Segments at the same x are the same rule. What matters is how much of the
+   * rows they cover between them, counted once where they overlap.
+   */
+  const atX = new Map();
+  for (const v of rules) {
+    const near = [...atX.keys()].find((x) => Math.abs(x - v.x) <= 3);
+    const key = near === undefined ? v.x : near;
+    if (!atX.has(key)) atX.set(key, []);
+    atX.get(key).push(v);
+  }
+  const spanning = [];
+  for (const [x, segments] of atX) {
+    const spans = segments
+      .map((s) => [Math.max(s.y0, top), Math.min(s.y1, bottom)])
+      .filter(([a, b]) => b > a)
+      .sort((p, q) => p[0] - q[0]);
+    let covered = 0;
+    let reached = -Infinity;
+    for (const [a, b] of spans) {
+      const from = Math.max(a, reached);
+      if (b > from) covered += b - from;
+      reached = Math.max(reached, b);
+    }
+    if (covered >= height * 0.6) spanning.push(x);
+  }
+  spanning.sort((a, b) => a - b);
 
   // Double-ruled borders arrive as two lines a point apart; they are one edge.
   const edges = [];

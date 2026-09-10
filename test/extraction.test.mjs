@@ -44,7 +44,7 @@ const EXPECTED = [
     why: 'a phase band captioned "Study Phase", wrapping down three lines' },
   { name: 'protocol9', file: at('protocol9'), columns: 11, rows: 32, cells: 168, unnamed: 0, unlabelled: 0,
     why: 'the table title set inside the activity column, bulleted rows, and a value written across columns' },
-  { name: 'protocol12', file: at('protocol12'), columns: 9, rows: 39, cells: 139, unnamed: 0, unlabelled: 0,
+  { name: 'protocol12', file: at('protocol12'), columns: 9, rows: 39, cells: 132, unnamed: 0, unlabelled: 0,
     why: 'a word printed vertically between two phases' },
   { name: 'protocol15', file: at('protocol15'), columns: 9, rows: 33, cells: 132, unnamed: 0, unlabelled: 0,
     why: 'a cell value that wraps onto a second line' },

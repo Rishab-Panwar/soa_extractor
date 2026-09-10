@@ -139,16 +139,37 @@ const targets = adhoc
   : Object.entries(SOURCES);
 let problems = 0;
 
+/*
+ * Both readings of every document, not just the committed one.
+ *
+ * This script read `public/outputs/*.json` and nothing else, and those carry a
+ * model review. So it checked the FILES and never the reader — while a reviewer
+ * dropping a PDF into the UI gets the rule-based path, which is a different
+ * answer. A bug living only there was invisible to every run of this audit, and
+ * one did: protocol15's Treatment Week 1-3 column was being deleted outright by
+ * the live reader while the committed file held it correctly, and this reported
+ * the document clean for as long as that was true.
+ *
+ * Each document is now audited twice — as committed, and as the reader produces
+ * it today — because those are two different claims and both get made.
+ */
+const readings = [];
 for (const [name, pdf] of targets) {
   if (!adhoc && only && name !== only) continue;
   if (!have(pdf)) { console.log(`${name}: ${pdf} not present — skipped`); continue; }
+  if (!adhoc) readings.push([`${name} (as committed)`, name, pdf, 'committed']);
+  readings.push([`${name} (as read today)`, name, pdf, 'live']);
+}
+
+for (const [title, name, pdf, how] of readings) {
   let doc;
-  if (adhoc) {
+  if (how === 'live') {
     const { run } = await import(pathToFileURL(resolve('src/pipeline.js')).href);
     doc = await run(readFileSync(pdf), { assist: false });
-    console.log(`${name}: extracted here, rules only — ${doc.tables.length} schedule(s)`);
+    console.log(`\n### ${title} — rules only, extracted here: ${doc.tables.length} schedule(s)`);
   } else {
     doc = JSON.parse(readFileSync(`public/outputs/${name}.json`, 'utf8'));
+    console.log(`\n### ${title}`);
   }
   const { pages } = await readPdf(readFileSync(pdf));
 
@@ -176,12 +197,12 @@ for (const [name, pdf] of targets) {
        * bill to a document it never opened is worse than no checker, because
        * it is believed.
        */
-      skipped.push(`${name} p${pageNumber}`);
-      console.log(`\n${name} ${table.id} p${pageNumber}: NOT CHECKED — the page draws no column rules to rebuild`);
+      skipped.push(`${title} p${pageNumber}`);
+      console.log(`\n${title} ${table.id} p${pageNumber}: NOT CHECKED — the page draws no column rules to rebuild`);
       continue;
     }
 
-    console.log(`\n${'='.repeat(74)}\n${name} ${table.id} — page ${pageNumber} as printed vs as extracted`);
+    console.log(`\n${'='.repeat(74)}\n${title} ${table.id} — page ${pageNumber} as printed vs as extracted`);
 
     /*
      * How many leading columns are the activity column.
@@ -318,7 +339,7 @@ for (const [name, pdf] of targets) {
     });
 
     const unmatched = drawn.filter((c) => !usedPrinted.has(c));
-    unchecked.push(...unmatched.map((c) => `${name} p${pageNumber} "${headerRows.map((r) => r[c]).filter(Boolean).join(' ').slice(0, 24) || '(no heading)'}"`));
+    unchecked.push(...unmatched.map((c) => `${title} p${pageNumber} "${headerRows.map((r) => r[c]).filter(Boolean).join(' ').slice(0, 24) || '(no heading)'}"`));
     if (process.env.DBG) for (const c of unmatched) console.error();
     if (unmatched.length) {
       console.log(`  · ${unmatched.length} drawn column(s) could not be paired to one of ours — not checked`);
