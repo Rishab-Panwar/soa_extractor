@@ -175,7 +175,7 @@
           "id": "c2",
           "label": "Baseline",
           "path": [
-            "Screening"
+            "Baseline"
           ],
           "visitNumber": null,
           "studyDay": null,
@@ -189,9 +189,7 @@
         {
           "id": "divider-randomization",
           "label": "RANDOMIZATION",
-          "path": [
-            "Baseline"
-          ],
+          "path": [],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,
@@ -201,8 +199,10 @@
         },
         {
           "id": "c3",
-          "label": "Baseline (Week 1-3)",
-          "path": [],
+          "label": "Treatment Week 1-3",
+          "path": [
+            "Treatment"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": "1-3",
@@ -261,7 +261,7 @@
           "id": "c8",
           "label": "Treatment Week 12",
           "path": [
-            "Follow-up"
+            "Treatment"
           ],
           "visitNumber": null,
           "studyDay": null,

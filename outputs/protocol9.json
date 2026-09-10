@@ -128,8 +128,7 @@
           "id": "col1",
           "label": "Day 1",
           "path": [
-            "Opiate Agonist Phase",
-            "(all Morphine)"
+            "Opiate Agonist Phase (all Morphine)"
           ],
           "visitNumber": null,
           "studyDay": "1",
@@ -141,8 +140,7 @@
           "id": "col2",
           "label": "Day 2",
           "path": [
-            "Opiate Agonist Phase",
-            "(all Morphine)"
+            "Opiate Agonist Phase (all Morphine)"
           ],
           "visitNumber": null,
           "studyDay": "2",
@@ -154,8 +152,7 @@
           "id": "col3",
           "label": "Day 3",
           "path": [
-            "Opiate Agonist Phase",
-            "(all Morphine)"
+            "Opiate Agonist Phase (all Morphine)"
           ],
           "visitNumber": null,
           "studyDay": "3",
@@ -167,9 +164,7 @@
           "id": "col4",
           "label": "Day 4",
           "path": [
-            "Detoxification: Medication or Placebo Phase",
-            "(randomized to",
-            "Lofexidine or Placebo)"
+            "Detoxification: Medication or Placebo Phase (randomized to Lofexidine or Placebo)"
           ],
           "visitNumber": null,
           "studyDay": "4",
@@ -181,9 +176,7 @@
           "id": "col5",
           "label": "Day 5",
           "path": [
-            "Detoxification: Medication or Placebo Phase",
-            "(randomized to",
-            "Lofexidine or Placebo)"
+            "Detoxification: Medication or Placebo Phase (randomized to Lofexidine or Placebo)"
           ],
           "visitNumber": null,
           "studyDay": "5",
@@ -195,9 +188,7 @@
           "id": "col6",
           "label": "Day 6",
           "path": [
-            "Detoxification: Medication or Placebo Phase",
-            "(randomized to",
-            "Lofexidine or Placebo)"
+            "Detoxification: Medication or Placebo Phase (randomized to Lofexidine or Placebo)"
           ],
           "visitNumber": null,
           "studyDay": "6",
@@ -209,9 +200,7 @@
           "id": "col7",
           "label": "Day 7",
           "path": [
-            "Detoxification: Medication or Placebo Phase",
-            "(randomized to",
-            "Lofexidine or Placebo)"
+            "Detoxification: Medication or Placebo Phase (randomized to Lofexidine or Placebo)"
           ],
           "visitNumber": null,
           "studyDay": "7",
@@ -223,9 +212,7 @@
           "id": "col8",
           "label": "Day 8",
           "path": [
-            "Detoxification: Medication or Placebo Phase",
-            "(randomized to",
-            "Lofexidine or Placebo)"
+            "Detoxification: Medication or Placebo Phase (randomized to Lofexidine or Placebo)"
           ],
           "visitNumber": null,
           "studyDay": "8",
@@ -237,10 +224,7 @@
           "id": "col9",
           "label": "Day 9",
           "path": [
-            "Post Med/ Detox",
-            "Phase",
-            "(Placebo,",
-            "QID)"
+            "Post Med/Detox Phase (Placebo, QID)"
           ],
           "visitNumber": null,
           "studyDay": "9",
@@ -252,10 +236,7 @@
           "id": "col10",
           "label": "Day 10",
           "path": [
-            "Post Med/ Detox",
-            "Phase",
-            "(Placebo,",
-            "QID)"
+            "Post Med/Detox Phase (Placebo, QID)"
           ],
           "visitNumber": null,
           "studyDay": "10",

@@ -176,9 +176,7 @@
         {
           "id": "divider-randomization",
           "label": "RANDOMIZATION",
-          "path": [
-            "Study Medication Administration"
-          ],
+          "path": [],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": null,
@@ -189,7 +187,9 @@
         {
           "id": "c2",
           "label": "Study Week 1-3",
-          "path": [],
+          "path": [
+            "Study Medication Administration"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": "1-3",
@@ -235,7 +235,9 @@
         {
           "id": "c6",
           "label": "Study Week 9-11",
-          "path": [],
+          "path": [
+            "Study Medication Administration"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": "9-11",
@@ -245,7 +247,9 @@
         {
           "id": "c7",
           "label": "Study Week 12/Term",
-          "path": [],
+          "path": [
+            "Study Medication Administration"
+          ],
           "visitNumber": null,
           "studyDay": null,
           "studyWeek": "12/Term",
