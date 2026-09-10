@@ -197,6 +197,21 @@ function superscriptAfter(mark, candidates) {
     if (!/^[a-z0-9*†‡§¶#]{1,2}$/i.test(t)) continue;
     if (w.x < right - 1 || w.x > right + 3.5) continue;
     if (w.h > mark.h + 0.5) continue;
+    /*
+     * Raised far enough to be read as its own line, but still this mark's.
+     *
+     * A superscript sits above the baseline of what it qualifies, and where the
+     * mark is at the top of its row the marker crosses the rule and is grouped
+     * as a line of its own — protocol15 sets the five "b" markers of its "Vital
+     * signs" row on the line of "Physical exam/FEV 1" above it. Read there they
+     * were written into four cells as "M I b b b b b", the letters of
+     * RANDOMIZATION gathered in with them; refused there, they were lost, and
+     * the footnote they point at had nothing on that row to qualify.
+     *
+     * It belongs to the mark it is set over, and the mark's own height is what
+     * says how far above that can be.
+     */
+    if (w.y > mark.y + mark.h || w.y + w.h < mark.y - mark.h) continue;
     return t;
   }
   return null;
@@ -759,6 +774,23 @@ function phrasesIn(lines, bands, pitch, labelRight, marks = []) {
     // value of its own. A lone letter standing clear of every mark IS a value:
     // protocol1 fills four cells with "P" for "practice only".
     if (value.length <= 2 && marks.some((m) => run.x0 - (m.x + m.w) > -1 && run.x0 - (m.x + m.w) < 10)) continue;
+    /*
+     * A row of loose letters is not a value, however long the run is.
+     *
+     * Superscripts sit above the mark they qualify, and where that mark is at
+     * the top of its row they cross the rule into the row above — so the five
+     * "b" markers on protocol15's "Vital signs" arrive on the line of "Physical
+     * exam/FEV 1" over it. Gathered left to right they join the letters of
+     * RANDOMIZATION set vertically beside them, and the run reads "M I b b b b
+     * b" — which was then written into four cells as a value the page does not
+     * contain anywhere.
+     *
+     * Nothing a schedule puts in a cell is spelled one letter at a time. A
+     * single letter alone can be a legend mark and is left to the test above;
+     * several in a row are debris from two different things.
+     */
+    const tokens = value.split(/\s+/).filter(Boolean);
+    if (tokens.length > 1 && tokens.every((t) => t.length === 1 && /[a-z]/i.test(t))) continue;
     // A long assessment name overruns the label column and its tail lands in
     // the grid — "Objective Opiate Withdrawal Scale (15)" is a row, not a value
     // written across the visits. What separates the two is the gap: a value is
@@ -1519,6 +1551,13 @@ export function extractTable(pages, { title = '' } = {}) {
       }
     }
 
+    // Every lone marker character printed on this page, wherever it was
+    // grouped. A superscript raised above its mark can be gathered onto the
+    // line above, so which line it landed on says nothing about which mark it
+    // belongs to; where it sits does.
+    const raised = page.lines.flatMap((l) => l.words)
+      .filter((w) => /^[a-z0-9*†‡§¶#]{1,2}$/i.test(clean(w.text)));
+
     // Rows, attaching cells to the columns of this page.
     let lastCategory = null;
     const dropped = [];
@@ -1596,8 +1635,10 @@ export function extractTable(pages, { title = '' } = {}) {
       }
 
       // Everything on this row that is not itself a mark: a superscript marker
-      // hides among these.
-      const loose = entry.lines.flatMap((l) => l.other || []);
+      // hides among these — and so does one raised onto the line above, which
+      // is why the row's own words are not the whole pool. Position decides;
+      // superscriptAfter will not take a marker that is not sitting on a mark.
+      const loose = [...entry.lines.flatMap((l) => l.other || []), ...raised];
       for (const word of entry.marks) {
         const band = columnFor(word, bands);
         if (!band) continue;

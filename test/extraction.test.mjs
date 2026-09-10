@@ -46,7 +46,7 @@ const EXPECTED = [
     why: 'the table title set inside the activity column, bulleted rows, and a value written across columns' },
   { name: 'protocol12', file: at('protocol12'), columns: 9, rows: 39, cells: 132, unnamed: 0, unlabelled: 0,
     why: 'a word printed vertically between two phases' },
-  { name: 'protocol15', file: at('protocol15'), columns: 9, rows: 33, cells: 132, unnamed: 0, unlabelled: 0,
+  { name: 'protocol15', file: at('protocol15'), columns: 9, rows: 33, cells: 128, unnamed: 0, unlabelled: 0,
     why: 'a cell value that wraps onto a second line' },
   // Eighteen, not the eleven the marks alone could find: seven of its visits
   // are ruled but sparse, and clustering marks could never see them.
