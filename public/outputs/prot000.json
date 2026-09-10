@@ -641,6 +641,7 @@
           "label": "Endoscopy b including biopsy sampling",
           "category": null,
           "markers": [
+            "b",
             "g"
           ],
           "cells": [
@@ -1318,7 +1319,8 @@
           "continued": false,
           "appliesTo": [
             {
-              "target": "table"
+              "target": "row",
+              "row": "r12"
             }
           ]
         },
@@ -1375,11 +1377,11 @@
           "appliesTo": [
             {
               "target": "row",
-              "row": "r11"
+              "row": "r17"
             },
             {
               "target": "row",
-              "row": "r17"
+              "row": "r11"
             },
             {
               "target": "column",
@@ -1419,15 +1421,15 @@
           "appliesTo": [
             {
               "target": "row",
+              "row": "r21"
+            },
+            {
+              "target": "row",
               "row": "r12"
             },
             {
               "target": "row",
               "row": "r13"
-            },
-            {
-              "target": "row",
-              "row": "r21"
             },
             {
               "target": "column",
@@ -2159,5 +2161,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-09T23:18:12.187Z"
+  "extractedAt": "2026-09-10T00:58:45.044Z"
 }

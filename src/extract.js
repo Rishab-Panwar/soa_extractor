@@ -1394,6 +1394,31 @@ export function extractTable(pages, { title = '' } = {}) {
         rowsByLabel.set(labelKey(entry.label), row);
         rowOrder.push(row);
       }
+
+      /*
+       * A marker printed INSIDE the row's name, not after it.
+       *
+       * "Endoscopy b including biopsy sampling", "Physical exam/FEV d 1" — the
+       * superscript sits where the sponsor's sentence puts it, and the patterns
+       * that link a footnote look at the end of the label, so footnote b had
+       * nothing to point at and reported itself as unmatched.
+       *
+       * Recognised the way a marker on a cell is: by being set smaller than the
+       * words around it. Matching a bare letter in the middle of a label would
+       * link footnote "a" to every row whose name contains the word "a", and
+       * type size is the only thing that tells those apart.
+       */
+      const sized = labelWords.filter((w) => clean(w.text).length > 1).map((w) => w.h).sort((a, b) => a - b);
+      const bodyType = sized[Math.floor(sized.length / 2)];
+      if (bodyType) {
+        for (const word of labelWords) {
+          const text = clean(word.text);
+          if (!/^[a-z]$|^[*†‡§¶#]{1,3}$/i.test(text) || word.h >= bodyType - 0.4) continue;
+          if (!row.inLabel) row.inLabel = [];
+          if (!row.inLabel.includes(text.toLowerCase())) row.inLabel.push(text.toLowerCase());
+        }
+      }
+
       // Everything on this row that is not itself a mark: a superscript marker
       // hides among these.
       const loose = entry.lines.flatMap((l) => l.other || []);
@@ -1620,7 +1645,11 @@ export function extractTable(pages, { title = '' } = {}) {
   const LEGEND = /^[x✓✔●•◆■]$/i;
   const known = [...new Set(allFootnotes.map((f) => f.marker))].filter((m) => !LEGEND.test(m));
   for (const row of rowOrder) {
-    row.markers = markersIn(row.label, known);
+    row.markers = [...new Set([
+      ...markersIn(row.label, known),
+      ...(row.inLabel || []).filter((m) => known.includes(m)),
+    ])];
+    delete row.inLabel;
     for (const cell of row.cells) {
       // A marker set after a written-out value arrives as the last word of the
       // phrase: "Weekly i" is a "Weekly" cell that footnote i qualifies. Split
