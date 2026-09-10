@@ -44,9 +44,9 @@ const EXPECTED = [
     why: 'a phase band captioned "Study Phase", wrapping down three lines' },
   { name: 'protocol9', file: at('protocol9'), columns: 11, rows: 32, cells: 168, unnamed: 0, unlabelled: 0,
     why: 'the table title set inside the activity column, bulleted rows, and a value written across columns' },
-  { name: 'protocol12', file: at('protocol12'), columns: 9, rows: 39, cells: 126, unnamed: 0, unlabelled: 0,
+  { name: 'protocol12', file: at('protocol12'), columns: 9, rows: 39, cells: 139, unnamed: 0, unlabelled: 0,
     why: 'a word printed vertically between two phases' },
-  { name: 'protocol15', file: at('protocol15'), columns: 9, rows: 33, cells: 120, unnamed: 0, unlabelled: 0,
+  { name: 'protocol15', file: at('protocol15'), columns: 9, rows: 33, cells: 132, unnamed: 0, unlabelled: 0,
     why: 'a cell value that wraps onto a second line' },
   // Eighteen, not the eleven the marks alone could find: seven of its visits
   // are ruled but sparse, and clustering marks could never see them.
@@ -85,20 +85,31 @@ test('a value written across columns reaches every column it is written over', a
   }
 });
 
-test('a word printed vertically is read as a divider, not as one-letter cells', async (t) => {
-  if (!existsSync(at('protocol12'))) return t.skip('protocol12.pdf not present');
-  const result = await run(readFileSync(at('protocol12')), { assist: false });
-  const table = result.tables[0];
-  const divider = table.columns.find((c) => c.divider);
-  assert.ok(divider, 'the divider column was found');
-  assert.equal(divider.label, 'RANDOMIZATION');
-  const letters = table.rows.flatMap((r) => r.cells.filter((c) => /^[A-QS-WYZ]$/i.test(c.value)));
-  assert.equal(letters.length, 0, 'none of its letters became cell values');
-  // Nothing is scheduled inside a line between two phases. Values written as
-  // words reach into it from the column beside it, and every one of them is a
-  // second copy of a cell already recorded correctly next door.
-  const inside = table.rows.flatMap((r) => r.cells.filter((c) => c.col === divider.id));
-  assert.equal(inside.length, 0, 'and nothing else was filed under the divider');
+test('a word printed vertically loses its letters, not the visit beside it', async (t) => {
+  if (!existsSync(at('protocol12')) || !existsSync(at('protocol15'))) return t.skip('protocols not present');
+  /*
+   * This test used to assert the opposite, and pinned a bug for weeks.
+   *
+   * Both documents rule a narrow column for the word they print down the
+   * middle of the schedule, and no mark stacks inside it — so no band is built
+   * there, and the nearest band to the word is the Treatment Week 1-3 column
+   * beside it. That column was renamed "RANDOMIZATION", flagged a divider, and
+   * had every one of its cells deleted. A whole visit of each schedule went
+   * missing, the week row shifted with it, and this test called it correct
+   * because a column labelled RANDOMIZATION did indeed exist.
+   *
+   * What has to be true is narrower: the letters must not become cells, and
+   * the visit they were printed across must keep its marks.
+   */
+  for (const name of ['protocol12', 'protocol15']) {
+    const table = (await run(readFileSync(at(name)), { assist: false })).tables[0];
+    const letters = table.rows.flatMap((r) => r.cells.filter((c) => /^[A-QS-WYZ]$/i.test(c.value)));
+    assert.equal(letters.length, 0, `${name}: none of its letters became cell values`);
+    const week = table.columns.find((c) => /^1-3$/.test(String(c.studyWeek || '')));
+    assert.ok(week, `${name}: the week 1-3 column is still a visit`);
+    const marks = table.rows.flatMap((r) => r.cells.filter((c) => c.col === week.id));
+    assert.ok(marks.length >= 10, `${name}: and it kept its marks (${marks.length})`);
+  }
 });
 
 test('a name that wraps inside its row stays one row', async (t) => {

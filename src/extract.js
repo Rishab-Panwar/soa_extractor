@@ -1058,9 +1058,90 @@ function readHeader(rows, bands, firstDataY, page) {
     // The drawn cell first, the inference only where the row is not ruled.
     const ruled = ruledSpans(entry.values, bands, page, entry.top, entry.bottom);
     if (ruled) continue;
+    if (centredSpans(entry.values, bands)) continue;
     for (const id of spanSparse(entry.values, bands)) inferred.add(id);
   }
   return { header, inferred: [...inferred] };
+}
+
+/**
+ * Banding headings placed by the fact that each is CENTRED over its group.
+ *
+ * Where the page rules the heading row, `ruledSpans` reads the answer off the
+ * page and this is not reached. Where it does not — protocol15 stops every
+ * vertical below its header, so the whole header block is set in whitespace —
+ * the span has to be inferred, and inferring it from how far the ink reaches is
+ * wrong in a way that matters: "Treatment" is one word centred over six visits,
+ * so its ink covers two of them, the four it does not reach are handed to
+ * whichever heading is nearer, and week 12 ends up filed under Follow-up.
+ *
+ * A sponsor centres a heading over the columns it covers. That turns the
+ * question into one with an exact answer: cut the columns into as many runs as
+ * there are headings, in order, so that each run's centre lands as close as
+ * possible to its heading's. Every arrangement is scored and the best kept —
+ * with nine columns and four headings there are 56 of them, and the cost of
+ * being wrong is a schedule that says the wrong thing about when a visit
+ * happens.
+ *
+ * Returns false, changing nothing, unless it is confident: at least two
+ * headings, fewer headings than columns, and every run within half a column's
+ * pitch of where its heading is centred.
+ */
+function centredSpans(values, bands) {
+  const heads = [...values.entries()]
+    .map(([id, v]) => ({ id, v, at: bands.findIndex((b) => b.id === id) }))
+    .filter((h) => h.at >= 0)
+    .sort((a, b) => a.at - b.at);
+  if (heads.length < 2 || heads.length >= bands.length) return false;
+
+  const mid = (from, to) => (bands[from].left + bands[to].right) / 2;
+  const inkOf = (h) => (h.v.x0 + h.v.x1) / 2;
+
+  // best[i][j]: the cheapest way to give headings 0..i the columns 0..j.
+  const best = [];
+  for (let i = 0; i < heads.length; i++) {
+    best.push([]);
+    for (let j = 0; j < bands.length; j++) {
+      if (j < i) { best[i][j] = null; continue; }
+      let choice = null;
+      const first = i === 0 ? 0 : i;
+      for (let start = first; start <= j; start++) {
+        // The base case is an object like every other step, not the number
+        // zero: read for its `.cost` a number gives NaN, and every arrangement
+        // then scores the same as every other.
+        const before = i === 0
+          ? (start === 0 ? { cost: 0, start: 0, from: null } : null)
+          : best[i - 1][start - 1];
+        if (!before) continue;
+        const cost = before.cost + Math.abs(mid(start, j) - inkOf(heads[i]));
+        if (!choice || cost < choice.cost) choice = { cost, start, from: before };
+      }
+      best[i][j] = choice;
+    }
+  }
+  const last = best[heads.length - 1][bands.length - 1];
+  if (!last) return false;
+
+  const runs = [];
+  let node = last;
+  let end = bands.length - 1;
+  for (let i = heads.length - 1; i >= 0; i--) {
+    runs.unshift({ head: heads[i], start: node.start, end });
+    end = node.start - 1;
+    node = node.from;
+  }
+
+  const pitch = bands.length > 1
+    ? (bands[bands.length - 1].centre - bands[0].centre) / (bands.length - 1) : 40;
+  for (const run of runs) {
+    if (Math.abs(mid(run.start, run.end) - inkOf(run.head)) > pitch * 0.5) return false;
+  }
+
+  values.clear();
+  for (const run of runs) {
+    for (let i = run.start; i <= run.end; i++) values.set(bands[i].id, { ...run.head.v });
+  }
+  return true;
 }
 
 /**
@@ -1696,6 +1777,48 @@ export function extractTable(pages, { title = '' } = {}) {
       .filter((c) => c.page === page)
       .reduce((best, c) => (!best || Math.abs(c.centre - word.x) < Math.abs(best.centre - word.x) ? c : best), null);
     if (!column || Math.abs(column.centre - word.x) > 40) continue;
+
+    /*
+     * Nearest is not the same as right, and this one deletes what it claims.
+     *
+     * protocol15 rules a narrow column for the word it prints down the middle
+     * of its schedule, and the marks stack nowhere inside it — so no band is
+     * built there, and the nearest band to the word is the Treatment Week 1-3
+     * column 28 points away. That column was then renamed "RANDOMIZATION",
+     * given the divider flag, and had EVERY ONE of its cells deleted by the
+     * rule below. A whole visit's worth of the schedule disappeared, and
+     * because the week row shifted with it, "12" ended up filed under
+     * Follow-up and the treatment weeks were wrong from there on.
+     *
+     * A column carrying a timepoint of its own is a visit. Whatever the word
+     * beside it is doing, it is not naming that column.
+     */
+    if (column.visitNumber || column.studyDay || column.studyWeek) {
+      /*
+       * Its letters still have to go, though.
+       *
+       * The word is set close enough to be sorted into this column even when
+       * the column is not its own, so "RANDOMIZATION" arrives spelled down the
+       * visit beside it — one row reading "R", the next "A", the next "N D".
+       * Dropping the whole column was what used to remove them, at the cost of
+       * everything else in it. A cell that is nothing but letters is a piece of
+       * that word; a cell holding "X", "3X" or "3 X" is a mark and stays.
+       */
+      const spelling = (value) => {
+        const parts = clean(value).split(/\s+/).filter(Boolean);
+        return parts.length > 0 && parts.every((p) => LETTER.test(p));
+      };
+      let removed = 0;
+      for (const row of rowOrder) {
+        const before = row.cells.length;
+        row.cells = row.cells.filter((c) => !(c.col === column.id && spelling(c.value)));
+        removed += before - row.cells.length;
+      }
+      ambiguities.push(`"${word.text}" is printed vertically at x≈${Math.round(word.x)} on page ${page}, `
+        + `and the nearest column to it is "${column.label}" — a visit with a timepoint of its own, `
+        + `so that column is kept as a visit. ${removed} cell(s) holding only its letters were removed.`);
+      continue;
+    }
 
     /*
      * A divider holds nothing, so nothing is left in it.
