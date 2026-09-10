@@ -19,7 +19,7 @@ import { available } from './assist.js';
 loadEnv();
 
 const PORT = Number(process.env.PORT || 3100);
-const page = fileURLToPath(new URL('../public/index.html', import.meta.url));
+const page = fileURLToPath(new URL('../index.html', import.meta.url));
 
 /*
  * Whether the model review may run, said out loud at startup.

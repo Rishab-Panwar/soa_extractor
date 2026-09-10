@@ -111,10 +111,14 @@ eight documents here, seven never reach it. Without the log there is no telling
 ## Deploying it
 
 Import the repository at vercel.com and press deploy — there is nothing to
-configure. `vercel.json` names `public/` as the site and `api/extract.js` as the
-endpoint, and rewrites `/extract` onto it, so the hosted page and the local
+configure. `index.html` is the site and `api/extract.js` the endpoint, and
+`vercel.json` rewrites `/extract` onto it so the hosted page and the local
 server answer the same URL with the same code. A custom domain is two fields in
 the project's Domains tab.
+
+Both live at the repository root deliberately. Naming an `outputDirectory` made
+Vercel treat the deployment as a static build rooted there and never turn `api/`
+into a function: the page served perfectly and every upload came back 404.
 
 Live at **soa.rishabai.me**.
 
