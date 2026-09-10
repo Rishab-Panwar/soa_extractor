@@ -1,7 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/extract.js": { "maxDuration": 60, "memory": 1024 }
+    "api/extract.js": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "node_modules/pdfjs-dist/legacy/build/**"
+    }
   },
   "rewrites": [{ "source": "/extract", "destination": "/api/extract" }]
 }
