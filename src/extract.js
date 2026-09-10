@@ -147,7 +147,7 @@ function columnKey(column) {
   // "V2", "Follow-up" — but a sentence cannot, and neither can this tool's own
   // "Column 7" placeholder.
   const label = labelKey(column.label || '');
-  if (!label || /^columnd+$/.test(label) || label.length > 14) return null;
+  if (!label || /^column\d+$/.test(label) || label.length > 14) return null;
   return label;
 }
 
@@ -198,7 +198,23 @@ function superscriptAfter(mark, candidates) {
 function isMark(word) {
   const t = clean(word.text);
   if (!t || t.length > 14) return false;
-  return CELL_TOKEN.test(t);
+  if (!CELL_TOKEN.test(t)) return false;
+  /*
+   * A number followed by a word is a timepoint, not a mark.
+   *
+   * The pattern above lets anything follow a leading number, so "12 months"
+   * read as a mark — and since the first row carrying a mark is where the
+   * header stops, that put the header's own second line inside the table:
+   * "Baseline Week 0 / Three months / Six months / 12 months" became a row
+   * with one cell, and six columns lost their timepoints.
+   *
+   * Written-out values are not lost by this; they are read by the pass that
+   * handles phrases, which is where a value like that belongs. The dosing
+   * abbreviations stay marks, because that is all they are.
+   */
+  const WORDY = /^(?:b?id|tid|qd|qw|prn|y\/n|yes|no|n\/a|na)$/i;
+  if (/[a-z]{3}/i.test(t) && !WORDY.test(t)) return false;
+  return true;
 }
 
 /**
@@ -1322,13 +1338,28 @@ export function extractTable(pages, { title = '' } = {}) {
       let existing = key ? columns.find((c) => c.page !== column.page && columnKey(c) === key) : null;
       if (!key) {
         unnamed.push(column);
-        // Fall back to geometry, but only against a page of the same width and
-        // only for columns that are themselves unidentified — so a page whose
-        // header DOES name its visits is never overridden by position.
-        existing = columns.find((c) => c.page !== column.page
+        /*
+         * Fall back to geometry: a page of the same width, a column at the same
+         * place.
+         *
+         * This used to match only columns that were themselves unidentified,
+         * to stop position overriding a header that names its visits. But the
+         * column being placed has no name at all — there is nothing to
+         * override — and refusing the match is what invents columns: a
+         * continuation page that reprints the grid without reprinting the
+         * header could not attach to the visits it plainly continues, so a
+         * six-visit schedule came out with eleven columns, five of them called
+         * "Column 1" and holding the second page's marks.
+         *
+         * The nearest, not the first: at half a column's pitch two candidates
+         * cannot both match, but if the grid shifts slightly between pages the
+         * nearer one is the one the page is continuing.
+         */
+        const near = columns.filter((c) => c.page !== column.page
           && c.pageWidth === column.pageWidth
-          && !columnKey(c)
           && Math.abs(c.centre - column.centre) <= column.pitch * 0.5);
+        existing = near.sort((a, b) =>
+          Math.abs(a.centre - column.centre) - Math.abs(b.centre - column.centre))[0];
       }
       if (existing) {
         column.id = existing.id;
@@ -1372,12 +1403,7 @@ export function extractTable(pages, { title = '' } = {}) {
          * a column that has no marks in it at all, which this does not yet do.
          * Losing them quietly is the part that is not acceptable.
          */
-        if (!entry.label && entry.lines.some((l) => (l.other || []).length)) {
-          for (const line of entry.lines) {
-            for (const word of line.other || []) dropped.push(clean(word.text));
-          }
-          continue;
-        }
+        if (!entry.label) continue;
         if (findRow(rowsByLabel, entry.label)) continue; // already a row elsewhere
         // A label with nothing under it, that was not absorbed as a wrap.
         lastCategory = entry.label;
@@ -1471,14 +1497,32 @@ export function extractTable(pages, { title = '' } = {}) {
         }
       }
 
-      // What the row was written with, against what it ended up holding. A
-      // word inside the grid that reached no cell is content the page prints
-      // and the table does not, and the reader has to be told which.
-      const said = [...row.cells.map((c) => c.value), ...(row.markers || [])].join(' ');
-      for (const word of loose) {
+    }
+
+    /*
+     * What the page printed inside its grid, against what the table now holds.
+     *
+     * Checked here, once, rather than inside the loop that builds the rows.
+     * Which branch a line takes depends on whether it has a mark, a name or a
+     * phrase, and a change to any of those quietly moves lines from a branch
+     * that reports its losses to one that does not — that is exactly what
+     * happened when "12 months" stopped counting as a mark, and Prot_111's
+     * sample list went back to disappearing in silence. Comparing the finished
+     * table against the page cannot be bypassed that way.
+     */
+    const held = [
+      ...rowOrder.map((r) => r.label),
+      ...rowOrder.flatMap((r) => r.cells.map((c) => c.value)),
+      ...columns.map((c) => c.label), ...columns.flatMap((c) => c.path || []),
+      ...pageColumns.map((c) => c.label), ...pageColumns.flatMap((c) => c.path || []),
+    ].join(' ');
+    for (const line of page.lines) {
+      if (line.y < firstDataY - 2 || line.bottom > lastDataBottom + 2) continue;
+      for (const word of line.words) {
         const text = clean(word.text);
-        if (text.length < 2 || said.includes(text)) continue;
-        if (PAGE_FURNITURE.test(text)) continue;
+        // Three characters, because a marker or a mark is not content and a
+        // one-word difference in punctuation is not a loss worth reporting.
+        if (text.length < 3 || PAGE_FURNITURE.test(text) || held.includes(text)) continue;
         dropped.push(text);
       }
     }
