@@ -1,166 +1,397 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SoA Extractor</title>
+<title>Schedule of Activities Extractor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23c9ab73'/%3E%3Cstop offset='1' stop-color='%23a8802f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%23121212'/%3E%3Cg fill='url(%23g)'%3E%3Crect x='5' y='17' width='3' height='7' rx='1.5'/%3E%3Crect x='10' y='11' width='3' height='13' rx='1.5'/%3E%3Crect x='15' y='7' width='3' height='17' rx='1.5'/%3E%3Crect x='20' y='13' width='3' height='11' rx='1.5'/%3E%3Crect x='25' y='19' width='3' height='5' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0e1620; --panel:#ffffff; --ink:#101820; --dim:#64748b; --line:#e3e8ee;
-    --teal:#0d7a6b; --teal-soft:#e7f4f1; --amber:#b45309; --amber-soft:#fef6e7;
-    --rose:#b42318; --rose-soft:#fdecea; --shadow:0 1px 2px rgba(16,24,32,.06),0 8px 24px rgba(16,24,32,.06);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:#f2f5f8;color:var(--ink);
-       font:14px/1.55 "Segoe UI",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/*
+ * Presentation only. Every id the script reads (drop, file, modeNote, status,
+ * out) and every class it writes (card, meta, prov, grid-wrap, band, category,
+ * rowhead, val, hit, mk, fns, fn, m, t, where, hint, amb, src, srcpage, ev,
+ * empty, hostednote, spinner, err, over, on, btn, body) is unchanged. Nothing
+ * here decides anything.
+ */
 
-  /* ── masthead ─────────────────────────────────────────────── */
-  header{background:linear-gradient(135deg,#0e1620 0%,#14303a 100%);color:#fff;padding:26px 28px 30px}
-  .wrap{max-width:1560px;margin:0 auto}
-  header h1{margin:0;font-size:20px;font-weight:650;letter-spacing:-.2px}
-  header p{margin:6px 0 0;font-size:13px;color:#9fb3bd;max-width:760px}
-  .badges{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-  .badge{font-size:11px;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.09);
-         border:1px solid rgba(255,255,255,.14);color:#c9dde4;padding:4px 9px;border-radius:99px}
+:root {
+  --champagne: hsl(38 45% 48%);
+  --champagne-mid: hsl(36 35% 70%);
+  --radius: 0.75rem;
+  --display: "Playfair Display", Georgia, serif;
+  --sans: Inter, "Segoe UI", -apple-system, system-ui, sans-serif;
+}
 
-  main{max-width:1560px;margin:-16px auto 60px;padding:0 28px}
+/* Dark is the default, as in the reference. */
+html.dark {
+  color-scheme: dark;
+  --bg: hsl(0 0% 7%);
+  --surface: hsl(0 0% 10%);
+  --surface-2: hsl(0 0% 12%);
+  --fg: hsl(36 30% 88%);
+  --dim: hsl(36 15% 50%);
+  --line: hsl(0 0% 16%);
+  --head: hsl(0 0% 13%);
+  --stripe: hsl(0 0% 9%);
+  --hit: hsl(38 45% 22%);
+  --hit-line: hsl(38 45% 40%);
+  --err: hsl(0 72% 62%);
+  --err-bg: hsl(0 40% 14%);
+}
 
-  /* ── drop zone ────────────────────────────────────────────── */
-  .drop{display:block;background:var(--panel);border:2px dashed #c7d3de;border-radius:12px;
-        padding:34px 24px;text-align:center;cursor:pointer;transition:.15s;box-shadow:var(--shadow)}
-  .drop:hover{border-color:var(--teal);background:#fbfefd}
-  .drop.over{border-color:var(--teal);background:var(--teal-soft);transform:translateY(-1px)}
-  .drop input{position:absolute;width:0;height:0;opacity:0}
-  .drop .big{font-size:16px;font-weight:600}
-  .drop .sub{color:var(--dim);font-size:13px;margin-top:5px}
-  .drop .ring{width:42px;height:42px;border-radius:50%;background:var(--teal-soft);color:var(--teal);
-              display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px}
+html.light {
+  color-scheme: light;
+  --bg: hsl(36 25% 93%);
+  --surface: hsl(36 20% 97%);
+  --surface-2: hsl(36 18% 90%);
+  --fg: hsl(0 0% 12%);
+  --dim: hsl(0 0% 42%);
+  --line: hsl(36 15% 82%);
+  --head: hsl(36 18% 88%);
+  --stripe: hsl(36 20% 95%);
+  --hit: hsl(38 60% 88%);
+  --hit-line: hsl(38 45% 55%);
+  --err: hsl(0 65% 40%);
+  --err-bg: hsl(0 60% 95%);
+}
 
-  /* ── status ───────────────────────────────────────────────── */
-  .status{margin:18px 0 0;font-size:13px;color:var(--dim);display:flex;align-items:center;gap:10px}
-  .spinner{width:14px;height:14px;border:2px solid #cfd9e2;border-top-color:var(--teal);
-           border-radius:50%;animation:spin .7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .err{background:var(--rose-soft);border:1px solid #f3c1bc;color:var(--rose);
-       padding:10px 14px;border-radius:8px;font-size:13px}
+* { box-sizing: border-box; }
 
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* ── cards ────────────────────────────────────────────────── */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
-        margin:18px 0;box-shadow:var(--shadow);overflow:hidden}
-  .card > header{background:none;color:inherit;padding:16px 20px 14px;border-bottom:1px solid var(--line)}
-  .card h2{margin:0;font-size:16px;font-weight:640;letter-spacing:-.2px;color:var(--ink)}
-  .meta{margin-top:5px;font-size:12px;color:var(--dim);display:flex;gap:14px;flex-wrap:wrap}
-  .meta code{background:#eef2f6;border-radius:4px;padding:1px 6px;font-size:11px}
-  .body{padding:16px 20px 20px}
-  h3{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);
-     margin:20px 0 8px;font-weight:650}
-  h3:first-child{margin-top:0}
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -.01em; }
 
-  /* ── the grid ─────────────────────────────────────────────── */
-  .grid-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px;background:#fff}
-  table{border-collapse:separate;border-spacing:0;font-size:12.5px;width:max-content;min-width:100%}
-  th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 8px;text-align:center}
-  thead th{position:sticky;top:0;z-index:3;background:#eff3f7;font-weight:640;font-size:11px;
-           color:#38495a;white-space:nowrap}
-  thead tr:nth-child(2) th{top:26px}
-  thead tr:nth-child(3) th{top:52px}
-  thead tr:nth-child(4) th{top:78px}
-  th.rowhead,td.rowhead{position:sticky;left:0;z-index:2;background:#fff;text-align:left;
-                        white-space:normal;min-width:250px;max-width:380px;border-right:2px solid var(--line)}
-  thead th.rowhead{z-index:4;background:#eff3f7}
-  tbody tr:nth-child(even) td{background:#fafcfd}
-  tbody tr:nth-child(even) td.rowhead{background:#fafcfd}
-  tbody tr:hover td{background:var(--teal-soft)}
-  tbody tr:hover td.rowhead{background:var(--teal-soft)}
-  td.val{font-variant-numeric:tabular-nums;font-weight:600;color:#123}
-  tr.category td{background:#eef4f8 !important;font-weight:650;text-align:left;color:#26414f;
-                 letter-spacing:.02em}
-  td.hit,th.hit{background:var(--amber-soft) !important;box-shadow:inset 0 0 0 2px #f0c078}
-  .mk{color:var(--amber);font-weight:700;font-size:10px;vertical-align:super;cursor:pointer;
-      padding:0 1px;border-radius:3px}
-  .mk:hover{background:var(--amber-soft)}
+.gold {
+  background-image: linear-gradient(135deg, var(--champagne), var(--champagne-mid));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.glow { box-shadow: 0 0 30px -5px hsl(38 45% 48% / .15); }
 
-  /* ── footnotes ────────────────────────────────────────────── */
-  .fns{display:grid;gap:6px}
-  .fn{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:7px 10px;
-      border:1px solid var(--line);border-radius:8px;cursor:pointer;transition:.12s;background:#fff}
-  .fn:hover{border-color:#e0b877;background:#fffdf8}
-  .fn.on{border-color:var(--amber);background:var(--amber-soft)}
-  /* The marker is set the way the protocol sets it — in the margin, in the
-     document's own notation — rather than stamped into a coloured chip, where
-     "*" and "****" both come out as an unreadable smudge. */
-  .fn .m{flex:0 0 34px;text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-         font-weight:700;font-size:12px;color:#8a5a00;line-height:1.5;white-space:nowrap}
-  .fn .t{flex:1 1 auto}
-  .fn .where{font-size:11px;color:var(--dim);margin-top:2px}
+/* ── nav ──────────────────────────────────────────────────────────────── */
 
-  /* ── notes ────────────────────────────────────────────────── */
-  /* The badge states how the table was read. It is not a warning light, so it
-     is not coloured like one — red and amber on a correct extraction read as an
-     alarm and cost the reader's trust in output that was fine. */
-  .prov{font-weight:600;padding:2px 9px;border-radius:99px;font-size:11px;background:#eef1f5;color:#41546b}
-  .hint{font-size:11px;color:var(--dim);margin:6px 0 2px}
-  thead tr.band th{background:#f2f5f8;font-weight:650;border-bottom:1px solid var(--line)}
-  .amb{background:var(--amber-soft);border-left:3px solid var(--amber);padding:9px 12px;
-       border-radius:0 8px 8px 0;font-size:13px;margin-bottom:6px;color:#5c3a06}
-  details{border:1px solid var(--line);border-radius:8px;padding:0;margin-top:8px;background:#fbfcfd}
-  summary{cursor:pointer;padding:9px 12px;font-size:12px;font-weight:600;color:#38495a;list-style:none}
-  summary::-webkit-details-marker{display:none}
-  summary::before{content:"▸ ";color:var(--dim)}
-  details[open] summary::before{content:"▾ "}
-  .src{padding:0 12px 12px;display:grid;gap:10px}
-  .srcpage b{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
-  .srcpage pre{margin:4px 0 0;padding:10px;background:#f7f9fb;border:1px solid var(--line);border-radius:6px;
-               font:11.5px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap;max-height:340px;overflow:auto}
-  .ev{padding:0 12px 12px;font-size:12px;color:var(--dim);display:grid;gap:3px}
-  .ev code{background:#eef2f6;border-radius:4px;padding:1px 5px;color:#38495a}
-  .btn{font:inherit;font-size:13px;padding:7px 14px;border:1px solid var(--line);background:#fff;
-       border-radius:8px;cursor:pointer;font-weight:600;color:#26414f}
-  .btn:hover{border-color:var(--teal);color:var(--teal)}
-  .modes{margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .modes .btn{padding:9px 16px}
-  .modes .btn.on{border-color:var(--teal);color:var(--teal);background:#f2fbfa;font-weight:600}
-  .modes .muted{flex:1 1 100%;font-size:12.5px;color:var(--dim);margin-top:2px;line-height:1.5}
-  .muted{font-size:12px;color:var(--dim);flex-basis:100%;margin-top:2px}
-  .hostednote{background:#eef4f8;border:1px solid var(--line);border-radius:8px;padding:9px 12px;
-              font-size:12.5px;color:#38495a;margin:14px 0 0}
-  .empty{text-align:center;padding:30px;color:var(--dim)}
+nav {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 14px 28px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 17px; font-weight: 700; }
+.brand .bars { display: flex; align-items: flex-end; gap: 2px; height: 18px; }
+.brand .bars i { width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--champagne-mid), var(--champagne)); }
+.brand .bars i:nth-child(1) { height: 7px }
+.brand .bars i:nth-child(2) { height: 14px }
+.brand .bars i:nth-child(3) { height: 18px }
+.brand .bars i:nth-child(4) { height: 11px }
+.brand .bars i:nth-child(5) { height: 5px }
+nav .links { display: flex; gap: 22px; font-size: 14px; color: var(--dim); }
+nav .links a { color: inherit; text-decoration: none; transition: color .15s; }
+nav .links a:hover { color: var(--fg); }
+.icon {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border: 1px solid var(--line); border-radius: 9px;
+  background: transparent; color: var(--dim); cursor: pointer; font-size: 15px;
+  transition: color .15s, border-color .15s;
+}
+.icon:hover { color: var(--champagne); border-color: var(--champagne); }
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+
+.hero { position: relative; overflow: hidden; padding: 92px 24px 64px; text-align: center; }
+.hero::before {
+  content: ""; position: absolute; left: 50%; top: 42%;
+  width: 560px; height: 560px; transform: translate(-50%, -50%);
+  border-radius: 50%; pointer-events: none;
+  background-image: linear-gradient(135deg, var(--champagne), var(--champagne-mid));
+  opacity: .07; filter: blur(120px);
+}
+.hero .inner { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+.hero .icon { margin: 0 auto 26px; }
+.hero h1 { font-size: clamp(38px, 6.2vw, 68px); line-height: 1.06; margin: 0; }
+.hero h1 .line2 { color: var(--fg); }
+.hero .lede { margin: 22px auto 0; max-width: 620px; font-size: 17px; color: var(--dim); }
+.badges { margin-top: 26px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.badge {
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--dim); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px;
+}
+
+/* ── buttons ──────────────────────────────────────────────────────────── */
+
+.btn {
+  font: inherit; font-size: 14px; font-weight: 600;
+  padding: 11px 22px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--fg);
+  transition: border-color .15s, color .15s, background .15s, opacity .15s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn:hover { border-color: var(--champagne); color: var(--champagne); }
+.btn.on, .btn.gold-btn {
+  background-image: linear-gradient(135deg, var(--champagne), var(--champagne-mid));
+  border-color: transparent; color: hsl(0 0% 7%);
+  box-shadow: 0 0 30px -5px hsl(38 45% 48% / .25);
+}
+.btn.on:hover, .btn.gold-btn:hover { opacity: .9; color: hsl(0 0% 7%); }
+
+/* ── the tool ─────────────────────────────────────────────────────────── */
+
+main { max-width: 1560px; margin: 0 auto; padding: 0 28px 40px; }
+.tool { max-width: 980px; margin: 0 auto; }
+
+.drop {
+  display: block; text-align: center; cursor: pointer;
+  background: var(--surface); border: 1px dashed color-mix(in srgb, var(--champagne) 35%, var(--line));
+  border-radius: 16px; padding: 44px 24px; transition: .15s;
+}
+.drop:hover { border-color: var(--champagne); background: var(--surface-2); }
+.drop.over { border-color: var(--champagne); background: var(--surface-2); transform: translateY(-1px); }
+.drop input { position: absolute; width: 0; height: 0; opacity: 0; }
+.drop .ring {
+  width: 46px; height: 46px; border-radius: 50%; margin: 0 auto 14px;
+  display: grid; place-items: center; font-size: 20px; color: hsl(0 0% 7%);
+  background-image: linear-gradient(135deg, var(--champagne), var(--champagne-mid));
+}
+.drop .big { font-size: 17px; font-weight: 600; font-family: var(--display); }
+.drop .sub { color: var(--dim); font-size: 13.5px; margin-top: 6px; }
+
+.modes { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
+.modes .muted { flex: 1 1 100%; text-align: center; font-size: 13px; color: var(--dim); margin-top: 4px; }
+
+.status { margin: 20px 0 0; font-size: 13.5px; color: var(--dim); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--champagne); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.err { background: var(--err-bg); border: 1px solid var(--err); color: var(--err); padding: 10px 14px; border-radius: 10px; font-size: 13.5px; }
+
+/* ── how it works ─────────────────────────────────────────────────────── */
+
+section.band-section { padding: 84px 24px; border-top: 1px solid var(--line); }
+section.band-section .inner { max-width: 1060px; margin: 0 auto; }
+.eyebrow { text-align: center; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--champagne); margin-bottom: 10px; }
+section.band-section h2 { text-align: center; font-size: clamp(26px, 3.4vw, 38px); margin: 0 0 12px; }
+section.band-section .say { text-align: center; color: var(--dim); max-width: 640px; margin: 0 auto 44px; }
+
+.steps { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+.step .n {
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  font-size: 13px; font-weight: 700; color: hsl(0 0% 7%); margin-bottom: 14px;
+  background-image: linear-gradient(135deg, var(--champagne), var(--champagne-mid));
+}
+.step h3 { font-size: 17px; margin: 0 0 8px; }
+.step p { margin: 0; color: var(--dim); font-size: 14px; }
+
+/* ── ready to start ───────────────────────────────────────────────────── */
+
+.cta { padding: 0 24px 92px; }
+.cta .box {
+  max-width: 660px; margin: 0 auto; text-align: center;
+  background: var(--surface); border: 1px solid color-mix(in srgb, var(--champagne) 22%, transparent);
+  border-radius: 18px; padding: 52px 36px;
+  box-shadow: 0 0 30px -5px hsl(38 45% 48% / .15);
+}
+.cta h2 { font-size: clamp(24px, 3vw, 32px); margin: 0 0 12px; }
+.cta p { color: var(--dim); margin: 0 0 28px; }
+
+footer { border-top: 1px solid var(--line); padding: 26px 28px; }
+footer .inner { max-width: 1060px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--dim); flex-wrap: wrap; }
+footer .name { font-family: var(--display); font-weight: 700; }
+footer a { color: inherit; }
+
+/* ── results: the extracted table ─────────────────────────────────────── */
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 22px 0; overflow: hidden; }
+.card > header { padding: 18px 22px 15px; border-bottom: 1px solid var(--line); }
+.card h2 { margin: 0; font-size: 18px; }
+.meta { margin-top: 7px; font-size: 12px; color: var(--dim); display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.meta code { background: var(--surface-2); border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+.prov { font-weight: 600; padding: 3px 10px; border-radius: 99px; font-size: 11px; background: var(--surface-2); color: var(--dim); border: 1px solid var(--line); }
+.body { padding: 18px 22px 22px; }
+h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 22px 0 9px; font-weight: 600; font-family: var(--sans); }
+h3:first-child { margin-top: 0; }
+
+.grid-wrap { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: separate; border-spacing: 0; font-size: 12.5px; width: max-content; min-width: 100%; }
+th, td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 9px; text-align: center; }
+thead th { position: sticky; top: 0; z-index: 3; background: var(--head); font-weight: 600; font-size: 11px; color: var(--fg); white-space: nowrap; }
+thead tr:nth-child(2) th { top: 27px }
+thead tr:nth-child(3) th { top: 54px }
+thead tr:nth-child(4) th { top: 81px }
+th.rowhead, td.rowhead { position: sticky; left: 0; z-index: 2; background: var(--surface); text-align: left; white-space: normal; min-width: 250px; max-width: 380px; border-right: 2px solid var(--line); }
+thead th.rowhead { z-index: 4; background: var(--head); }
+tbody tr:nth-child(even) td { background: var(--stripe); }
+tbody tr:nth-child(even) td.rowhead { background: var(--stripe); }
+tbody tr:hover td, tbody tr:hover td.rowhead { background: var(--surface-2); }
+td.val { font-variant-numeric: tabular-nums; font-weight: 600; }
+tr.category td { background: var(--head) !important; font-weight: 600; text-align: left; letter-spacing: .02em; }
+td.hit, th.hit { background: var(--hit) !important; box-shadow: inset 0 0 0 2px var(--hit-line); }
+.mk { color: var(--champagne); font-weight: 700; font-size: 10px; vertical-align: super; cursor: pointer; padding: 0 1px; border-radius: 3px; }
+.mk:hover { background: var(--hit); }
+thead tr.band th { background: var(--surface-2); font-weight: 600; }
+
+.fns { display: grid; gap: 7px; }
+.fn { display: flex; gap: 11px; align-items: flex-start; font-size: 13.5px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: .12s; background: var(--surface); }
+.fn:hover { border-color: color-mix(in srgb, var(--champagne) 55%, var(--line)); }
+.fn.on { border-color: var(--champagne); background: var(--hit); }
+.fn .m { flex: 0 0 34px; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; font-size: 12px; color: var(--champagne); line-height: 1.5; white-space: nowrap; }
+.fn .t { flex: 1 1 auto; }
+.fn .where { font-size: 11px; color: var(--dim); margin-top: 3px; }
+
+.hint { font-size: 11.5px; color: var(--dim); margin: 7px 0 3px; }
+.amb { background: var(--surface-2); border-left: 3px solid var(--champagne); padding: 10px 13px; border-radius: 0 10px 10px 0; font-size: 13.5px; margin-bottom: 7px; }
+.hostednote { background: var(--surface-2); border: 1px solid var(--line); border-left: 3px solid var(--champagne); padding: 12px 15px; border-radius: 0 10px 10px 0; font-size: 13.5px; margin: 18px 0; color: var(--dim); }
+details { border: 1px solid var(--line); border-radius: 10px; margin-top: 9px; background: var(--surface); }
+summary { cursor: pointer; padding: 10px 13px; font-size: 12px; font-weight: 600; list-style: none; }
+summary::-webkit-details-marker { display: none }
+summary::before { content: "▸ "; color: var(--dim) }
+details[open] summary::before { content: "▾ " }
+.src { padding: 0 13px 13px; display: grid; gap: 10px; }
+.srcpage b { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--dim); }
+.srcpage pre { margin: 5px 0 0; padding: 11px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; font: 11.5px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; max-height: 340px; overflow: auto; }
+.ev { padding: 0 13px 13px; font-size: 12px; color: var(--dim); display: grid; gap: 3px; }
+.ev code { background: var(--surface-2); border-radius: 4px; padding: 1px 5px; }
+.empty { text-align: center; padding: 34px; color: var(--dim); }
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <h1>Schedule of Activities Extractor</h1>
-    <p>Give it a clinical trial protocol. It finds the Schedule of Activities — whatever the sponsor
-       called it, wherever it sits, however many pages it runs across — and rebuilds the grid
-       verbatim, with footnotes bound to the cells they modify.</p>
+
+<nav>
+  <div class="brand">
+    <span class="bars"><i></i><i></i><i></i><i></i><i></i></span>
+    <span>SoA<span class="gold">Extractor</span></span>
+  </div>
+  <div class="links">
+    <a href="#how">How It Works</a>
+    <a href="#start">Get Started</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="inner">
+    <button class="icon" id="theme" title="Switch between dark and light">☀</button>
+    <h1><span class="gold">Every schedule it carries.</span><br><span class="line2">Rebuilt exactly as printed.</span></h1>
+    <p class="lede">Drop in a clinical trial protocol. It finds the Schedule of Activities, and any
+      sub-schedule printed alongside it, wherever they sit and whatever the sponsor called them, and
+      rebuilds each grid verbatim with footnotes bound to the cells they modify.</p>
     <div class="badges">
       <span class="badge">no page numbers given</span>
-      <span class="badge">no API key</span>
-      <span class="badge">nothing leaves this machine</span>
+      <span class="badge">no API key needed</span>
+      <span class="badge">about a second a protocol</span>
     </div>
   </div>
-</header>
+</section>
 
 <main>
-  <label class="drop" id="drop">
-    <input type="file" id="file" accept="application/pdf,.pdf">
-    <div class="ring">↑</div>
-    <div class="big">Drop a protocol PDF here, or click to choose</div>
-    <div class="sub">80–250 pages is normal. Landscape and rotated pages are handled.</div>
-  </label>
-  <div class="modes">
-    <button class="btn mode on" data-mode="geometry">Read from the page</button>
-    <button class="btn mode" data-mode="review">Read from the page, then ask Claude</button>
-    <div class="muted" id="modeNote">Rules only — the drawn grid, offline and free, about a second a protocol.</div>
+  <div class="tool">
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="application/pdf,.pdf">
+      <div class="ring">↑</div>
+      <div class="big">Drop a protocol PDF here, or click to choose</div>
+      <div class="sub">80 to 250 pages is normal. Landscape and rotated pages are handled.</div>
+    </label>
+    <div class="modes">
+      <button class="btn mode on" data-mode="geometry">Read from the page</button>
+      <button class="btn mode" data-mode="review">Read from the page, then ask Claude</button>
+      <div class="muted" id="modeNote">Rules only, the drawn grid, offline and free, about a second a protocol.</div>
+    </div>
+    <div class="status" id="status"></div>
   </div>
-  <div class="status" id="status"></div>
   <div id="out"></div>
 </main>
 
+<section class="band-section" id="how">
+  <div class="inner">
+    <div class="eyebrow">How it works</div>
+    <h2>Measured, not guessed</h2>
+    <p class="say">A schedule is a ruled table, and the rules are in the PDF as vector paths. The columns
+      are the vertical lines. That turns inference into measurement.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Find it</h3>
+        <p>No page number is given. Every page is scored on evidence a schedule is printed there: marks
+          stacking at one x, study period words, footnote definitions underneath. Adjacent pages that
+          score become one table, so a schedule running across four pages is not four fragments.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Read the lines</h3>
+        <p>Columns are the vertical rules, rows the horizontal ones. Both readings are built, the drawn
+          one and the inferred one, and the drawn grid is used only if it accounts for every mark the
+          other found. A better structure that loses a mark has made the output worse.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Keep it verbatim</h3>
+        <p><code>3X/week</code>, <code>(X)</code>, <code>Xa</code>, <code>12/ Term</code> are stored as
+          printed. A shaded cell with no character does not become an X. Footnote markers sit beside a
+          value, never inside it, so each one can point at the cell it qualifies.</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <h3>Say what it cannot settle</h3>
+        <p>The reading is scored against itself. Where the checks distrust it, and only there, the same
+          words go to Claude for a second opinion, and every value that comes back is checked against
+          the page. Anything still unresolved is written down rather than quietly decided.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="start">
+  <div class="box">
+    <h2>Read the code</h2>
+    <p>The extractor, the confidence checks, the audit that rebuilds each page from its own ruled lines
+      and diffs it against the output, and the committed result for all five protocols.</p>
+    <a class="btn gold-btn" href="https://github.com/Rishab-Panwar/soa_extractor" target="_blank" rel="noopener">
+      View on GitHub →
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="inner">
+    <span class="name gold">SoA Extractor</span>
+    <span>Reads the grid the document draws. Nothing is inferred that the page does not say.</span>
+  </div>
+</footer>
+
 <script>
 const $ = (id) => document.getElementById(id);
+
+/*
+ * Dark and light, remembered.
+ *
+ * The only thing on this page that changes state without the extractor being
+ * involved. A reviewer comparing an extracted grid against a PDF open beside it
+ * should be able to match the two, and a printed protocol is on white paper.
+ */
+(() => {
+  const root = document.documentElement;
+  const saved = (() => { try { return localStorage.getItem('soa-theme'); } catch { return null; } })();
+  const apply = (mode) => {
+    root.classList.toggle('dark', mode === 'dark');
+    root.classList.toggle('light', mode !== 'dark');
+    const button = document.getElementById('theme');
+    if (button) button.textContent = mode === 'light' ? '☀' : '☾';
+  };
+  apply(saved || 'light');
+  const button = document.getElementById('theme');
+  if (button) button.addEventListener('click', () => {
+    const next = root.classList.contains('dark') ? 'light' : 'dark';
+    apply(next);
+    try { localStorage.setItem('soa-theme', next); } catch { /* private window: the choice just does not persist */ }
+  });
+})();
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
 let result = null;
 
