@@ -245,9 +245,15 @@ for (const [name, pdf] of targets) {
         const union = new Set([...a, ...b]).size;
         // The heading breaks a tie between two visits marked identically; it
         // never makes a pairing on its own.
+        // An exact heading match is strong evidence, not a nudge, and it must
+        // count for a heading one character long: protocol9 heads its columns
+        // "1" through "11", the day rows are what tell those apart, and
+        // requiring two characters left every single-digit day to be paired on
+        // the strength of its marks alone — which put the column headed "3"
+        // against our Day 4, and five more behind it.
         const agrees = [col.label, col.studyDay, col.studyWeek, col.visitNumber, ...(col.path || [])]
-          .some((v) => v && key(v).length > 1 && headOf(c) && key(v) === headOf(c));
-        scores.push({ c, col, score: (union ? shared / union : 0) + (agrees ? 0.01 : 0) });
+          .some((v) => v && key(v) && headOf(c) && key(v) === headOf(c));
+        scores.push({ c, col, score: (union ? shared / union : 0) + (agrees ? 0.5 : 0) });
       }
     }
     scores.sort((p, q) => q.score - p.score);
@@ -261,6 +267,32 @@ for (const [name, pdf] of targets) {
       taken.add(col.id);
       usedPrinted.add(c);
     }
+    /*
+     * A pairing that crosses is wrong, whatever it scored.
+     *
+     * Both tables read left to right and neither reorders its visits, so the
+     * paired columns must ascend together. Greedy scoring does not know that:
+     * on protocol9 every day carries a similar set of assessments, and the
+     * pairing slipped by one — reporting the column headed "3" against our
+     * "Day 4", and eight more like it, on a page we had read exactly right.
+     *
+     * The longest ascending run is kept and the rest let go, so a genuine
+     * crossing costs a few columns their check rather than producing nine
+     * confident reports about nothing.
+     */
+    const paired = drawn.map((c, i) => ({ i, at: table.columns.indexOf(mineHere[i]) }))
+      .filter((p) => p.at >= 0);
+    const best = [];
+    for (const p of paired) {
+      let run = [p];
+      for (const q of best) if (q[q.length - 1].at < p.at && q.length + 1 > run.length) run = [...q, p];
+      best.push(run);
+    }
+    const keep = new Set((best.sort((a, b) => b.length - a.length)[0] || []).map((p) => p.i));
+    drawn.forEach((c, i) => {
+      if (mineHere[i] && !keep.has(i)) { mineHere[i] = undefined; usedPrinted.delete(c); }
+    });
+
     const unmatched = drawn.filter((c) => !usedPrinted.has(c));
     if (unmatched.length) {
       console.log(`  · ${unmatched.length} drawn column(s) could not be paired to one of ours — not checked`);
