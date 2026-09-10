@@ -158,7 +158,24 @@ function findRow(index, label) {
   if (index.has(key)) return index.get(key);
   for (const [other, row] of index) {
     const shorter = key.length < other.length ? key : other;
-    if (shorter.length >= 12 && (key.startsWith(other) || other.startsWith(key))) return row;
+    const longer = key.length < other.length ? other : key;
+    if (shorter.length < 12) continue;
+    if (!(key.startsWith(other) || other.startsWith(key))) continue;
+    /*
+     * A prefix, yes — but a WRAP's worth of one, not a whole phrase more.
+     *
+     * This test is here so a row whose name is cut differently on a
+     * continuation page still finds itself. It was also merging rows that
+     * merely begin alike: 3041835 heads a section "Randomisation" and then
+     * lists "Randomisation via Sealed Envelope" under it, and the second was
+     * folded into the first — its name gone, and its mark filed against a
+     * section heading that the page marks nowhere.
+     *
+     * A line wrap changes where a name is cut, so the two readings stay close
+     * in length. Seventeen characters of extra words is a different row.
+     */
+    if (shorter.length < longer.length * 0.7) continue;
+    return row;
   }
   return null;
 }

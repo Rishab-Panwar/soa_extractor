@@ -95,13 +95,38 @@ function gridOf(page) {
   return { matrix, cols, rows };
 }
 
+/*
+ * Any PDF, not only the ones with a published output.
+ *
+ * The documents that find real faults are the ones nobody has looked at, and
+ * those cannot be committed here — so pass a path and the schedule is extracted
+ * on the spot and compared against the page it came from:
+ *
+ *   node scripts/audit.mjs ../somewhere/Prot_111.pdf
+ *
+ * What is checked is identical either way. The only difference is where the
+ * extraction comes from: the committed file, which carries a model review, or a
+ * fresh rule-based read.
+ */
+const skipped = [];
 const only = process.argv[2];
+const adhoc = only && /\.pdf$/i.test(only);
+const targets = adhoc
+  ? [[only.split(/[\\/]/).pop().replace(/\.pdf$/i, ''), only]]
+  : Object.entries(SOURCES);
 let problems = 0;
 
-for (const [name, pdf] of Object.entries(SOURCES)) {
-  if (only && name !== only) continue;
+for (const [name, pdf] of targets) {
+  if (!adhoc && only && name !== only) continue;
   if (!have(pdf)) { console.log(`${name}: ${pdf} not present — skipped`); continue; }
-  const doc = JSON.parse(readFileSync(`public/outputs/${name}.json`, 'utf8'));
+  let doc;
+  if (adhoc) {
+    const { run } = await import(pathToFileURL(resolve('src/pipeline.js')).href);
+    doc = await run(readFileSync(pdf), { assist: false });
+    console.log(`${name}: extracted here, rules only — ${doc.tables.length} schedule(s)`);
+  } else {
+    doc = JSON.parse(readFileSync(`public/outputs/${name}.json`, 'utf8'));
+  }
   const { pages } = await readPdf(readFileSync(pdf));
 
   for (const table of doc.tables) {
@@ -117,7 +142,21 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
    for (const pageNumber of table.pages) {
     const page = pages.find((p) => p.number === pageNumber);
     const grid = page && gridOf(page);
-    if (!grid) { console.log(`\n${name} ${table.id} p${pageNumber}: no usable grid — skipped`); continue; }
+    if (!grid) {
+      /*
+       * Counted, not merely mentioned.
+       *
+       * A page that draws no column rules cannot be rebuilt from its rules —
+       * and that is exactly where the extractor is weakest. Prot_111 draws
+       * none at all, so every page of it was skipped and the run still signed
+       * off with "0 discrepancy line(s) in all". A checker that gives a clean
+       * bill to a document it never opened is worse than no checker, because
+       * it is believed.
+       */
+      skipped.push(`${name} p${pageNumber}`);
+      console.log(`\n${name} ${table.id} p${pageNumber}: NOT CHECKED — the page draws no column rules to rebuild`);
+      continue;
+    }
 
     console.log(`\n${'='.repeat(74)}\n${name} ${table.id} — page ${pageNumber} as printed vs as extracted`);
 
@@ -454,3 +493,8 @@ for (const [name, pdf] of Object.entries(SOURCES)) {
   }
 }
 console.log(`\n${problems} discrepancy line(s) in all.`);
+if (skipped.length) {
+  console.log(`\n${skipped.length} page(s) could NOT be checked, having no ruled grid to rebuild: ${skipped.join(', ')}.`);
+  console.log('Nothing above vouches for those. On a document whose pages are all listed here,');
+  console.log('a count of zero means nothing was compared — not that nothing is wrong.');
+}
