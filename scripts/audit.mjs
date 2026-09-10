@@ -131,6 +131,7 @@ function gridOf(page) {
  * fresh rule-based read.
  */
 const skipped = [];
+const unchecked = [];
 const only = process.argv[2];
 const adhoc = only && /\.pdf$/i.test(only);
 const targets = adhoc
@@ -273,8 +274,9 @@ for (const [name, pdf] of targets) {
         // requiring two characters left every single-digit day to be paired on
         // the strength of its marks alone — which put the column headed "3"
         // against our Day 4, and five more behind it.
-        const agrees = [col.label, col.studyDay, col.studyWeek, col.visitNumber, ...(col.path || [])]
-          .some((v) => v && key(v) && headOf(c) && key(v) === headOf(c));
+        const says = [col.label, col.studyDay, col.studyWeek, col.visitNumber, ...(col.path || [])];
+        const head = headOf(c);
+        const agrees = says.some((v) => v && key(v) && head && key(v) === head);
         scores.push({ c, col, score: (union ? shared / union : 0) + (agrees ? 0.5 : 0) });
       }
     }
@@ -316,6 +318,8 @@ for (const [name, pdf] of targets) {
     });
 
     const unmatched = drawn.filter((c) => !usedPrinted.has(c));
+    unchecked.push(...unmatched.map((c) => `${name} p${pageNumber} "${headerRows.map((r) => r[c]).filter(Boolean).join(' ').slice(0, 24) || '(no heading)'}"`));
+    if (process.env.DBG) for (const c of unmatched) console.error();
     if (unmatched.length) {
       console.log(`  · ${unmatched.length} drawn column(s) could not be paired to one of ours — not checked`);
     }
@@ -630,6 +634,11 @@ for (const [name, pdf] of targets) {
   }
 }
 console.log(`\n${problems} discrepancy line(s) in all.`);
+if (unchecked.length) {
+  console.log(`
+${unchecked.length} drawn column(s) had no counterpart in our table, so their cells went unchecked:`);
+  for (const u of unchecked) console.log(`  · ${u}`);
+}
 if (skipped.length) {
   console.log(`\n${skipped.length} page(s) could NOT be checked, having no ruled grid to rebuild: ${skipped.join(', ')}.`);
   console.log('Nothing above vouches for those. On a document whose pages are all listed here,');
