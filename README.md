@@ -45,14 +45,21 @@ the first is a requirement the brief names explicitly.
 The rule-based path alone — no key, no network, no cost — now reads every one of
 them with **no unnamed column and no unlabelled row**:
 
-| Protocol | Columns | Rows | Cells |
-|---|---|---|---|
-| protocol1 | 14 | 28 | 139 |
-| protocol5 | 11 | 30 | 107 |
-| protocol9 | 11 | 32 | 168 |
-| protocol12 | 9 | 39 | 140 |
-| protocol15 | 9 | 33 | 134 |
-| Prot_000 | 18 | 29 | 141 |
+| Protocol | Columns | Rows | Cells | Audited against its own pages |
+|---|---|---|---|---|
+| protocol1 | 14 | 28 | 139 | clean |
+| protocol5 | 11 | 31 | 107 | clean |
+| protocol9 | 11 | 32 | 168 | 2 rows the rules leave out, 1 value |
+| protocol12 | 9 | 39 | 132 | clean |
+| protocol15 | 9 | 33 | 132 | clean |
+| Prot_000 | 18 | 29 | 141 | clean |
+| 3041835 (unseen) | 6 | 33 | 86 | clean |
+| Prot_111 (unseen) | 7 | 16 | 35 | cannot be checked — draws no column rules |
+
+The last column is `npm run audit` comparing the rule-based reading against the
+table the page draws, cell by cell. protocol9's three are rows and a value the
+rules leave out on a rotated page and the review recovers; Prot_111's is a
+verification gap, not a clean bill, and the audit says so in those words.
 
 Two honest qualifications. The geometric rules were developed against these
 protocols, so those numbers are in-sample; Prot_000 is the only document held
@@ -470,7 +477,7 @@ The review now retries once before giving up.
 ## Checking the output against the page
 
 ```bash
-npm run audit                       # the six documents with committed outputs
+npm run audit                       # every document, BOTH readings
 node scripts/audit.mjs protocol9    # one of them, in full
 node scripts/audit.mjs ../any.pdf   # a document that is not in this repo:
                                     # extracted on the spot, then compared
@@ -489,12 +496,28 @@ the audit takes a path and extracts on the spot. Both unseen protocols tried
 this way were read correctly bar one row each, and both faults were general
 enough to have been waiting for any document with the same shape.
 
+**Both readings, because this repo makes two claims and only one was ever
+checked.** For most of this build the audit read `public/outputs/*.json` and
+nothing else — files that carry a model review. So it checked the FILES and
+never the reader, while anyone dropping a PDF into the UI gets the rule-based
+path. A bug living only there was structurally invisible, and one did live
+there: protocol15's Treatment Week 1-3 column was being deleted outright by the
+reader while the committed file held it correctly, and every run of this audit
+called the document clean. Each document is now checked twice — as committed,
+and as the reader produces it today.
+
+Turning that on found, in its first run, a column rule drawn as two segments
+that made `ruledBands` discard protocol12's entire drawn grid; a whole visit
+column deleted on two documents by the word printed down the middle of the
+schedule; and a phase heading banded by how far its ink reaches rather than by
+what it is centred over, which put week 12 under Follow-up.
+
 ### What it compares
 
 | Checked against the printed page | Count | Result |
 |---|---|---|
-| Rows and their values, every page | **273 rows** | 0 missing · 0 mismatches |
-| Every cell, in the column the page prints it in | every paired column | 1 known artifact |
+| Rows and their values, every page, both readings | **546 rows** | 2 rows the rules leave out |
+| Every cell, in the column the page prints it in | every paired column | 2 reports, both traced |
 | Column headings, every page | **127 headings** | 0 unaccounted for |
 | Footnote text, whole | **53 footnotes** | 0 not found on the page |
 

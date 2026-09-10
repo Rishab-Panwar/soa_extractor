@@ -117,6 +117,11 @@ function gridOf(page) {
   return { matrix, cols, rows };
 }
 
+/** The label of every printed row on the page, from its leading columns. */
+function printedRows(grid, labelCols) {
+  return grid.matrix.map((r) => r.slice(0, labelCols).filter(Boolean).join(" ")).filter(Boolean);
+}
+
 /*
  * Any PDF, not only the ones with a published output.
  *
@@ -243,7 +248,20 @@ for (const [title, name, pdf, how] of readings) {
      */
     const isData = (r) => ours.has(key(r.slice(0, labelCols).filter(Boolean).join(' ')));
     const firstData = grid.matrix.findIndex(isData);
-    const headerRows = firstData > 0 ? grid.matrix.slice(0, firstData) : [];
+    /*
+     * A row full of marks is data, whatever our labels say.
+     *
+     * The header block ends at the first printed row whose name we recognise —
+     * which depends on our labels, so where a reading names its rows
+     * differently the split slides down and a row of ticks is read as part of
+     * the heading. protocol9's day columns then had heads like "1 / 1X",
+     * matching nothing we say about them, and eight columns reported
+     * themselves unaccounted for on a page we read exactly.
+     */
+    const ticks = (r) => r.filter((v) => /^(?:\d{0,2}\s*x|x)$/i.test(String(v || '').trim())).length;
+    let headerRows = firstData > 0 ? grid.matrix.slice(0, firstData) : [];
+    const solid = headerRows.findIndex((r) => ticks(r) >= 3);
+    if (solid >= 0) headerRows = headerRows.slice(0, solid);
     const headOf = (c) => key(headerRows.map((r) => r[c]).filter(Boolean).join(' '));
 
     /*
@@ -339,6 +357,27 @@ for (const [title, name, pdf, how] of readings) {
     });
 
     const unmatched = drawn.filter((c) => !usedPrinted.has(c));
+    /*
+     * A grid whose columns are almost all strangers is not this table's.
+     *
+     * The old test for that looked for another table in `doc.tables` starting
+     * on this page, so it only worked once the extraction had already found
+     * that other table. The rule-based reading of protocol5 finds one schedule
+     * where the reviewed output finds two, so on the page where its
+     * blood-collection appendix begins there was no second table to look for,
+     * and the schedule was compared against the appendix: 23 reports about
+     * "10 ml" and "volume per sample", none of them anything to do with it.
+     *
+     * Its ROWS could not settle it — an appendix about blood draws lists
+     * "hematology" and "pregnancy test" like the schedule does. Its columns
+     * can: "volume per sample", "type a", "D-1" pair with nothing of ours.
+     */
+    if (drawn.length >= 4 && usedPrinted.size < drawn.length * 0.5) {
+      console.log(`  · only ${usedPrinted.size} of ${drawn.length} columns here pair with ours — `
+        + 'this grid belongs to another table, not compared');
+      continue;
+    }
+
     unchecked.push(...unmatched.map((c) => `${title} p${pageNumber} "${headerRows.map((r) => r[c]).filter(Boolean).join(' ').slice(0, 24) || '(no heading)'}"`));
     if (process.env.DBG) for (const c of unmatched) console.error();
     if (unmatched.length) {
