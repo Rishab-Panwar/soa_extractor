@@ -6,6 +6,8 @@
   "description": "Finds the Schedule of Activities in a clinical trial protocol and extracts it faithfully.",
   "scripts": {
     "serve": "node src/server.js",
+    "serve:geometry": "node -e \"process.env.SOA_ALLOW_REVIEW='0';import('./src/server.js')\"",
+    "serve:review": "node -e \"process.env.SOA_ALLOW_REVIEW='1';import('./src/server.js')\"",
     "extract": "node src/cli.js",
     "sync-outputs": "node -e \"const f=require('fs');f.mkdirSync('public/outputs',{recursive:true});for(const n of f.readdirSync('outputs'))f.copyFileSync('outputs/'+n,'public/outputs/'+n);console.log('synced')\"",
     "test": "node --test",

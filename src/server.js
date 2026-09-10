@@ -13,12 +13,27 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 import { run } from './pipeline.js';
+import { available } from './assist.js';
 
 // Imports are hoisted, so this runs before any code below reads process.env.
 loadEnv();
 
 const PORT = Number(process.env.PORT || 3100);
 const page = fileURLToPath(new URL('../public/index.html', import.meta.url));
+
+/*
+ * Whether the model review may run, said out loud at startup.
+ *
+ * A key in .env was enough to turn the review on, and nothing announced it —
+ * so the same upload could cost money or not depending on a file you last
+ * looked at weeks ago, and there was no way to run the geometric path alone to
+ * compare against. SOA_ALLOW_REVIEW now decides when it is set; unset, the
+ * behaviour is what it has always been.
+ */
+const asked = process.env.SOA_ALLOW_REVIEW;
+const ALLOW_REVIEW = asked === undefined || asked === ''
+  ? undefined
+  : !/^(0|false|no|off)$/i.test(asked);
 
 /** Read a whole request body, with a ceiling so a bad upload cannot fill memory. */
 function body(request, limit = 80 * 1024 * 1024) {
@@ -64,7 +79,12 @@ const server = createServer(async (request, response) => {
       const data = await body(request);
       if (!data.length) throw new Error('no file received');
       const started = Date.now();
-      const result = await run(data);
+      // Logged, because the review only runs on a table the checks distrust —
+      // so an upload that reads well is identical either way, and without this
+      // there is no way to tell "the switch did nothing" from "the switch is
+      // broken".
+      const log = (stage, message) => console.log(`  ${stage}: ${message}`);
+      const result = await run(data, ALLOW_REVIEW === undefined ? { log } : { assist: ALLOW_REVIEW, log });
       result.tookMs = Date.now() - started;
       response.writeHead(200, { 'content-type': 'application/json' });
       response.end(JSON.stringify(result));
@@ -81,5 +101,10 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(PORT, () => {
+  const on = ALLOW_REVIEW === undefined ? available() : ALLOW_REVIEW && available();
   console.log(`SoA extractor on http://localhost:${PORT}`);
+  console.log(on
+    ? `  model review: ON — a table the checks cannot trust is sent for a second opinion, which costs an API call.`
+    : `  model review: OFF — everything is read from the page geometry alone, offline and free.`);
+  console.log(`  set SOA_ALLOW_REVIEW=0 to force it off, =1 to force it on.`);
 });
