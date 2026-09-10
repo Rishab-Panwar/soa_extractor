@@ -1227,7 +1227,7 @@
       ],
       "ambiguities": [
         "Page 51: the ruled row boundaries account for 37 of the 39 marks found by reading the lines, so the rules were not used for rows on this page.",
-        "Page 51 carries the caption of a different table, so its grid has not been appended to this schedule. Only the footnotes printed on the page have been read."
+        "Page 51 carries the caption of a different table, so its grid has not been appended to this schedule. It is extracted separately; the footnotes printed here are read for both."
       ],
       "provenance": {
         "readBy": "geometry",
@@ -1235,6 +1235,554 @@
         "confidence": 1,
         "verdict": "trust",
         "findings": [],
+        "rowsAreRuled": false,
+        "geometric": null,
+        "locatorScore": 22,
+        "locatorEvidence": [
+          {
+            "page": 50,
+            "score": 22,
+            "reasons": [
+              "title \"Appendix I: Time and Events Schedule\"",
+              "1 header row(s) of numbered timepoints",
+              "3 study-period words",
+              "118 cell-like marks",
+              "15 grid-like rows"
+            ]
+          },
+          {
+            "page": 51,
+            "score": 13.5,
+            "reasons": [
+              "6 study-period words",
+              "32 cell-like marks",
+              "5 grid-like rows",
+              "11 footnote-definition lines"
+            ]
+          },
+          {
+            "page": 52,
+            "score": 3,
+            "reasons": [
+              "8 cell-like marks",
+              "6 footnote-definition lines"
+            ]
+          },
+          {
+            "page": 53,
+            "score": 1.67,
+            "reasons": [
+              "5 footnote-definition lines"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "t2",
+      "title": "APPENDIX II: Schedule of Blood Collections",
+      "pages": [
+        51
+      ],
+      "columns": [
+        {
+          "id": "p51c1",
+          "label": "Per Sample",
+          "path": [
+            "Per Sample"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c2",
+          "label": "Column 2",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c3",
+          "label": "Screening",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "Screening",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c4",
+          "label": "D-8",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D-8",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c5",
+          "label": "D-1",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D-1",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c6",
+          "label": "D1",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D1",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c7",
+          "label": "D2",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D2",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c8",
+          "label": "D3",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D3",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c9",
+          "label": "D6",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D6",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c10",
+          "label": "D8",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D8",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c11",
+          "label": "D11",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D11",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c12",
+          "label": "D13",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D13",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c13",
+          "label": "D17",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D17",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c14",
+          "label": "D31",
+          "path": [],
+          "visitNumber": null,
+          "studyDay": "D31",
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        },
+        {
+          "id": "p51c15",
+          "label": "Volume",
+          "path": [
+            "Volume"
+          ],
+          "visitNumber": null,
+          "studyDay": null,
+          "studyWeek": null,
+          "window": null,
+          "markers": [],
+          "pages": [
+            51
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "id": "r1",
+          "kind": "assessment",
+          "label": "Chemistries plus liver function tests",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "10 mL"
+            },
+            {
+              "col": "p51c3",
+              "value": "1"
+            },
+            {
+              "col": "p51c4",
+              "value": "1"
+            },
+            {
+              "col": "p51c9",
+              "value": "1"
+            },
+            {
+              "col": "p51c12",
+              "value": "1"
+            },
+            {
+              "col": "p51c13",
+              "value": "1"
+            },
+            {
+              "col": "p51c14",
+              "value": "1"
+            },
+            {
+              "col": "p51c15",
+              "value": "60 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "r2",
+          "kind": "assessment",
+          "label": "Hematology",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "10 mL"
+            },
+            {
+              "col": "p51c3",
+              "value": "1"
+            },
+            {
+              "col": "p51c13",
+              "value": "1"
+            },
+            {
+              "col": "p51c14",
+              "value": "1"
+            },
+            {
+              "col": "p51c15",
+              "value": "30 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "P"
+            }
+          ]
+        },
+        {
+          "id": "r3",
+          "kind": "assessment",
+          "label": "Infectious disease serology",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "10 mL"
+            },
+            {
+              "col": "p51c3",
+              "value": "1"
+            },
+            {
+              "col": "p51c15",
+              "value": "10 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "r4",
+          "kind": "assessment",
+          "label": "PK Samples for cocaine",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "5 mL"
+            },
+            {
+              "col": "p51c5",
+              "value": "15"
+            },
+            {
+              "col": "p51c10",
+              "value": "15"
+            },
+            {
+              "col": "p51c12",
+              "value": "15"
+            },
+            {
+              "col": "p51c15",
+              "value": "225 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "P"
+            }
+          ]
+        },
+        {
+          "id": "r5",
+          "kind": "assessment",
+          "label": "PK Samples for Atomoxetine",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "5 mL"
+            },
+            {
+              "col": "p51c9",
+              "value": "2"
+            },
+            {
+              "col": "p51c10",
+              "value": "2"
+            },
+            {
+              "col": "p51c11",
+              "value": "2"
+            },
+            {
+              "col": "p51c12",
+              "value": "2"
+            },
+            {
+              "col": "p51c15",
+              "value": "40 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "P"
+            }
+          ]
+        },
+        {
+          "id": "r6",
+          "kind": "assessment",
+          "label": "Pregnancy Test",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "5 mL"
+            },
+            {
+              "col": "p51c3",
+              "value": "1"
+            },
+            {
+              "col": "p51c4",
+              "value": "1"
+            },
+            {
+              "col": "p51c13",
+              "value": "1"
+            },
+            {
+              "col": "p51c14",
+              "value": "1"
+            },
+            {
+              "col": "p51c15",
+              "value": "20 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "S"
+            }
+          ]
+        },
+        {
+          "id": "r7",
+          "kind": "assessment",
+          "label": "Alcohol Test",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c1",
+              "value": "5 mL"
+            },
+            {
+              "col": "p51c3",
+              "value": "1"
+            },
+            {
+              "col": "p51c15",
+              "value": "5 mL"
+            },
+            {
+              "col": "p51c2",
+              "value": "P"
+            }
+          ]
+        },
+        {
+          "id": "r8",
+          "kind": "assessment",
+          "label": "Total",
+          "category": null,
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c15",
+              "value": "390 mL"
+            }
+          ]
+        },
+        {
+          "id": "r9",
+          "kind": "category",
+          "label": "a",
+          "category": null,
+          "markers": [],
+          "cells": []
+        },
+        {
+          "id": "r10",
+          "kind": "assessment",
+          "label": "",
+          "category": "a",
+          "markers": [],
+          "cells": [
+            {
+              "col": "p51c3",
+              "value": "-"
+            },
+            {
+              "col": "p51c10",
+              "value": "51"
+            }
+          ]
+        }
+      ],
+      "footnotes": [],
+      "ambiguities": [
+        "Page 51: the ruled row boundaries account for 37 of the 39 marks found by reading the lines, so the rules were not used for rows on this page.",
+        "Page 51: 4 item(s) of text inside the grid belong to no row and no column, so they are not in the table: \"S = serum, P = plasma;\", \"D = day\", \"NIDA-CPU-atomoxetine-0001 Atomoxetine\", \"Cocaine Interaction Study\". This happens where a column holds words instead of marks — the columns are found from the marks, so one with none of its own is not found.",
+        "1 column(s) carry no readable visit number, day or week in the printed header (pages 51). Those columns could not be matched against the same visit on another page, so a table that spans pages may list a visit more than once. The cells under them are still verbatim."
+      ],
+      "provenance": {
+        "readBy": "geometry",
+        "model": null,
+        "confidence": 0.8,
+        "verdict": "check",
+        "findings": [
+          {
+            "check": "unidentified-columns",
+            "severity": "low",
+            "detail": "1 of 15 columns (7%) carry no visit number, study day, week or window. Columns like these cannot be recognised as the same visit on another page, so a schedule spanning pages may be listing the same visits more than once."
+          },
+          {
+            "check": "unlabelled-rows",
+            "severity": "low",
+            "detail": "1 row(s) carry marks but no activity name. Every assessment has a name, so these are very likely prose or page furniture read as table rows."
+          }
+        ],
         "rowsAreRuled": false,
         "geometric": null,
         "locatorScore": 22,
@@ -1663,5 +2211,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-10T12:35:50.357Z"
+  "extractedAt": "2026-09-10T13:45:16.698Z"
 }

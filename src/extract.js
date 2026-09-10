@@ -1342,6 +1342,10 @@ export function extractTable(pages, { title = '' } = {}) {
   // Whether EVERY page's rows came from the drawn grid. A later pass may only
   // trust these row boundaries if none of them were inferred.
   let rowsAreRuled = true;
+  // The page on which a differently captioned table begins, if one does.
+  let anotherFrom = null;
+  let anotherTitle = null;
+  let anotherY = null;
   const allFootnotes = [];
   const columns = [];
   const rowsByLabel = new Map();
@@ -1397,18 +1401,6 @@ export function extractTable(pages, { title = '' } = {}) {
      * ROW is what cost protocol9 its "Prior to Day 4" values, and it no longer
      * does that.
      */
-    const dataRows = assembled.filter((r) => r.marks.length && !namesDimension(r.label));
-    if (!dataRows.length) continue;
-
-    // The drawn grid where the page draws one, the marks where it does not.
-    // Not all schedules are ruled — some are set entirely in whitespace — so
-    // the inference stays as the fallback rather than being replaced.
-    const bands = ruledBands(page, dataRows, gridLeft) || columnBands(dataRows, page.width);
-    if (bands.length < 2) {
-      ambiguities.push(`Page ${page.number}: marks found but no column structure could be resolved; the page was skipped.`);
-      continue;
-    }
-
     /*
      * A page that announces a different table is a different table.
      *
@@ -1426,17 +1418,62 @@ export function extractTable(pages, { title = '' } = {}) {
      * The page's footnotes are still taken, because a schedule's footnotes are
      * frequently printed under whatever comes after it.
      */
-    const startsAnother = columns.length && page.lines.slice(0, 14).some((line) => {
-      const text = clean(line.text);
-      if (!NEW_TABLE.test(text) || /continued/i.test(text)) return false;
-      return labelKey(text).slice(0, 24) !== labelKey(title).slice(0, 24);
-    });
+    const captionLine = !columns.length ? null : page.lines.slice(0, 14)
+      .find((line) => {
+        const text = clean(line.text);
+        return NEW_TABLE.test(text) && !/continued/i.test(text)
+          && labelKey(text).slice(0, 24) !== labelKey(title).slice(0, 24);
+      });
+    const caption = captionLine ? clean(captionLine.text) : null;
+    const startsAnother = Boolean(caption);
     if (startsAnother) {
+      /*
+       * Refusing to append it is only half the answer.
+       *
+       * The caption says this grid belongs to a different table, so it is not
+       * added to this one. But it was still dropped: protocol5's "APPENDIX II:
+       * Schedule of Blood Collections" was located, read, refused, and then
+       * lost, and a protocol carrying a sub-schedule is exactly the case the
+       * brief names. The page where the next table starts is recorded so the
+       * caller can extract it in its own right.
+       */
+      /*
+       * Its own caption travels with it.
+       *
+       * The caller names a table by looking for a known form of words, and
+       * "APPENDIX II: Schedule of Blood Collections" is not one of them: a
+       * sponsor may call a sub-schedule anything. The page has already said
+       * what this table is called, in the line that identified it as a
+       * different table at all, so that is what gets carried rather than asking
+       * a word list to recognise it a second time.
+       */
+      if (anotherFrom === null) {
+        anotherFrom = page.number;
+        anotherTitle = caption;
+        // Where on the page, not just which page. This one carries the tail of
+        // THIS table above the caption — on protocol5, ten lines of footnotes
+        // reading "X a - POMS, BSCS will be performed..." Those carry marks,
+        // and read as part of the next table they become rows with no name.
+        anotherY = captionLine.words[0].y;
+      }
       ambiguities.push(`Page ${page.number} carries the caption of a different table, so its grid has not been `
-        + 'appended to this schedule. Only the footnotes printed on the page have been read.');
+        + 'appended to this schedule. It is extracted separately; the footnotes printed here are read for both.');
       footnotePages.push({ page, fromY: 0, spilled: true });
       continue;
     }
+
+    const dataRows = assembled.filter((r) => r.marks.length && !namesDimension(r.label));
+    if (!dataRows.length) continue;
+
+    // The drawn grid where the page draws one, the marks where it does not.
+    // Not all schedules are ruled — some are set entirely in whitespace — so
+    // the inference stays as the fallback rather than being replaced.
+    const bands = ruledBands(page, dataRows, gridLeft) || columnBands(dataRows, page.width);
+    if (bands.length < 2) {
+      ambiguities.push(`Page ${page.number}: marks found but no column structure could be resolved; the page was skipped.`);
+      continue;
+    }
+
 
     const firstDataY = dataRows[0].y;
     // Measured over every marked row, not just the ones the column-finding pass
@@ -2008,5 +2045,9 @@ export function extractTable(pages, { title = '' } = {}) {
     // that was inferred is a guess, and a later pass that treats these labels
     // as authoritative must know the difference.
     rowsAreRuled,
+    // Where the next table starts, so it is extracted rather than discarded.
+    anotherFrom,
+    anotherTitle,
+    anotherY,
   };
 }

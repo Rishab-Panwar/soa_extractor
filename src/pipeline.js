@@ -7,7 +7,7 @@
 
 import { readPdf } from './ingest.js';
 import { locate } from './locate.js';
-import { extractTable } from './extract.js';
+import { extractTable, splitLines } from './extract.js';
 import { assess } from './confidence.js';
 import { available, secondOpinion } from './assist.js';
 import { normalise } from './schema.js';
@@ -423,6 +423,34 @@ export function linkTrailingMarkers(table) {
  * and the table says which happened. Unset, as it is on the CLI and the local
  * server, nothing is timed and a review takes as long as it takes.
  */
+/*
+ * A page from its caption down.
+ *
+ * A second table can start halfway down a page whose top half is the tail of
+ * the first — protocol5 prints ten lines of Appendix I's footnotes above
+ * "APPENDIX II: Schedule of Blood Collections", and those footnotes read
+ * "X a - POMS, BSCS will be performed at intake". Each carries an X, so read as
+ * part of Appendix II they become rows with marks and no activity name. The
+ * page is cut at the caption instead of being handed over whole.
+ */
+function below(page, y) {
+  if (!y) return page;
+  const keep = (w) => w.y >= y - 1;
+  return {
+    ...page,
+    words: page.words.filter(keep),
+    lines: page.lines.filter((line) => line.words.some(keep))
+      .map((line) => (line.words.every(keep) ? line : { ...line, words: line.words.filter(keep) })),
+    rules: {
+      horizontals: (page.rules.horizontals || []).filter((r) => r.y >= y - 1),
+      // A vertical is kept if any of it is below the cut, trimmed to the cut:
+      // the two tables can share a drawn border down the side of the page.
+      verticals: (page.rules.verticals || []).filter((r) => r.y1 >= y - 1)
+        .map((r) => (r.y0 >= y - 1 ? r : { ...r, y0: y - 1 })),
+    },
+  };
+}
+
 export async function run(buffer, {
   maxTables = 3, floor = 12, assist = true, deadline = null, log = () => {},
 } = {}) {
@@ -430,12 +458,59 @@ export async function run(buffer, {
   const { candidates, scores } = locate(doc);
 
   const tables = [];
-  for (const candidate of candidates.slice(0, maxTables)) {
+  /*
+   * A queue rather than a list, because extracting one table can reveal another.
+   *
+   * A sub-schedule printed straight after the main one shares its run of pages,
+   * so the locator offers them as a single candidate. extractTable refuses to
+   * append a grid whose caption names a different table, and used to leave it
+   * there: protocol5's blood-collection appendix was found, read, refused and
+   * then lost. It now says which page the next table starts on, and that
+   * becomes a candidate of its own.
+   */
+  const queue = candidates.slice(0, maxTables).map((c) => ({ ...c }));
+  for (let at = 0; at < queue.length && tables.length < maxTables; at++) {
+    const candidate = queue[at];
     if (candidate.score < floor && tables.length) break;
-    const pages = candidate.pages.map((n) => doc.pages[n - 1]);
-    const table = extractTable(pages, { title: titleOn(pages[0]) || titleOn(pages[1] || pages[0]) });
+    const pages = candidate.pages.map((n) => doc.pages[n - 1])
+      .map((page, i) => (i === 0 ? below(page, candidate.from) : page));
+    // A candidate carrying its own caption keeps it: the page said what this
+    // table is called, and a word list should not get to overrule the document.
+    const table = extractTable(pages, {
+      title: candidate.title || titleOn(pages[0]) || titleOn(pages[1] || pages[0]),
+    });
     // A candidate that yielded no grid was a false positive from the locator,
     // and reporting an empty table would be worse than reporting none.
+    // Whatever this table refused becomes the next candidate, before anything
+    // decides whether THIS one is worth keeping: a refused grid is a real table
+    // either way.
+    if (table.anotherFrom) {
+      /*
+       * Its own extent, not the inherited one.
+       *
+       * The locator joined this run of pages for the FIRST table, and a page
+       * with no grid is taken as that table's footnotes spilling over. The
+       * second table gets no such benefit of the doubt: nothing measured how
+       * far IT runs. protocol5's appendix is followed by Appendix III, four
+       * pages of prose about adverse events, whose section headings were read
+       * as its footnotes. The range is cut at the first page with no grid.
+       */
+      const rest = [];
+      for (const n of candidate.pages.filter((n) => n >= table.anotherFrom)) {
+        if (rest.length && splitLines(doc.pages[n - 1]).gridLeft === null) break;
+        rest.push(n);
+      }
+      if (rest.length && !queue.some((q) => q.pages[0] === rest[0])) {
+        // Next, not last. The queue ends with the locator's weaker guesses, and
+        // the loop stops at the first one below the score floor — so a table
+        // appended after those is never reached. This one is not a guess: a
+        // page said in its own caption that it carries a different table.
+        queue.splice(at + 1, 0, {
+          ...candidate, pages: rest, score: candidate.score,
+          title: table.anotherTitle, from: table.anotherY,
+        });
+      }
+    }
     if (!table.rows.length || table.columns.length < 2) continue;
     // The first candidate is the schedule. A SECOND one is only believed when
     // the document names it — a protocol that carries a sub-study or PK
@@ -443,6 +518,21 @@ export async function run(buffer, {
     // that merely scores well does not. Without this, a page of numbered prose
     // is reported as a schedule with a hundred rows.
     if (tables.length && !table.title) continue;
+    /*
+     * ...and only when its columns are timepoints.
+     *
+     * A caption is not enough on its own. Protocols print plenty of wide,
+     * dense, well-captioned tables that are not schedules — "Table 1.
+     * Frequency of Adverse Events By Treatment Group", "Table 2: Laboratory
+     * Values at Baseline and Termination", "Level of Significance of the
+     * Difference Between Hemodynamic Variables" — and each of those was
+     * reported as a schedule until this ran. What separates a schedule from
+     * them is not its name, which is why the name is not what is asked: a
+     * schedule's columns are points in time. protocol5's blood-collection
+     * appendix reads 12 of 15 columns as study days; those three read none.
+     */
+    const timed = table.columns.filter((c) => c.visitNumber || c.studyDay || c.studyWeek || c.window);
+    if (tables.length && timed.length < table.columns.length / 2) continue;
     table.id = `t${tables.length + 1}`;
     table.locatorScore = candidate.score;
     table.locatorEvidence = candidate.evidence.map((e) => ({ page: e.page, score: e.score, reasons: e.reasons }));
