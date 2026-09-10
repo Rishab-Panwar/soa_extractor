@@ -62,7 +62,7 @@ const server = createServer(async (request, response) => {
       return;
     }
 
-    if (request.method === 'POST' && request.url === '/extract') {
+    if (request.method === 'POST' && request.url.startsWith('/extract')) {
       const data = await body(request);
       if (!data.length) throw new Error('no file received');
       const started = Date.now();
@@ -71,7 +71,19 @@ const server = createServer(async (request, response) => {
       // there is no way to tell "the switch did nothing" from "the switch is
       // broken".
       const log = (stage, message) => console.log(`  ${stage}: ${message}`);
-      const result = await run(data, ALLOW_REVIEW === undefined ? { log } : { assist: ALLOW_REVIEW, log });
+      /*
+       * The page asks; the server decides.
+       *
+       * A visitor picks which reading they want, and the page sends it. But the
+       * key is the server's to spend, so `SOA_ALLOW_REVIEW=0` refuses
+       * regardless — a button on a public URL must not be able to run up a bill
+       * on a machine whose owner has said no.
+       */
+      const asked = new URL(request.url, 'http://localhost').searchParams.get('review') === '1';
+      const assist = ALLOW_REVIEW === false ? false : asked;
+      const result = await run(data, { assist, log });
+      result.reviewAsked = asked;
+      result.reviewRan = assist && available();
       result.tookMs = Date.now() - started;
       response.writeHead(200, { 'content-type': 'application/json' });
       response.end(JSON.stringify(result));

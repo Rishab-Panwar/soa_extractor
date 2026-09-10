@@ -118,8 +118,10 @@
   .btn{font:inherit;font-size:13px;padding:7px 14px;border:1px solid var(--line);background:#fff;
        border-radius:8px;cursor:pointer;font-weight:600;color:#26414f}
   .btn:hover{border-color:var(--teal);color:var(--teal)}
-  .samples{margin:14px 0 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--dim)}
-  .samples .btn{padding:5px 12px;font-size:12.5px}
+  .modes{margin:16px 0 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .modes .btn{padding:9px 16px}
+  .modes .btn.on{border-color:var(--teal);color:var(--teal);background:#f2fbfa;font-weight:600}
+  .modes .muted{flex:1 1 100%;font-size:12.5px;color:var(--dim);margin-top:2px;line-height:1.5}
   .muted{font-size:12px;color:var(--dim);flex-basis:100%;margin-top:2px}
   .hostednote{background:#eef4f8;border:1px solid var(--line);border-radius:8px;padding:9px 12px;
               font-size:12.5px;color:#38495a;margin:14px 0 0}
@@ -148,6 +150,11 @@
     <div class="big">Drop a protocol PDF here, or click to choose</div>
     <div class="sub">80–250 pages is normal. Landscape and rotated pages are handled.</div>
   </label>
+  <div class="modes">
+    <button class="btn mode on" data-mode="geometry">Read from the page</button>
+    <button class="btn mode" data-mode="review">Read from the page, then ask Claude</button>
+    <div class="muted" id="modeNote">Rules only — the drawn grid, offline and free, about a second a protocol.</div>
+  </div>
   <div class="status" id="status"></div>
   <div id="out"></div>
 </main>
@@ -163,16 +170,49 @@ const drop = $('drop');
 drop.addEventListener('drop', (ev) => { ev.preventDefault(); if (ev.dataTransfer.files[0]) send(ev.dataTransfer.files[0]); });
 $('file').addEventListener('change', (ev) => { if (ev.target.files[0]) send(ev.target.files[0]); });
 
+/*
+ * Which reading the visitor asked for.
+ *
+ * The two are not alternatives so much as one and then the other: the rules
+ * always run, and the review is only consulted where the rules' own checks say
+ * they cannot be trusted. So a well-read protocol comes back identical either
+ * way — which is worth showing rather than hiding, because it is the argument
+ * for the design.
+ */
+let mode = 'geometry';
+for (const button of document.querySelectorAll('button[data-mode]')) {
+  button.addEventListener('click', () => {
+    mode = button.dataset.mode;
+    for (const other of document.querySelectorAll('button[data-mode]')) {
+      other.classList.toggle('on', other === button);
+    }
+    $('modeNote').textContent = mode === 'geometry'
+      ? 'Rules only — the drawn grid, offline and free, about a second a protocol.'
+      : 'Rules first. Where their own checks distrust the result, the same words go to Claude for a second opinion, and every value it returns is checked back against the page.';
+  });
+}
+
 async function send(file) {
   $('out').innerHTML = '';
-  $('status').innerHTML = `<span class="spinner"></span> reading <b>${esc(file.name)}</b> — scoring every page, then rebuilding the grid…`;
+  const how = mode === 'review'
+    ? 'reading <b>' + esc(file.name) + '</b> — rules first, then a review of anything they cannot vouch for…'
+    : 'reading <b>' + esc(file.name) + '</b> — scoring every page, then rebuilding the grid…';
+  $('status').innerHTML = `<span class="spinner"></span> ${how}`;
   const started = Date.now();
   try {
-    const response = await fetch('/extract', { method: 'POST', body: file });
+    const response = await fetch(`/extract?review=${mode === 'review' ? 1 : 0}`, { method: 'POST', body: file });
     result = await response.json();
     if (result.error) throw new Error(result.error);
     const secs = ((Date.now() - started) / 1000).toFixed(1);
-    $('status').innerHTML = `<b>${esc(file.name)}</b> · ${result.pageCount} pages searched · ${result.tables.length} schedule(s) · ${secs}s`;
+    // Said plainly, because the review only runs on a table the checks distrust:
+    // asking for it and not getting it is the ordinary case, not a failure.
+    let asked = '';
+    if (result.reviewAsked) {
+      asked = result.reviewRan
+        ? ' · <b>Claude was available</b> for anything the rules could not vouch for'
+        : ' · Claude was <b>not consulted</b>: ' + esc(result.hosted?.note ? 'not enabled on this deployment' : 'no API key configured');
+    }
+    $('status').innerHTML = `<b>${esc(file.name)}</b> · ${result.pageCount} pages searched · ${result.tables.length} schedule(s) · ${secs}s${asked}`;
     render();
   } catch (error) {
     $('status').innerHTML = `<div class="err">${esc(error.message)}</div>`;

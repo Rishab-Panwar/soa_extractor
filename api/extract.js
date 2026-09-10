@@ -51,19 +51,31 @@ export default async function handler(request, response) {
     if (!data.length) throw new Error('no file received');
 
     const started = Date.now();
-    const result = await run(data, {
-      // Off unless deliberately enabled: see the note at the top of this file.
-      assist: process.env.SOA_ALLOW_REVIEW === '1',
-      log: () => {},
-    });
+    /*
+     * The visitor chooses, within what the deployment allows.
+     *
+     * The page offers both readings side by side, so the choice arrives as
+     * ?review=1 — but the key belongs to whoever deployed this, and a button on
+     * a public URL must not be able to spend it against their wishes. So the
+     * request can only ever turn the review OFF relative to what the
+     * environment permits, never on.
+     */
+    const permitted = process.env.SOA_ALLOW_REVIEW === '1';
+    const asked = new URL(request.url, 'http://localhost').searchParams.get('review') === '1';
+    const assist = permitted && asked;
+
+    const result = await run(data, { assist, log: () => {} });
     result.tookMs = Date.now() - started;
+    result.reviewAsked = asked;
+    result.reviewRan = assist;
     result.hosted = {
-      reviewAvailable: process.env.SOA_ALLOW_REVIEW === '1',
-      note: process.env.SOA_ALLOW_REVIEW === '1'
+      reviewAvailable: permitted,
+      note: permitted
         ? null
-        : 'This hosted version runs the geometric reader only. Tables marked "fallback" '
-          + 'are ones its own checks do not trust; running the tool locally with an API key '
-          + 'sends those pages for a second opinion.',
+        : 'This deployment runs the geometric reader only — a review takes 90–150s against a '
+          + '60s serverless limit, and an unauthenticated button must not spend an API key. '
+          + 'Tables marked "fallback" are ones the checks do not trust; running the tool '
+          + 'locally with a key sends those pages for a second opinion.',
     };
 
     response.status(200).json(result);
