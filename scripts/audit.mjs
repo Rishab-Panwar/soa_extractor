@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 
-const { readPdf } = await import(pathToFileURL(resolve('src/ingest.js')).href);
+const { readPdf, linesOf } = await import(pathToFileURL(resolve('src/ingest.js')).href);
 
 const have = (p) => { try { readFileSync(p); return true; } catch { return false; } };
 
@@ -76,11 +76,33 @@ function gridOf(page) {
   }
   if (cols.length < 3 || rows.length < 3) return null;
 
+  /*
+   * Words are placed by the band their LINE is in, not their own middle.
+   *
+   * Word by word, a superscript rides above its baseline and the second line
+   * of a two-line row sits below its band's edge, so each drifts into the
+   * neighbouring row on its own. That is what reported five marks as missing
+   * from rows the page never marks — the "e" printed on "BPRS" was read
+   * against "Continuous BP, HR, ECG" above it. A line is the unit the page
+   * sets its rows in, so a line belongs to one band and its words go with it.
+   */
+  const bandOf = new Map();
+  for (const line of linesOf(page.words)) {
+    const mid = (line.top + line.bottom) / 2;
+    let band = rows.findIndex((y, i) => i < rows.length - 1 && mid > y - 1 && mid < rows[i + 1] + 1);
+    // A line straddling an edge belongs to whichever band holds more of it.
+    if (band >= 0) {
+      const over = (i) => Math.min(line.bottom, rows[i + 1]) - Math.max(line.top, rows[i]);
+      if (band + 1 < rows.length - 1 && over(band + 1) > over(band)) band += 1;
+      if (band > 0 && over(band - 1) > over(band)) band -= 1;
+    }
+    for (const w of line.words) bandOf.set(w, band);
+  }
+
   const cell = (r, c) => {
     const words = page.words.filter((w) => {
       const cx = centre(w);
-      const cy = w.y + w.h / 2;
-      return cx > cols[c] && cx < cols[c + 1] && cy > rows[r] - 1 && cy < rows[r + 1] + 1;
+      return cx > cols[c] && cx < cols[c + 1] && bandOf.get(w) === r;
     });
     return norm(words.sort((a, b) => (Math.abs(a.y - b.y) > 3 ? a.y - b.y : a.x - b.x))
       .map((w) => w.text).join(' '));
@@ -320,7 +342,16 @@ for (const [name, pdf] of targets) {
     let misplaced = 0;
     for (const row of printed) {
       const label = row.slice(0, labelCols).filter(Boolean).join(' ');
-      const mine = ours.get(key(label));
+      /*
+       * The same row, with its superscript kept out of its name.
+       *
+       * protocol15 prints "Physical exam/FEV<d> 1" and we store the name as
+       * "Physical exam/FEV1" with "d" recorded as a marker, which is the point
+       * of keeping markers beside values rather than glued into them. Matched
+       * on the raw text, that row reported itself as missing from a table that
+       * holds it and has footnote d pointing straight at it.
+       */
+      const mine = ours.get(key(label)) || ours.get(key(label.replace(/\b[a-z]\b/gi, ' ')));
       if (!mine) {
         if (grid.matrix.indexOf(row) < firstData) continue;
         /*
@@ -339,7 +370,19 @@ for (const [name, pdf] of targets) {
           const shared = [...want].filter((w) => have.has(w)).length;
           return shared >= Math.min(want.size, have.size) * 0.7;
         });
-        if (!near && key(label).length > 3) { console.log(`  ! ROW MISSING: "${label.slice(0, 52)}"`); missing++; problems++; }
+        /*
+         * A footnote legend under the table is not a row of it.
+         *
+         * The reconstruction knows only about ruled cells, and a sponsor rules
+         * the block under the grid the same way — so "a. b. c. d. e. 6th
+         * administration…", "X a X b X c X d – FEV 1" and "a S = serum, P =
+         * plasma" were each reported as a row we had lost. They are the
+         * footnotes, and they are checked as footnotes further down.
+         */
+        const legend = /^\s*[a-z*†‡§¶#]{1,3}\s*[.):=-]/i.test(label)
+          || /^\s*(?:x\s*[a-z]\s*){2,}/i.test(label)
+          || (label.match(/=/g) || []).length >= 2;
+        if (!near && !legend && key(label).length > 3) { console.log(`  ! ROW MISSING: "${label.slice(0, 52)}"`); missing++; problems++; }
         continue;
       }
       /*
@@ -372,8 +415,17 @@ for (const [name, pdf] of targets) {
       const got = tally(inOurs);
       const lost = [...wanted].filter(([v, n]) => (got.get(v) || 0) < n)
         .map(([v, n]) => `${v}×${n - (got.get(v) || 0)}`);
-      const extra = [...got].filter(([v, n]) => (wanted.get(v) || 0) < n)
-        .map(([v, n]) => `${v}×${n - (wanted.get(v) || 0)}`);
+      /*
+       * Extra means INVENTED, not repeated.
+       *
+       * protocol9 writes "Prior to Day 4" once, in a cell merged across three
+       * days, and we record it against each day it covers — which is the whole
+       * point of recording it. Counting copies called that three words too
+       * many, three times over. A word the page does not print at all is the
+       * fault worth reporting; a word it prints once and we attach to each
+       * column it is written over is not.
+       */
+      const extra = [...got].filter(([v]) => !wanted.has(v)).map(([v, n]) => `${v}×${n}`);
 
       /*
        * WHERE a written-out value sits, not only that we hold it.
@@ -425,12 +477,65 @@ for (const [name, pdf] of targets) {
         const should = mineHere[drawn.indexOf(c)];
         if (!should) continue;
         const printedHere = norm(row[c] || '');
-        const oursHere = mine.cells.filter((x) => x.col === should.id).map((x) => norm(x.value)).join(' ');
+        // Markers count as printed content. The page sets an "X" with a
+        // superscript "b" beside it and we keep the two apart deliberately, so
+        // comparing the value alone reports a difference that is only our own
+        // way of storing it.
+        const oursHere = mine.cells.filter((x) => x.col === should.id)
+          .map((x) => norm([x.value, ...(x.markers || [])].join(' '))).join(' ');
         if (!printedHere && !oursHere) continue;
         // A value written across columns is printed once and held in each of
         // them, so containment either way counts as agreement.
+        /*
+         * The same tokens, in whatever order.
+         *
+         * A cell holding "X" with a superscript "b" can be printed b-then-X or
+         * X-then-b depending on where the superscript's baseline falls, and we
+         * store the marker after the value regardless. Comparing the strings
+         * made "a x" and "x a" a discrepancy — six of them, all of them the
+         * same cell read correctly.
+         */
+        const bag = (s) => s.split(' ').filter(Boolean).map(key).filter(Boolean).sort();
+        const inside = (a, b) => {
+          const rest = [...b];
+          return a.every((t) => {
+            const at = rest.indexOf(t);
+            if (at < 0) return false;
+            rest.splice(at, 1);
+            return true;
+          });
+        };
+        const mineBag = bag(oursHere);
+        const pageBag = bag(printedHere);
         const agrees = printedHere && oursHere
-          && (key(printedHere).includes(key(oursHere)) || key(oursHere).includes(key(printedHere)));
+          && (inside(mineBag, pageBag) || inside(pageBag, mineBag));
+        /*
+         * A value written across merged cells is printed once and covers many.
+         *
+         * protocol9 prints "Prior to Day 4" in a cell spanning days 1 to 3. The
+         * reconstruction finds text in one of those three and nothing in the
+         * other two, and we hold it in all three — correctly, because a reader
+         * asking about day 2 must not have to know the answer was printed over
+         * day 1. So a value we hold where the page rules an empty cell is no
+         * fault if the same value is printed elsewhere on the same row.
+         */
+        /*
+         * A bare marker letter on its own is not comparable.
+         *
+         * A superscript is set above the baseline of the mark it qualifies, and
+         * where that mark sits at the top of its row the superscript crosses
+         * the rule into the row above. protocol15 prints "Vital signs" with an
+         * X in six columns, each carrying a "b" that lands in the band of
+         * "Physical exam/FEV" over it — reported as six marks missing from a
+         * row the page marks twice. The mark itself is always in the right
+         * band, so nothing that matters is waved through here.
+         */
+        if (!mineBag.length && pageBag.length && pageBag.every((t) => t.length === 1)) continue;
+
+        const spanned = !printedHere && oursHere
+          && drawn.some((other) => other !== c && inside(bag(norm(row[other] || '')), mineBag)
+            && bag(norm(row[other] || '')).length);
+        if (spanned) continue;
         if (agrees) continue;
         if (!printedHere && !/[a-z]{3}/i.test(oursHere) && oursHere.length <= 2) {
           // A lone mark we hold where the page rules an empty cell. Reported,

@@ -805,13 +805,6 @@
             {
               "col": "c1",
               "value": "X"
-            },
-            {
-              "col": "c4",
-              "value": "X",
-              "markers": [
-                "b"
-              ]
             }
           ]
         },
@@ -832,7 +825,10 @@
             },
             {
               "col": "c4",
-              "value": "wk 6"
+              "value": "X wk 6",
+              "markers": [
+                "b"
+              ]
             }
           ]
         },
