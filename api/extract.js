@@ -64,7 +64,18 @@ export default async function handler(request, response) {
     const asked = new URL(request.url, 'http://localhost').searchParams.get('review') === '1';
     const assist = permitted && asked;
 
-    const result = await run(data, { assist, log: () => {} });
+    /*
+     * Finish before Vercel stops listening.
+     *
+     * The function is killed at 60 seconds (see vercel.json). Reading a
+     * protocol geometrically takes about one; a review takes ninety to a
+     * hundred and fifty. Started here it would be cut off mid-flight and the
+     * caller would get nothing at all — not a worse table, no table — which is
+     * strictly worse than the reading the rules had already produced.
+     *
+     * Five seconds are held back to serialise and send whatever we have.
+     */
+    const result = await run(data, { assist, deadline: started + 55_000, log: () => {} });
     result.tookMs = Date.now() - started;
     result.reviewAsked = asked;
     result.reviewRan = assist;

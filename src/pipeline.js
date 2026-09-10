@@ -408,7 +408,24 @@ export function linkTrailingMarkers(table) {
  * dropped by a floor rather than by rank, so a document with two good schedules
  * yields two and a document with one yields one.
  */
-export async function run(buffer, { maxTables = 3, floor = 12, assist = true, log = () => {} } = {}) {
+/*
+ * `deadline` — a wall clock the review has to finish inside.
+ *
+ * A serverless function is killed at a fixed time, and a review of a four-page
+ * schedule takes ninety seconds to two and a half minutes. Started with forty
+ * seconds left it does not produce a worse answer; it produces NO answer, and
+ * takes the perfectly good geometric reading down with it. The visitor gets an
+ * error where a moment earlier they had a table.
+ *
+ * So the caller may pass the moment it must be finished by, as an epoch
+ * millisecond. The review is then skipped when too little time remains, and
+ * abandoned if it overruns anyway — either way the rule-based reading stands
+ * and the table says which happened. Unset, as it is on the CLI and the local
+ * server, nothing is timed and a review takes as long as it takes.
+ */
+export async function run(buffer, {
+  maxTables = 3, floor = 12, assist = true, deadline = null, log = () => {},
+} = {}) {
   const doc = await readPdf(buffer);
   const { candidates, scores } = locate(doc);
 
@@ -454,8 +471,32 @@ export async function run(buffer, { maxTables = 3, floor = 12, assist = true, lo
       const pages = table.pages.map((n) => doc.pages[n - 1]).filter(Boolean);
       if (!pages.length) continue;
 
+      // Enough of the clock left to be worth starting. A review that cannot
+      // finish is not a slower review, it is a dead function.
+      const left = deadline ? deadline - Date.now() : Infinity;
+      if (left < 25_000) {
+        const note = 'This table is one the checks do not trust, and a second opinion was not '
+          + 'attempted: too little time remained of this request\'s budget to finish one. '
+          + 'What is below is the rule-based reading, unaltered.';
+        table.ambiguities = [...(table.ambiguities || []), note];
+        log('assist', `${table.id}: skipped, ${Math.round(left / 1000)}s left of the budget`);
+        continue;
+      }
+
       log('assist', `${table.id}: confidence ${table.assessment.confidence} (${table.assessment.findings.filter((f) => f.severity === 'high').map((f) => f.check).join(', ')}); reviewing pages ${table.pages.join(', ')}`);
-      const found = await secondOpinion(pages, { geometric: table, log });
+      // And abandoned if it overruns anyway, so the reading below survives.
+      const found = await Promise.race([
+        secondOpinion(pages, { geometric: table, log }),
+        new Promise((resolve) => { setTimeout(() => resolve('timeout'), Math.max(1000, left - 6000)).unref?.(); }),
+      ]);
+      if (found === 'timeout') {
+        const note = 'This table is one the checks do not trust. A second opinion was started and '
+          + 'did not finish inside this request\'s budget, so it was abandoned; what is below is '
+          + 'the rule-based reading, unaltered.';
+        table.ambiguities = [...(table.ambiguities || []), note];
+        log('assist', `${table.id}: review abandoned on the clock; keeping the rule-based read`);
+        continue;
+      }
       if (!found || !found.length) continue;
       const reviewed = found[0];
 
