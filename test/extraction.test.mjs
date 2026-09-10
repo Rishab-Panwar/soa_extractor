@@ -243,6 +243,36 @@ test('the numbered narrative after a schedule is not read as footnotes', async (
   const last = twelve.tables[0].footnotes.find((f) => f.marker === 'J');
   assert.ok(last, 'footnote J is still read');
   assert.ok(!/eligibility requirements/.test(last.text), 'and it does not swallow the paragraph after it');
+  // The same numbered narrative reuses "a", "b", "c" as plain sub-bullets
+  // ("a. BSCS", "b. CGI-S") three points in — a marker the SoA's own footnote
+  // "a" also uses, on an unrelated page. Merging same-marker text across
+  // pages is right for a table-wide note reprinted with more added (below),
+  // and wrong here: footnote "a" must not inherit that page's prose just
+  // because they happen to share a letter.
+  const footnoteA = twelve.tables[0].footnotes.find((f) => f.marker === 'a');
+  assert.ok(footnoteA, 'footnote a is still read');
+  assert.ok(/Vital signs/.test(footnoteA.text) && !/BSCS/.test(footnoteA.text),
+    'and stays its own definition, not the coincidental reuse of "a" in the narrative');
+});
+
+test('a table-wide note with no marker of its own is still captured', async (t) => {
+  if (!existsSync(at('protocol1'))) return t.skip('protocol1 not present');
+  // "Abbreviations: CT = computed tomography; ECG = electrocardiogram" sits
+  // right where the footnotes are and qualifies what the table's other text
+  // means, same as a marker's definition does, but nothing in the grid points
+  // at it. Generalised on the shape ("Abbreviations:" followed by "TOKEN =
+  // definition" pairs), not on these particular abbreviations, so it holds
+  // for any protocol that prints a legend this way, not just this one.
+  const result = await run(readFileSync(at('protocol1')), { assist: false });
+  const note = result.tables[0].footnotes.find((f) => /^abbreviations$/i.test(f.marker));
+  assert.ok(note, 'the glossary line is captured');
+  assert.equal(note.kind, 'note', 'and reported as a table-wide note, not a cell-qualifying footnote');
+  // Page 53 prints it short (two terms); page 54 reprints it with two more
+  // ("ET", "RT") added. The fuller version should survive, not the first one
+  // seen — this is the same continuation the brief asks about, just without
+  // a marker of its own to carry the sequence.
+  assert.ok(/ET = Early Termination/.test(note.text) && /RT = Retrieval/.test(note.text),
+    'the fuller reprint on the later page is kept, not discarded for repeating a marker already seen');
 });
 
 test('a legend marker the grid writes as a whole cell is read', async (t) => {

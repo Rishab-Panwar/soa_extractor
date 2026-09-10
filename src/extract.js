@@ -44,6 +44,30 @@ const LEGEND_MARK = /^(?:[*†‡§¶#]{1,3}|x)$/i;
 const FOOTNOTE_DEF = /^(?:(?<sym>[*†‡§¶#]{1,3})\s*|(?<on>[Xx✓●•]\s*)?(?<marker>[a-z]|\d{1,2}|\([a-z0-9]{1,2}\))\s*(?:[.):=–—-]\s*|\s+))(?<text>\S.*)$/i;
 
 /*
+ * A glossary line has no marker of its own, and is still load-bearing.
+ *
+ * "Abbreviations: CT = computed tomography; ECG = electrocardiogram" sits
+ * exactly where the footnotes do and qualifies what the table's other text
+ * means, same as a marker's definition does — but nothing in the grid points
+ * at it, so FOOTNOTE_DEF never matches it and it was read past entirely. What
+ * makes it recognisable is not the specific abbreviations any one protocol
+ * happens to use, but the shape: a run of short "TOKEN = definition" pairs. A
+ * leading label word (Abbreviations, Definitions, Legend, Key) is enough on
+ * its own; without one, two or more pairs are required, so an isolated
+ * equation inside ordinary prose is not mistaken for a glossary.
+ */
+const GLOSSARY_LABEL = /^(?:abbreviations?|definitions?|legend|key|glossary)\s*:\s*/i;
+const GLOSSARY_PAIR = /^[A-Za-z][A-Za-z0-9/+.\s-]{0,14}=\s*\S.{0,80}$/;
+function glossaryLine(text) {
+  const labelled = GLOSSARY_LABEL.test(text);
+  const body = text.replace(GLOSSARY_LABEL, '');
+  const pairs = body.split(';').map((p) => p.trim()).filter(Boolean);
+  if (!pairs.length || !pairs.every((p) => GLOSSARY_PAIR.test(p))) return null;
+  if (!labelled && pairs.length < 2) return null;
+  return { label: labelled ? text.slice(0, text.indexOf(':')) : 'note' };
+}
+
+/*
  * Words that name what a header row is telling you.
  *
  * The optional qualifier matters more than it looks. Sponsors write "Study
@@ -1373,6 +1397,7 @@ export function readFootnotes(page, fromY = 0, plausible = null, after = null) {
       // continue, and once that is refused its "2." has nothing either.
       || follows(marker, previous)
     );
+    const glossary = !m ? glossaryLine(text) : null;
     if (m && believable && text.length > 3) {
       previous = marker;
       if (current) found.push(current);
@@ -1380,6 +1405,19 @@ export function readFootnotes(page, fromY = 0, plausible = null, after = null) {
         marker,
         printed,
         text: clean(m.groups.text),
+        page: page.number,
+        continued: false,
+        height: line.height,
+      };
+    } else if (glossary) {
+      // No marker of its own to continue a sequence with, so it neither reads
+      // as one nor starts one — the next real marker still counts from
+      // whatever came before this line, not from it.
+      if (current) found.push(current);
+      current = {
+        marker: glossary.label,
+        printed: null,
+        text,
         page: page.number,
         continued: false,
         height: line.height,
@@ -1925,7 +1963,27 @@ export function extractTable(pages, { title = '' } = {}) {
       if (claimed.has(key)) {
         // Not a footnote — but it may be the continuation of the last one.
         const previous = allFootnotes[allFootnotes.length - 1];
-        if (previous && previous.page === f.page) previous.text = `${previous.text} ${f.marker} ${f.text}`.trim();
+        if (previous && previous.page === f.page) {
+          previous.text = `${previous.text} ${f.marker} ${f.text}`.trim();
+        } else {
+          // Or the SAME table-wide note printed again under a later page of a
+          // table that spans several, sometimes with more added to it —
+          // protocol1's "Abbreviations:" line names two terms under page 53
+          // and four under page 54, and the second printing was simply
+          // discarded here for repeating a marker already seen, losing "ET"
+          // and "RT" with it. Keep whichever printing says more.
+          //
+          // Restricted to a glossary line's OWN marker — never a lettered
+          // one. protocol12 reuses "a" as a plain sub-bullet ("a. BSCS") deep
+          // in the numbered narrative on the page after its schedule, and
+          // that is exactly the coincidental reuse the marker-uniqueness rule
+          // above exists to refuse; merging it in would hand the real
+          // footnote "a" a thousand characters of unrelated prose.
+          const earlier = [...allFootnotes].reverse().find((e) => e.marker.toLowerCase() === key);
+          if (earlier && earlier.printed === null && f.text.length > earlier.text.length) {
+            earlier.text = f.text; earlier.page = f.page;
+          }
+        }
         continue;
       }
       claimed.add(key);

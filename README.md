@@ -193,13 +193,13 @@ Method: render the source pages, put them beside the extracted grid, compare cel
 
 | Protocol | Result | Verdict |
 |---|---|---|
-| protocol1 (Lilly LZZT, pp. 53–54) | 14 columns · 28 rows · 4 footnotes | exact |
+| protocol1 (Lilly LZZT, pp. 53–54) | 14 columns · 28 rows · 5 footnotes | exact |
 | protocol5 (atomoxetine, pp. 50–53, rotated) | two tables: 11 × 31 · 9 footnotes, and 15 × 8 · 1 footnote | both exact |
 | protocol9 (lofexidine, pp. 26–29, rotated) | 11 columns · 32 rows · 3 footnotes | columns exact; 2 rows and 1 value short |
 | protocol12 (modafinil, pp. 48–50) | 9 columns · 39 rows · 13 footnotes | exact |
 | protocol15 (cabergoline, pp. 25–27) | 9 columns · 33 rows · 7 footnotes | exact |
 
-**protocol1.** The printed table has a **blank spacer column** where visit 6 would be. No visit is invented for it and the gap is recorded as an ambiguity. Page 54's `Hemoglobin A1c` stitches onto page 53's `Hemoglobin A1C` rather than becoming a second row. `Xa`, `Xb` and the `P` legend link to the right cells.
+**protocol1.** The printed table has a **blank spacer column** where visit 6 would be. No visit is invented for it and the gap is recorded as an ambiguity. Page 54's `Hemoglobin A1c` stitches onto page 53's `Hemoglobin A1C` rather than becoming a second row. `Xa`, `Xb` and the `P` legend link to the right cells. It also prints `Abbreviations: CT = computed tomography; ECG = electrocardiogram` right where the footnotes are — no marker, tied to no cell, but it still qualifies what the table's text means, so it is read as a table-wide note rather than dropped for having nothing to link to. The note is generalised on shape (a label word like Abbreviations, Definitions or Legend, followed by `TOKEN = definition` pairs), not on these specific abbreviations, so it holds for any protocol that prints a legend this way. Page 54 reprints it with two more terms added (`ET`, `RT`); the fuller version is kept rather than the first one seen.
 
 **protocol5.** Appendix I is exact: 11 columns (Up to −35, −15* to −9, −6, −2, −1, 7, 8, 12, 13, 17, 31) and 31 rows. It also satisfies a check the document implies: PK samples for cocaine, 5 mL × (15+15+15) = **225 mL**, exactly the printed Total Volume, with a grand total of 390 mL.
 It carries a **second schedule** too, `APPENDIX II: Schedule of Blood Collections`, printed on page 51 under the tail of the first. Both are returned, as `t1` and `t2`; the audit rebuilds the appendix from its own drawn rules and finds 11 printed rows with no missing row, no cell mismatch, and all 15 column headings accounted for — a two-line banding header (`Type` over `a`, `Number of Samples per Day` over the twelve day columns, `Total` over `Volume`) resolved to the right name for each. Its own legend, `a S = serum, P = plasma; b D = day`, is read as a footnote rather than an extra row with no name, and the sponsor's running footer beneath it is recognised as page furniture rather than one more row of data.

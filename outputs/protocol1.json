@@ -1132,6 +1132,21 @@
       ],
       "footnotes": [
         {
+          "marker": "Abbreviations",
+          "printed": "Abbreviations",
+          "kind": "note",
+          "text": "Abbreviations: CT = computed tomography; ECG = electrocardiogram; ET = Early Termination; RT = Retrieval",
+          "pages": [
+            54
+          ],
+          "continued": false,
+          "appliesTo": [
+            {
+              "target": "table"
+            }
+          ]
+        },
+        {
           "marker": "X",
           "printed": "X",
           "kind": "footnote",
@@ -1765,5 +1780,5 @@
       ]
     }
   ],
-  "extractedAt": "2026-09-10T15:00:36.803Z"
+  "extractedAt": "2026-09-10T15:54:57.160Z"
 }
