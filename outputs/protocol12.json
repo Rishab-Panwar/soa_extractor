@@ -826,19 +826,13 @@
               "col": "c7",
               "value": "X",
               "markers": [
-                "c"
-              ]
-            },
-            {
-              "col": "c8",
-              "value": "X",
-              "markers": [
+                "c",
                 "e"
               ]
             },
             {
               "col": "c4",
-              "value": "X b wk 6"
+              "value": "wk 6"
             }
           ]
         },
